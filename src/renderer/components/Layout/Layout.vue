@@ -158,7 +158,7 @@
             Add
         },
         data: () => ({
-            title: 'PocketBook',
+            title: '电网智能决策平台',
             drawer: null,
             items: [
                 {heading: 'Home'},
