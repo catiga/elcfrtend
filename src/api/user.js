@@ -1,4 +1,5 @@
-import db from '../datastore'
+//import db from '../datastore'
+import db from '../datastore/index_mysql'
 import _ from 'lodash'
 
 const Table = 'user'
@@ -6,8 +7,12 @@ const Table = 'user'
 export function login(data) {
     return new Promise((resolve, reject) => {
         try {
-            const user = db.read().get(Table).find({userId: data.name, password: data.password}).value()
-            resolve(_.cloneDeep(user))
+            // const user = db.read().get(Table).find({userId: data.name, password: data.password}).value()
+            // resolve(_.cloneDeep(user))
+            let sql = `select * from sys_admin where flag!=-1 and user='${data.name}' and pwd='${data.password}'`;
+            db.query(sql, function(err, values, fields) {
+                resolve(_.cloneDeep(values[0]))
+              });
         } catch (err) {
             return reject(err)
         }

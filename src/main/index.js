@@ -99,7 +99,11 @@ function createLoginWindow() {
         loginWindow = null
     })
 
-    ipcMain.on('openMainWindow', () => {
+    ipcMain.on('openMainWindow', (event, loginedUser) => {
+        if(!loginedUser) {
+            //非登陆成功，不允许创建
+            return;
+        }
         if (!mainWindow) {
             createMainWindow()
         }
@@ -146,11 +150,9 @@ function createMainWindow() {
         webPreferences: {
             nodeIntegration: true,
             preload: ()=>{
-                console.log('执行preload');
                 if(window && window.process && window.process.type==='renderer') {
                     const {ipcRenderer} = require('electron');
                     ipcRenderer.on('change-view', (event, url)=> {
-                        console.log('收到跳转消息', url);
                         window.location.href = url;
                     });
                 }
@@ -167,8 +169,6 @@ function createMainWindow() {
     };
 
     const menuObj = require('../context/menu');
-    console.log('菜单对象', menuObj);
-    
 
     mainWindow.loadURL(winURL)
 

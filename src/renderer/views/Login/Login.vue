@@ -15,7 +15,7 @@
                             elevation="12"
                             max-width="calc(100% - 32px)"
                     >
-                        <h1 class="">Log in</h1>
+                        <h1 class="">智能电网决策系统</h1>
                         <v-flex>
                             <v-btn small flat icon>
                                 <v-icon>filter_1</v-icon>
@@ -39,7 +39,7 @@
                                     v-model="name"
                                     :counter="10"
                                     :rules="nameRules"
-                                    label="Name"
+                                    label="用户"
                                     required
                             ></v-text-field>
 
@@ -49,7 +49,7 @@
                                     :rules="[rules.required, rules.min]"
                                     :type="show1 ? 'text' : 'password'"
                                     name="input-10-1"
-                                    label="Normal with hint text"
+                                    label="密码"
                                     hint="At least 6 characters"
                                     counter
                                     @click:append="show1 = !show1"
@@ -63,7 +63,7 @@
                                     @click="validate"
                                     :loading="loadingSubmit"
                             >
-                                lets go
+                                登陆
                             </v-btn>
                         </v-form>
                     </v-card-text>
@@ -94,8 +94,8 @@
             name: 'admin',
             password: '123456',
             nameRules: [
-                v => !!v || 'Name is required',
-                v => (v && v.length <= 5) || 'Name must be less than 10 characters'
+                v => !!v || '请输入用户名',
+                v => (v && v.length <= 5) || '用户名小于10个字符'
             ],
             rules: {
                 required: value => !!value || 'Required.',
@@ -110,10 +110,10 @@
                     setTimeout(()=> {
                         login({name: this.name, password: this.password}).then(result =>{
                             if(result) {
-                                ipcRenderer.send('openMainWindow')
+                                ipcRenderer.send('openMainWindow', result)
                             } else {
                                 this.loadingSubmit = false
-                                this.loginErrMsg = 'no user was found'
+                                this.loginErrMsg = '用户或密码错误'
                                 this.ShowLoginErrMsg = true
                             }
                         }).catch(err => {
