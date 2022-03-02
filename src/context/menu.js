@@ -1,17 +1,11 @@
-//import { app, remote } from 'electron'
 
 const { Menu, BrowserWindow, dialog, app, remote, shell, ipcRenderer } = require('electron');
 
-//console.log('准备获取remote的global', global.sharedObject.mainWindow);
 let processMainWindow = global.sharedObject.mainWindow;
-//console.log('主进程中获取到的窗口对象', processMainWindow);
 
 const sendMenuEvent = async(url) => {
   if(processMainWindow) {
-    console.log('准备跳转', url);
-    console.log(processMainWindow.webContents);
     processMainWindow.webContents.send('change-view', url);
-    console.log('跳转完成');
   }
 }
 
@@ -20,9 +14,8 @@ const systemMenus = [{
   submenu: [{
     label: '打开工程',
     click: async (item, focusedWindow) => {
-      //console.log('准备跳转22222', item)
-      sendMenuEvent('/incomeAndExpenditure');
-      //openchild();
+      //sendMenuEvent('/incomeAndExpenditure');
+      processMainWindow.loadURL('http://localhost:9080/#/incomeAndExpenditure');
     }
   }, {
     label: '新建工程',
