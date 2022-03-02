@@ -158,23 +158,23 @@
             Add
         },
         data: () => ({
-            title: '电网智能决策平台',
+            title: '智能决策平台',
             drawer: null,
             items: [
                 {heading: 'Home'},
                 {isSingle: true, icon: 'home', text: 'Dashboard', to: '/home'},
                 {heading: 'Manager'},
-                // {
-                //     isGroup: true,
-                //     icon: 'list',
-                //     text: 'Task Manager',
-                //     items: [
-                //         {icon: '', text: 'Week Statistics'},
-                //         {icon: '', text: 'Month Statistics'},
-                //         {icon: '', text: 'Year Statistics'},
-                //         {icon: '', text: 'File Manager'}
-                //     ]
-                // },
+                {
+                    isGroup: true,
+                    icon: 'list',
+                    text: 'Task Manager',
+                    items: [
+                        {icon: '', text: 'Week Statistics'},
+                        {icon: '', text: 'Month Statistics'},
+                        {icon: '', text: 'Year Statistics'},
+                        {icon: '', text: 'File Manager'}
+                    ]
+                },
                 {isSingle: true, icon: 'import_export', text: 'IncomeAndExpenditure', to: '/incomeAndExpenditure'},
                 {isSingle: true, icon: 'category', text: 'Category', to: '/category'},
                 {isSingle: true, icon: 'account_balance_wallet', text: 'Assets', to: '/assets'},

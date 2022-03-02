@@ -12,6 +12,8 @@ import * as Sentry from '@sentry/electron'
 // package.json
 import pkg from '../../package.json'
 
+//const menuTemplate = require('../context/menu');
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -21,6 +23,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow, loginWindow
+
 const winURL = process.env.NODE_ENV === 'development'
     ? `http://localhost:9080`
     : `file://${__dirname}/index.html`
@@ -141,9 +144,31 @@ function createMainWindow() {
         transparent: true, // 透明
         // fullscreen: true, // 全屏
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            preload: ()=>{
+                console.log('执行preload');
+                if(window && window.process && window.process.type==='renderer') {
+                    const {ipcRenderer} = require('electron');
+                    ipcRenderer.on('change-view', (event, url)=> {
+                        console.log('收到跳转消息', url);
+                        window.location.href = url;
+                    });
+                }
+            }
         },
     })
+
+    //设置系统菜单
+    // const menu = Menu.buildFromTemplate(menuTemplate.default)
+    // Menu.setApplicationMenu(menu)
+
+    global.sharedObject = {
+        mainWindow :mainWindow
+    };
+
+    const menuObj = require('../context/menu');
+    console.log('菜单对象', menuObj);
+    
 
     mainWindow.loadURL(winURL)
 
@@ -524,7 +549,7 @@ if (!gotTheLock) {
     // 创建 mainWindow, 加载应用的其余部分, etc...
     app.on('ready', () => {
         createLoginWindow()
-        createMainWindow()
+        //createMainWindow()
         createTray()
         ipcStartOnBoot()
         autoUpdate()
