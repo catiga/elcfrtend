@@ -166,23 +166,61 @@
             items: [
                 {heading: 'Home'},
                 {isSingle: true, icon: 'home', text: 'Dashboard', to: '/home'},
-                {heading: 'Manager'},
+                {heading: '工程管理'},
                 {
                     isGroup: true,
                     icon: 'list',
-                    text: 'Task Manager',
+                    text: '输变电联合系统潮流计算',
                     items: [
-                        {icon: '', text: 'Week Statistics'},
-                        {icon: '', text: 'Month Statistics'},
-                        {icon: '', text: 'Year Statistics'},
-                        {icon: '', text: 'File Manager'}
+                        {icon: '', text: '作业列表1'},
+                        {icon: '', text: '作业列表2'}
                     ]
                 },
+                {
+                    isGroup: true,
+                    icon: 'list',
+                    text: '站外进线拓扑重构',
+                    items: [
+                        {icon: '', text: '作业列表1'},
+                        {icon: '', text: '作业列表2'}
+                    ]
+                },
+                {
+                    isGroup: true,
+                    icon: 'list',
+                    text: '风险评估',
+                    items: [
+                        {icon: '', text: '作业列表1'},
+                        {icon: '', text: '作业列表2'}
+                    ]
+                },
+                {
+                    isGroup: true,
+                    icon: 'list',
+                    text: '薄弱环节分析',
+                    items: [
+                        {icon: '', text: '作业列表1'},
+                        {icon: '', text: '作业列表2'}
+                    ]
+                },
+                {
+                    isGroup: true,
+                    icon: 'list',
+                    text: '检修方案智能决策',
+                    items: [
+                        {icon: '', text: '作业列表1'},
+                        {icon: '', text: '作业列表2'}
+                    ]
+                },
+
+                {divider: true},
+
+
                 {isSingle: true, icon: 'import_export', text: 'IncomeAndExpenditure', to: '/incomeAndExpenditure'},
                 {isSingle: true, icon: 'category', text: 'Category', to: '/category'},
                 {isSingle: true, icon: 'account_balance_wallet', text: 'Assets', to: '/assets'},
                 {divider: true},
-                {heading: 'System'},
+                {heading: '系统'},
                 {isSingle: true, icon: 'settings', text: 'Settings', to: '/settings'},
                 {isSingle: true, icon: 'visibility_off', text: 'Password', to: '/password'},
                 {isSingle: true, icon: 'lightbulb_outline', text: 'Notes', to: '/notes'},
