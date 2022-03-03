@@ -1,8 +1,10 @@
 //import db from '../datastore'
 import db from '../datastore/index_mysql'
 import _ from 'lodash'
+import store from '../renderer/store'
 
 const Table = 'user'
+let _currentLoginUser_;
 
 export function login(data) {
     return new Promise((resolve, reject) => {
@@ -11,7 +13,9 @@ export function login(data) {
             // resolve(_.cloneDeep(user))
             let sql = `select * from sys_admin where flag!=-1 and user='${data.name}' and pwd='${data.password}'`;
             db.query(sql, function(err, values, fields) {
-                resolve(_.cloneDeep(values[0]))
+                _currentLoginUser_ = values[0];
+                store.commit('updateLoginUser', _currentLoginUser_);
+                resolve(_.cloneDeep(_currentLoginUser_));
               });
         } catch (err) {
             return reject(err)

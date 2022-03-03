@@ -103,7 +103,7 @@
         <v-toolbar app fixed dense>
             <v-toolbar-side-icon @click.stop="mini = !mini" style="-webkit-app-region: no-drag"></v-toolbar-side-icon>
             <v-toolbar-title class="red--text" style="-webkit-user-select: none;-webkit-app-region: drag">
-                Balance: $10000.50
+                Balance: 1111
             </v-toolbar-title>
             <v-spacer style="height:90%;-webkit-app-region: drag"></v-spacer>
             <v-btn style="-webkit-app-region: no-drag"
@@ -149,9 +149,11 @@
     const electron = require('electron');
     const remote = electron.remote;
 
-    import {mapActions} from 'vuex'
+    import {mapActions, mapGetters, mapState} from 'vuex'
     import {ipcRenderer} from 'electron'
     import Add from '../add/add'
+    
+    //import store from '../../store'
 
     export default {
         components: {
@@ -190,7 +192,13 @@
             // 是最大化
             isMaximized: false,
         }),
-        // computed: {
+        mounted() {
+            console.log('getloginuser', this.getLoginUser);
+        },
+        computed: {
+            ...mapGetters([
+                'getLoginUser'
+            ]),
         //     dialogAdd: {
         //         get() {
         //             return this.$store.getters.dialogAddShow
@@ -200,7 +208,7 @@
         //             this.updateDialog(value)
         //         }
         //     }
-        // },
+        },
         methods: {
             ...mapActions([
                 'updateDialog',
