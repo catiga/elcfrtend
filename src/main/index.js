@@ -22,6 +22,9 @@ if (process.env.NODE_ENV !== 'development') {
     global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
+// init the global data object with stored
+global.sharedObject = {}
+
 let mainWindow, loginWindow
 
 const winURL = process.env.NODE_ENV === 'development'
@@ -104,9 +107,12 @@ function createLoginWindow() {
             //非登陆成功，不允许创建
             return;
         }
+
         if (!mainWindow) {
             createMainWindow()
         }
+
+        global.sharedObject.loginedUser = loginedUser
 
         // loginWindow.hide()
         loginWindow.destroy()
@@ -164,9 +170,7 @@ function createMainWindow() {
     // const menu = Menu.buildFromTemplate(menuTemplate.default)
     // Menu.setApplicationMenu(menu)
 
-    global.sharedObject = {
-        mainWindow :mainWindow
-    };
+    global.sharedObject.mainWindow = mainWindow
 
     const menuObj = require('../context/menu');
 

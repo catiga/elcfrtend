@@ -103,7 +103,7 @@
         <v-toolbar app fixed dense>
             <v-toolbar-side-icon @click.stop="mini = !mini" style="-webkit-app-region: no-drag"></v-toolbar-side-icon>
             <v-toolbar-title class="red--text" style="-webkit-user-select: none;-webkit-app-region: drag">
-                Balance: 1111
+                当前用户: {{currentUser.name}}
             </v-toolbar-title>
             <v-spacer style="height:90%;-webkit-app-region: drag"></v-spacer>
             <v-btn style="-webkit-app-region: no-drag"
@@ -160,6 +160,7 @@
             Add
         },
         data: () => ({
+            currentUser : remote.getGlobal('sharedObject').loginedUser,
             title: '智能决策平台',
             drawer: null,
             items: [
@@ -193,7 +194,7 @@
             isMaximized: false,
         }),
         mounted() {
-            console.log('getloginuser', this.getLoginUser);
+            console.log('getloginuser', remote.getGlobal('sharedObject'));
         },
         computed: {
             ...mapGetters([
