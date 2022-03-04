@@ -3,6 +3,8 @@
 import db from '../datastore/index_mysql'
 import _ from 'lodash'
 
+const moment = require('moment')
+
 const Table = 'incomeAndExpenditure'
 const TableAssets = 'assets'
 
@@ -116,18 +118,23 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
 export function postModel(document) {
     return new Promise((resolve, reject) => {
         try {
-            const collection = db.get(Table)
-            const model = collection.insert(document).write()
-            const collectionAssets = db.get(TableAssets)
-            let assetsAmountOfMoney = 0
-            collection.filter({assetsId: model.assetsId}).value().forEach(item => {
-                assetsAmountOfMoney += item.type ==='e' ? -item.amountOfMoney : item.amountOfMoney
-            })
-            // 更新资产表
-            collectionAssets.updateById(model.assetsId, {assetsAmountOfMoney: assetsAmountOfMoney}).write()
-            resolve({
-                code: 200,
-                data: _.cloneDeep(model)
+            let title = document.title
+            let info = document.info
+            let a_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+            let sql = `insert into project_info(title, info, a_time, flag) values('${title}', '${info}', '${a_time}', 0)`
+
+            db.query(sql, function(err, values, fields) {
+                let model = {
+                    id : values.insertId,
+                    title : title,
+                    info : info,
+                    a_time : a_time,
+                    flag : 0
+                }
+                resolve({
+                    code: 200,
+                    data: model
+                })
             })
         } catch (err) {
             return reject({
@@ -159,18 +166,14 @@ export function postOrPutModel(document) {
 export function putModelById(id, attrs) {
     return new Promise((resolve, reject) => {
         try {
-            const collection = db.get(Table)
-            const model = collection.updateById(id, attrs).write()
-            const collectionAssets = db.get(TableAssets)
-            let assetsAmountOfMoney = 0
-            collection.filter({assetsId: model.assetsId}).value().forEach(item => {
-                assetsAmountOfMoney += item.type ==='e' ? -item.amountOfMoney : item.amountOfMoney
-            })
-            // 更新资产表
-            collectionAssets.updateById(model.assetsId, {assetsAmountOfMoney: assetsAmountOfMoney}).write()
-            resolve({
-                code: 200,
-                data: _.cloneDeep(model)
+            let title = attrs.title;
+            let info = attrs.info;
+            let sql = `update project_info set title='${title}', info='${info}' where id=${id}`
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: 1
+                })
             })
         } catch (err) {
             return reject({

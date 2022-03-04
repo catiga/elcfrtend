@@ -133,7 +133,7 @@
 
                                 <td class="text-xs-right" width="180">
                                     <v-btn v-if="props.item.is_import==0" fab small color="success" @click="importLocalFile(props.item)">导入</v-btn>
-                                    <v-btn v-if="props.item.is_import==1" fab small color="error" @click="viewItem(props.item)">查看</v-btn>
+                                    <v-btn v-if="props.item.is_import==1" fab small color="error" @click="viewItem(props.item)">打开</v-btn>
                                 </td>
 
                             </tr>
@@ -161,6 +161,7 @@
                     >
                         <v-container grid-list-md>
                             <v-layout wrap>
+                                <!--
                                 <v-flex xs12>
                                     <v-select
                                             :items="assetsList"
@@ -228,6 +229,19 @@
                                     <v-text-field label="Remark"
                                                   v-model="editedItem.remark"></v-text-field>
                                 </v-flex>
+                                -->
+
+                                <v-flex xs12>
+                                    <v-text-field label="名称*"
+                                        :rules="[rules.required]"
+                                        v-model="editedItem.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="说明*"
+                                        :rules="[rules.required]"
+                                        v-model="editedItem.info"></v-text-field>
+                                </v-flex>
+                                
                                 <v-flex xs12>
                                     <el-upload
                                             class="upload-demo"
@@ -245,13 +259,13 @@
                                 </v-flex>
                             </v-layout>
                         </v-container>
-                        <small>*indicates required field</small>
+                        <small>*代表必填信息</small>
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click="closeDialogEdit">Close</v-btn>
-                    <v-btn color="blue darken-1" flat @click="saveEdit">Save</v-btn>
+                    <v-btn color="blue darken-1" flat @click="closeDialogEdit">关闭</v-btn>
+                    <v-btn color="blue darken-1" flat @click="saveEdit">保存</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -366,14 +380,19 @@
                 valid: true,
                 submitResult: false,
                 editedIndex: -1,
+
                 editedItem: {
-                    categoryId: '',
-                    type: '',
-                    assetsId: '',
-                    remark: '',
-                    createdAt: '',
-                    amountOfMoney: '',
+                    // categoryId: '',
+                    // type: '',
+                    // assetsId: '',
+                    // remark: '',
+                    // createdAt: '',
+                    // amountOfMoney: '',
+
+                    title: '',
+                    info: '',
                 },
+
                 defaultItem: {
                     categoryId: '',
                     type: '',
@@ -383,7 +402,7 @@
                     amountOfMoney: '',
                 },
                 rules: {
-                    required: value => !!value || 'Required.',
+                    required: value => !!value || '必填项不可为空.',
                 },
                 assetsList: [],
                 categoryList: [],
