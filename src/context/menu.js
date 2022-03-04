@@ -12,25 +12,12 @@ const sendMenuEvent = async(url) => {
 const systemMenus = [{
   label: '文件',
   submenu: [{
-    label: '打开工程',
+    label: '工程管理',
     click: async (item, focusedWindow) => {
-      //sendMenuEvent('/incomeAndExpenditure');
       processMainWindow.loadURL('http://localhost:9080/#/incomeAndExpenditure');
     }
   }, {
-    label: '新建工程',
-    click: function (item, focusedWindow) {
-    }
-  }, {
     type: 'separator'
-  }, {
-    label: '保存工程',
-    click: function (item, focusedWindow) {
-    }
-  }, {
-    label: '最近打开',
-    click: function (item, focusedWindow) {
-    }
   }, {
     label: '退出',
     click: function (item, focusedWindow) {

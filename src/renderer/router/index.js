@@ -1,10 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import projectManage from './modules/projectMgr'
+
 Vue.use(Router)
 
 export default new Router({
     routes: [
+        projectManage,
         {
             path: '/login',
             name: 'login',

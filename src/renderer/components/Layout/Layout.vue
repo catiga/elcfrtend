@@ -166,7 +166,10 @@
             items: [
                 {heading: 'Home'},
                 {isSingle: true, icon: 'home', text: 'Dashboard', to: '/home'},
-                {heading: '工程管理'},
+
+                {isSingle: true, icon: 'import_export', text: '工程管理', to: '/projectMgr/style/list'},
+
+                {heading: '计算管理'},
                 {
                     isGroup: true,
                     icon: 'list',
