@@ -22,12 +22,20 @@ export function login(data) {
 export function getModelWhere(attrs) {
     return new Promise((resolve, reject) => {
         try {
-            const collection = db.get(Table)
-            const list = collection.filter(attrs).value()
-            resolve({
-                code: 200,
-                data: _.cloneDeep(list)
-            })
+            let sql = `select * from ${Table} where flag!=-1 and user='${attrs.userId}' and pwd='${attrs.password}'`;
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                });
+            });
+
+            // const collection = db.get(Table)
+            // const list = collection.filter(attrs).value()
+            // resolve({
+            //     code: 200,
+            //     data: _.cloneDeep(list)
+            // })
         } catch (err) {
             return reject({
                 code: 400,
@@ -40,12 +48,22 @@ export function getModelWhere(attrs) {
 export function putModelById(id, attrs) {
     return new Promise((resolve, reject) => {
         try {
-            const collection = db.get(Table)
-            const model = collection.updateById(id, attrs).write()
-            resolve({
-                code: 200,
-                data: _.cloneDeep(model)
-            })
+            console.log('修改对象', attrs)
+            let sql = `update ${Table} set pwd='${attrs.password}' where id=${id}`;
+            console.log(sql)
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: values
+                });
+            });
+
+            // const collection = db.get(Table)
+            // const model = collection.updateById(id, attrs).write()
+            // resolve({
+            //     code: 200,
+            //     data: _.cloneDeep(model)
+            // })
         } catch (err) {
             return reject({
                 code: 400,

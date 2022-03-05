@@ -94,7 +94,7 @@
                     </v-list-tile-action>
                     <v-list-tile-content>
                         <v-list-tile-title>
-                            Logout
+                            退出
                         </v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>

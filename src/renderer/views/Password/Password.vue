@@ -3,7 +3,7 @@
         <v-flex xs12 d-flex>
             <v-card>
                 <v-card-title>
-                    <span class="headline">Change Password</span>
+                    <span class="headline">修改密码</span>
                 </v-card-title>
                 <v-card-text>
                     <v-form
@@ -17,7 +17,7 @@
                                 <v-flex xs12>
                                     <v-text-field
                                             v-model="name"
-                                            label="UserId"
+                                            label="用户"
                                             required
                                             disabled
                                     ></v-text-field>
@@ -29,7 +29,7 @@
                                             :rules="[rules.required, rules.min]"
                                             :type="show1 ? 'text' : 'password'"
                                             name="input-10-1"
-                                            label="Old password*"
+                                            label="旧密码*"
                                             hint="At least 6 characters"
                                             counter
                                             @click:append="show1 = !show1"
@@ -42,7 +42,7 @@
                                             :rules="[rules.required, rules.min]"
                                             :type="show2 ? 'text' : 'password'"
                                             name="input-10-1"
-                                            label="New password*"
+                                            label="新密码*"
                                             hint="At least 6 characters"
                                             counter
                                             @click:append="show2 = !show2"
@@ -50,12 +50,12 @@
                                 </v-flex>
                             </v-layout>
                         </v-container>
-                        <small>*indicates required field</small>
+                        <small>*代表必填项</small>
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" @click="saveEdit">Save</v-btn>
+                    <v-btn color="blue darken-1" @click="saveEdit">保存</v-btn>
                     <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
@@ -117,9 +117,9 @@
             submitResult: {
                 handler(val) {
                     if (val) {
-                        this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : 'Operation succeeded'
+                        this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作成功'
                     } else {
-                        this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : 'Operation failed'
+                        this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作失败'
                     }
                 }
             },
@@ -161,7 +161,7 @@
                         } else {
                             this.submitResult = false
                             this.snackbar = true
-                            this.snackbarMsg = 'The original password is incorrect'
+                            this.snackbarMsg = '旧密码检查失败'
                         }
                     }).catch(err => {
                         this.submitResult = false

@@ -59,14 +59,16 @@ const pageMenus = [
     {isSingle: true, icon: 'account_balance_wallet', text: 'Assets', to: '/assets'},
     {divider: true},
     {heading: '系统'},
-    {isSingle: true, icon: 'settings', text: 'Settings', to: '/settings'},
-    {isSingle: true, icon: 'visibility_off', text: 'Password', to: '/password'},
+    {isSingle: true, icon: 'settings', text: '设置', to: '/settings'},
+    {isSingle: true, icon: 'visibility_off', text: '密码', to: '/password'},
     {isSingle: true, icon: 'lightbulb_outline', text: 'Notes', to: '/notes'},
     {isSingle: true, icon: 'help', text: 'Help', to: '/help'},
 ]
 
-var buildDynamicMenu = function (user) {
-    return pageMenus
+var buildDynamicMenu = function (user, openedProject) {
+    let pm = pageMenus
+
+    return pm
 };
 
 
