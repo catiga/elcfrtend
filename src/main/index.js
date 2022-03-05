@@ -12,8 +12,6 @@ import * as Sentry from '@sentry/electron'
 // package.json
 import pkg from '../../package.json'
 
-//const menuTemplate = require('../context/menu');
-
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -23,7 +21,12 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 // init the global data object with stored
-global.sharedObject = {}
+global.sharedObject = {
+    loginedUser: '',
+    mainWindow: '',
+    openedProject: '',
+    pageMenus: ''
+}
 
 let mainWindow, loginWindow
 
@@ -172,7 +175,10 @@ function createMainWindow() {
 
     global.sharedObject.mainWindow = mainWindow
 
-    const menuObj = require('../context/menu');
+    const menuObj = require('../context/appMenu')
+    const pageMenus = require('../context/pageMenu')
+    
+    global.sharedObject.pageMenus = pageMenus.buildDynamicMenu(global.sharedObject.loginedUser)
 
     mainWindow.loadURL(winURL)
 
