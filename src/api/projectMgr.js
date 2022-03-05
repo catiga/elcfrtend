@@ -5,7 +5,7 @@ import _ from 'lodash'
 
 const moment = require('moment')
 
-const Table = 'incomeAndExpenditure'
+const Table = 'project_info'
 const TableAssets = 'assets'
 
 export function getModelById(id) {
@@ -83,7 +83,7 @@ export function getModelExport(filterFun) {
 export function getModelPagination(pagination, whereAttrs, filterFun) {
     return new Promise((resolve, reject) => {
         try {
-            let sql = 'select * from project_info where flag!=-1';
+            let sql = `select * from ${Table} where flag!=-1`;
             if(whereAttrs) {
                 if(whereAttrs.dateStart) {
                     sql = sql + ` and a_time>='${whereAttrs.dateStart}'`
@@ -121,7 +121,7 @@ export function postModel(document) {
             let title = document.title
             let info = document.info
             let a_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
-            let sql = `insert into project_info(title, info, a_time, flag) values('${title}', '${info}', '${a_time}', 0)`
+            let sql = `insert into ${Table}(title, info, a_time, flag) values('${title}', '${info}', '${a_time}', 0)`
 
             db.query(sql, function(err, values, fields) {
                 let model = {
@@ -168,7 +168,7 @@ export function putModelById(id, attrs) {
         try {
             let title = attrs.title;
             let info = attrs.info;
-            let sql = `update project_info set title='${title}', info='${info}' where id=${id}`
+            let sql = `update ${Table} set title='${title}', info='${info}' where id=${id}`
             db.query(sql, function(err, values, fields) {
                 resolve({
                     code: 200,
@@ -224,7 +224,7 @@ export function deleteModelById(id) {
     return new Promise((resolve, reject) => {
         try {
             if (id) {
-                let sql = `update project_info set flag=-1 where id=${id}`
+                let sql = `update ${Table} set flag=-1 where id=${id}`
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200
@@ -248,7 +248,7 @@ export function deleteModelByIds(ids) {
     return new Promise((resolve, reject) => {
         try {
             if (ids && ids.length>0) {
-                let sql = `update project_info set flag=-1 where id in (`
+                let sql = `update ${Table} set flag=-1 where id in (`
                 ids.forEach(id => {
                     sql = sql + `${id},`
                 })
