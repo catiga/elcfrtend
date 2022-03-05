@@ -223,11 +223,18 @@ export function replaceModelById(id, attrs) {
 export function deleteModelById(id) {
     return new Promise((resolve, reject) => {
         try {
-            const collection = db.get(Table)
-            collection.removeById(id).write()
-            resolve({
-                code: 200
-            })
+            if (id) {
+                let sql = `update project_info set flag=-1 where id=${id}`
+                db.query(sql, function(err, values, fields) {
+                    resolve({
+                        code: 200
+                    })
+                });
+            } else {
+                resolve({
+                    code: 200
+                })
+            }
         } catch (err) {
             return reject({
                 code: 400,
@@ -240,13 +247,23 @@ export function deleteModelById(id) {
 export function deleteModelByIds(ids) {
     return new Promise((resolve, reject) => {
         try {
-            const collection = db.get(Table)
-            ids.forEach(id => {
-                collection.removeById(id).write()
-            })
-            resolve({
-                code: 200
-            })
+            if (ids && ids.length>0) {
+                let sql = `update project_info set flag=-1 where id in (`
+                ids.forEach(id => {
+                    sql = sql + `${id},`
+                })
+                sql = sql.substring(0, sql.length - 1) + `)`
+                
+                db.query(sql, function(err, values, fields) {
+                    resolve({
+                        code: 200
+                    })
+                });
+            } else {
+                resolve({
+                    code: 200
+                })
+            }
         } catch (err) {
             return reject({
                 code: 400,

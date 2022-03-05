@@ -12,6 +12,8 @@ export function login(data) {
             // const user = db.read().get(Table).find({userId: data.name, password: data.password}).value()
             // resolve(_.cloneDeep(user))
             let sql = `select * from sys_admin where flag!=-1 and user='${data.name}' and pwd='${data.password}'`;
+
+            console.log('sql===', sql)
             db.query(sql, function(err, values, fields) {
                 _currentLoginUser_ = values[0];
                 store.commit('updateLoginUser', _currentLoginUser_);

@@ -69,8 +69,10 @@
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
                     <v-btn color="primary" dark class="mb-2" @click="dialogEdit = true">新建工程</v-btn>
                     <v-btn color="error" dark class="mb-2" @click="dialogDeleteBatch = true">批量删除</v-btn>
-                    <v-btn :loading="exporting" :disabled="exporting" color="purple" @click="exportLocalFile">导出</v-btn>
                     <v-btn :loading="importing" :disabled="importing" color="error" @click="importLocalFile">导入</v-btn>
+                    <!--
+                    <v-btn :loading="exporting" :disabled="exporting" color="purple" @click="exportLocalFile">导出</v-btn>
+                    -->
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
@@ -271,25 +273,25 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="290">
             <v-card>
-                <v-card-title class="headline">delete immediately?</v-card-title>
-                <v-card-text>Are you sure you want to delete this item?
+                <v-card-title class="headline">提示：</v-card-title>
+                <v-card-text>确定删除工程吗?
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click="closeDialogDelete">Disagree</v-btn>
-                    <v-btn color="blue darken-1" flat @click="saveDelete">Agree</v-btn>
+                    <v-btn color="blue darken-1" flat @click="closeDialogDelete">取消</v-btn>
+                    <v-btn color="blue darken-1" flat @click="saveDelete">确定</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <v-dialog v-model="dialogDeleteBatch" max-width="290">
             <v-card>
-                <v-card-title class="headline">batch delete immediately?</v-card-title>
-                <v-card-text>Are you sure you want to delete these items?
+                <v-card-title class="headline">提示：</v-card-title>
+                <v-card-text>确定要批量删除选中工程吗?
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click="closeDialogDeleteBatch">Disagree</v-btn>
-                    <v-btn color="blue darken-1" flat @click="saveDeleteBatch">Agree</v-btn>
+                    <v-btn color="blue darken-1" flat @click="closeDialogDeleteBatch">取消</v-btn>
+                    <v-btn color="blue darken-1" flat @click="saveDeleteBatch">确定</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -435,9 +437,9 @@
             submitResult: {
                 handler(val) {
                     if (val) {
-                        this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : 'Operation succeeded'
+                        this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作成功'
                     } else {
-                        this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : 'Operation failed'
+                        this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作失败'
                     }
                 }
             },
@@ -536,7 +538,6 @@
                 })
 
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
-                    console.log('result===', result)
                     if (result.code === 200) {
                         let items = result.data.list
                         const total = result.data.total
@@ -634,6 +635,11 @@
 
             saveDeleteBatch() {
                 const ids = this.selected.map(item => item.id)
+                if (!ids || ids.length === 0) {
+                    this.snackbarMsg = '请选择要删除的工程'
+                    this.snackbar = true
+                    return
+                }
                 deleteModelByIds(ids).then(result => {
                     if (result.code === 200) {
                         this.submitResult = true
