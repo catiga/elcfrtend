@@ -15,6 +15,12 @@ const reportRouter = {
       component: () => import('@/views/MenuSetting/elemdata/benchmark'),
       name: 'ms_elemdata_benchmark',
       meta: { title: '基准值修正', noCache: true }
+    },
+    {
+      path: 'ms/elemdata/station',
+      component: () => import('@/views/MenuSetting/elemdata/station'),
+      name: 'ms_elemdata_station',
+      meta: { title: '厂站数据修正', noCache: true }
     }
   ]
 }

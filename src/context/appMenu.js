@@ -35,6 +35,7 @@ const systemMenus = [{
   }, {
     label: '厂站',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station')
     }
   }, {
     type: 'separator'

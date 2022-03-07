@@ -60,6 +60,9 @@
             <v-toolbar-title class="red--text" style="-webkit-user-select: none;-webkit-app-region: drag">
                 当前用户: {{currentUser.name}}
             </v-toolbar-title>
+            <v-toolbar-title class="red--text" style="-webkit-user-select: none;-webkit-app-region: drag" v-if="currentProject">
+                打开工程: {{currentProject.title}}
+            </v-toolbar-title>
             <v-spacer style="height:90%;-webkit-app-region: drag"></v-spacer>
             <v-btn style="-webkit-app-region: no-drag"
                    icon
@@ -95,7 +98,7 @@
             <Add></Add>
         </v-content>
         <v-footer app fixed inset>
-            <span>&copy; 2019</span>
+            <span>&copy; 2022</span>
         </v-footer>
     </v-app>
 </template>

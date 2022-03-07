@@ -311,13 +311,11 @@ export function loadProjectParams(project) {
 }
 
 export function saveProjectParams(project, attrs) {
-    console.log(attrs)
     return new Promise((resolve, reject) => {
         try {
             if (attrs) {
                 Object.keys(attrs).forEach(key => {
                     let value = attrs[key]
-                    console.log(key, value)
                     let sql = `select * from project_params where proj_id=${project.id} and flag!=-1 and param_k='${key}'`
                     db.query(sql, function(err, values, fields) {
                         if(values && values.length>0) {
