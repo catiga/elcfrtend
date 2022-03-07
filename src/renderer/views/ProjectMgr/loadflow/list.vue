@@ -320,21 +320,21 @@
         putModelById,
         deleteModelById,
         deleteModelByIds
-    } from '../../../api/projectMgr'
+    } from '../../../../api/projectMgr'
 
     import {
         getModelAll as getCategoryAll,
         getModelWhere as getCategoryWhere,
         postModel as postCategory
-    } from '../../../api/category'
-    import {getModelAll as getAssetsAll} from '../../../api/assets'
+    } from '../../../../api/category'
+    import {getModelAll as getAssetsAll} from '../../../../api/assets'
     import Excel from 'exceljs'
     import {app, remote, shell} from 'electron'
     import moment from 'moment'
     import fs from 'fs-extra'
-    import db from '../../../datastore'
+    import db from '../../../../datastore'
 
-    const pageMenus = require('../../../context/pageMenu')
+    const pageMenus = require('../../../../context/pageMenu')
 
     export default {
         filters: {

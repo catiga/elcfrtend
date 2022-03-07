@@ -1,50 +1,65 @@
 const pageMenus = [
-    {heading: 'Home'},
-    {isSingle: true, icon: 'home', text: 'Dashboard', to: '/home'},
+    {heading: 'Home', key:'home_folder'},
+    {isSingle: true, icon: 'home', text: 'Dashboard', to: '/home', key:'home_folder_home', parent:'home_folder'},
 
-    {isSingle: true, icon: 'import_export', text: '工程管理', to: '/projectMgr/style/list'},
+    {isSingle: true, icon: 'import_export', text: '工程管理', to: '/projectMgr/p/list', key:'home_folder_project', parent:'home_folder'},
 
-    {heading: '计算管理'},
+    {heading: '计算管理', key:'comp_folder'},
     {
-        isGroup: true,
+        isSingle: true,
         icon: 'list',
         text: '输变电联合系统潮流计算',
+        key: 'comp_folder_loadflow',
+        parent: 'comp_folder',
+        to: '/projectMgr/loadflow/list',
         items: [
             {icon: '', text: '作业列表1'},
             {icon: '', text: '作业列表2'}
         ]
     },
     {
-        isGroup: true,
+        isSingle: true,
         icon: 'list',
         text: '站外进线拓扑重构',
+        key: 'comp_folder_station',
+        parent: 'comp_folder',
+        to: '/projectMgr/station',
         items: [
             {icon: '', text: '作业列表1'},
             {icon: '', text: '作业列表2'}
         ]
     },
     {
-        isGroup: true,
+        isSingle: true,
         icon: 'list',
         text: '风险评估',
+        key: 'comp_folder_risk',
+        parent: 'comp_folder',
+        to: '/projectMgr/risk',
         items: [
             {icon: '', text: '作业列表1'},
             {icon: '', text: '作业列表2'}
         ]
     },
     {
-        isGroup: true,
+        isSingle: true,
         icon: 'list',
         text: '薄弱环节分析',
+        key: 'comp_folder_weak',
+        parent: 'comp_folder',
+        to: '/projectMgr/weak',
         items: [
             {icon: '', text: '作业列表1'},
             {icon: '', text: '作业列表2'}
         ]
     },
     {
-        isGroup: true,
+        isSingle: true,
         icon: 'list',
         text: '检修方案智能决策',
+        key: 'comp_folder_overhaul',
+        parent: 'comp_folder',
+        to: '/projectMgr/overhaul',
         items: [
             {icon: '', text: '作业列表1'},
             {icon: '', text: '作业列表2'}
@@ -66,8 +81,18 @@ const pageMenus = [
 ]
 
 var buildDynamicMenu = function (user, openedProject) {
-    let pm = pageMenus
+    let pm = []
+    for (let x in pageMenus) {
+        let mi = pageMenus[x]
+        let add = true
+        if (mi.key === 'comp_folder' || mi.parent === 'comp_folder') {
+            if (!openedProject) {
+                //add = false
+            }
+        }
 
+        if (add) pm.push(mi)
+    }
     return pm
 };
 
