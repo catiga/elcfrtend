@@ -14,7 +14,7 @@ const systemMenus = [{
   submenu: [{
     label: '工程管理',
     click: async (item, focusedWindow) => {
-      processMainWindow.loadURL('http://localhost:9080/#/incomeAndExpenditure');
+      focusedWindow.loadURL('http://localhost:9080/#/projectMgr/p/list')
     }
   }, {
     type: 'separator'
@@ -30,6 +30,7 @@ const systemMenus = [{
   submenu: [{
     label: '基准值修正',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/benchmark')
     }
   }, {
     label: '厂站',

@@ -290,3 +290,69 @@ export function deleteModelWhere(whereAttrs) {
         }
     })
 }
+
+export function loadProjectParams(project) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select * from project_params where proj_id=${project.id} and flag!=-1`
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+export function saveProjectParams(project, attrs) {
+    console.log(attrs)
+    return new Promise((resolve, reject) => {
+        try {
+            if (attrs) {
+                Object.keys(attrs).forEach(key => {
+                    let value = attrs[key]
+                    console.log(key, value)
+                    let sql = `select * from project_params where proj_id=${project.id} and flag!=-1 and param_k='${key}'`
+                    db.query(sql, function(err, values, fields) {
+                        if(values && values.length>0) {
+                            sql = `update project_params set param_v='${value}' where proj_id=${project.id} and param_k='${key}'`
+                            db.query(sql, function(e1, v1, f1) {
+                                resolve({
+                                    code: 200,
+                                    data: 1
+                                })
+                            })
+                        } else {
+                            let a_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                            let sql = `insert into project_params(proj_id, param_k, param_v, a_time, flag) values(${project.id}, '${key}', '${value}', '${a_time}', 0)`
+                            db.query(sql, function(e1, v1, f1) {
+                                resolve({
+                                    code: 200,
+                                    data: 1
+                                })
+                            })
+                        }
+                    })
+                })
+                // for (let k of attrs.keys()) {
+                //    console.log('k==', k)
+
+                    // let sql = `select * from project_params where proj_id=${project.id} and flag!=-1`
+                    // db.query(sql, function(err, values, fields) {    
+                    // })
+                // }
+            }
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}

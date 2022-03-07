@@ -2,12 +2,14 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import projectManage from './modules/projectMgr'
+import menuSetting from './modules/menuSetting'
 
 Vue.use(Router)
 
 export default new Router({
     routes: [
         projectManage,
+        menuSetting,
         {
             path: '/login',
             name: 'login',
