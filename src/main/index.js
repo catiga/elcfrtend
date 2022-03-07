@@ -177,8 +177,8 @@ function createMainWindow() {
 
     const menuObj = require('../context/appMenu')
     const pageMenus = require('../context/pageMenu')
-    
-    global.sharedObject.pageMenus = pageMenus.buildDynamicMenu(global.sharedObject.loginedUser)
+
+    global.sharedObject.pageMenus = pageMenus.buildDynamicMenu(global.sharedObject.loginedUser, global.sharedObject.openedProject)
 
     mainWindow.loadURL(winURL)
 
