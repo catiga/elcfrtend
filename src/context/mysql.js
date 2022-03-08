@@ -15,7 +15,6 @@ const pool = mysql.createPool({
 //     password: '123456',
 //     database: 'wh_smartgrid'
 // });
-
 //导出查询相关  
 var query = function (sql, callback) {
     pool.getConnection(function (err, conn) {
