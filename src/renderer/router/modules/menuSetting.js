@@ -27,7 +27,13 @@ const reportRouter = {
           component: () => import('@/views/MenuSetting/elemdata/child/stat'),
           name: 'station_stat',
           meta: { title:'厂站1' }
-        }
+        },
+        {
+          path: 'station_stat2',
+          component: () => import('@/views/MenuSetting/elemdata/child/stat2'),
+          name: 'station_stat2',
+          meta: { title:'厂站1' }
+        },
       ]
     }
   ]
