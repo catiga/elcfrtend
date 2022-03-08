@@ -1,5 +1,5 @@
 <template>
     
-    <div>厂站表</div>
+    <div>交流表</div>
     
 </template>

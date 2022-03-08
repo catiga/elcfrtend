@@ -23,16 +23,40 @@ const reportRouter = {
       meta: { title: '厂站数据修正', noCache: true },
       children : [
         {
-          path: 'station_stat',
+          path: 'stat',
           component: () => import('@/views/MenuSetting/elemdata/child/stat'),
           name: 'station_stat',
-          meta: { title:'厂站1' }
+          meta: { title:'厂站' }
         },
         {
-          path: 'station_stat2',
-          component: () => import('@/views/MenuSetting/elemdata/child/stat2'),
-          name: 'station_stat2',
-          meta: { title:'厂站1' }
+          path: 'moline',
+          component: () => import('@/views/MenuSetting/elemdata/child/moline'),
+          name: 'station_moline',
+          meta: { title:'母线' }
+        },
+        {
+          path: 'acline',
+          component: () => import('@/views/MenuSetting/elemdata/child/acline'),
+          name: 'station_acline',
+          meta: { title:'交流线' }
+        },
+        {
+          path: 'paracap',
+          component: () => import('@/views/MenuSetting/elemdata/child/paracap'),
+          name: 'station_paracap',
+          meta: { title:'并联电容电抗' }
+        },
+        {
+          path: 'transformer',
+          component: () => import('@/views/MenuSetting/elemdata/child/transformer'),
+          name: 'station_transformer',
+          meta: { title:'变压器' }
+        },
+        {
+          path: 'load',
+          component: () => import('@/views/MenuSetting/elemdata/child/load'),
+          name: 'station_load',
+          meta: { title:'负荷' }
         },
       ]
     }

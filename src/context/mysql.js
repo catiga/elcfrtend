@@ -1,10 +1,10 @@
 const mysql = require('mysql');
 
 const pool = mysql.createPool({
-    host: '121.36.139.203',
+    host: '127.0.0.1',
     port: "3306",
-    user: 'baiqi',
-    password: 'baiqi',
+    user: 'root',
+    password: '123456',
     database: 'wh_smartgrid'
 });
 

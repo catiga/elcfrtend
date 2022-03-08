@@ -21,12 +21,12 @@ export default {
     return {
       tab: null,
       items: [
-          {id:1, name:'厂站', router:'/menuSetting/ms/elemdata/station/station_stat'}, 
-          {id:2, name:'母线', router:'/menuSetting/ms/elemdata/station/station_stat2'}, 
-          {id:3, name:'交流线', router:'/menuSetting/ms/elemdata/station/station_stat'}, 
-          {id:4, name:'并联电容/电抗器', router:'/menuSetting/ms/elemdata/station/station_stat'}, 
-          {id:5, name:'变压器', router:'/menuSetting/ms/elemdata/station/station_stat'}, 
-          {id:6, name:'负荷', router:'/menuSetting/ms/elemdata/station/station_stat'}, 
+          {id:1, name:'厂站', router:'/menuSetting/ms/elemdata/station/stat'}, 
+          {id:2, name:'母线', router:'/menuSetting/ms/elemdata/station/moline'}, 
+          {id:3, name:'交流线', router:'/menuSetting/ms/elemdata/station/acline'}, 
+          {id:4, name:'并联电容/电抗器', router:'/menuSetting/ms/elemdata/station/paracap'}, 
+          {id:5, name:'变压器', router:'/menuSetting/ms/elemdata/station/transformer'}, 
+          {id:6, name:'负荷', router:'/menuSetting/ms/elemdata/station/load'}, 
     ],
       texts: [
         "checkcheckcheck",

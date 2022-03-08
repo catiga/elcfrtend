@@ -1,5 +1,5 @@
 <template>
     
-    <div>我是二</div>
+    <div>变压器</div>
     
 </template>
