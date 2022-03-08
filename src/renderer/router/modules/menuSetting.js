@@ -20,7 +20,15 @@ const reportRouter = {
       path: 'ms/elemdata/station',
       component: () => import('@/views/MenuSetting/elemdata/station'),
       name: 'ms_elemdata_station',
-      meta: { title: '厂站数据修正', noCache: true }
+      meta: { title: '厂站数据修正', noCache: true },
+      children : [
+        {
+          path: 'station_stat',
+          component: () => import('@/views/MenuSetting/elemdata/child/stat'),
+          name: 'station_stat',
+          meta: { title:'厂站1' }
+        }
+      ]
     }
   ]
 }
