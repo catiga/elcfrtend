@@ -1,12 +1,20 @@
 const mysql = require('mysql');
 
 const pool = mysql.createPool({
-    host: '127.0.0.1',
+    host: '121.36.139.203',
     port: "3306",
-    user: 'root',
-    password: '123456',
+    user: 'baiqi',
+    password: 'baiqi',
     database: 'wh_smartgrid'
 });
+
+// const pool = mysql.createPool({
+//     host: '127.0.0.1',
+//     port: "3306",
+//     user: 'root',
+//     password: '123456',
+//     database: 'wh_smartgrid'
+// });
 
 //导出查询相关  
 var query = function (sql, callback) {
