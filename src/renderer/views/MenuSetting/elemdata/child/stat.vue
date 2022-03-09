@@ -75,6 +75,7 @@
                                     v-model="props.item.ps_name"
                                     single-line
                                     hide-details
+                                    @blur="saveValue(props.item)"
                                     ></v-text-field>
                                 </td>
                                 <td>
@@ -82,6 +83,7 @@
                                     v-model="props.item.stat_type"
                                     single-line
                                     hide-details
+                                    @blur="saveValue(props.item)"
                                     ></v-text-field>
                                 </td>
                                 <td>
@@ -89,6 +91,7 @@
                                     v-model="props.item.zone_no"
                                     single-line
                                     hide-details
+                                    @blur="saveValue(props.item)"
                                     ></v-text-field>
                                 </td>
                                 <td width="50">
@@ -140,7 +143,7 @@
 </template>
 
 <script>
-    import {getModelPagination} from '../../../../../api/stationMgr'
+    import { getModelPagination, saveStatData } from '../../../../../api/stationMgr'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -224,9 +227,6 @@
             }
         },
         computed: {
-            formTitle() {
-                return this.editedIndex === -1 ? '新建工程' : '编辑工程'
-            },
         },
         watch: {
             pagination: {
@@ -260,15 +260,9 @@
             }
         },
         mounted() {
-            console.log('global.sharedObject.page', remote.getGlobal('sharedObject'))
             this.initialize()
         },
         methods: {
-            toggleAll() {
-                if (this.selected.length) this.selected = []
-                else this.selected = this.desserts.slice()
-            },
-
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending
@@ -354,15 +348,9 @@
                 })
             },
 
-            editItem(item) {
-                this.editedIndex = this.desserts.indexOf(item)
-                this.editedItem = Object.assign({}, item)
-                this.dialogEdit = true
-            },
-
-            deleteItem(item) {
-                this.editedItem = Object.assign({}, item)
-                this.dialogDelete = true
+            saveValue(item) {
+                console.log('item', item)
+                saveStatData(item)
             },
 
             closeDialogEdit() {
