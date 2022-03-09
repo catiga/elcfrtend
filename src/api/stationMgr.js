@@ -1,12 +1,64 @@
-//import db from '../datastore'
 
 import db from '../datastore/index_mysql'
 import _ from 'lodash'
+const electron = require('electron');
+const remote = electron.remote;
 
 const moment = require('moment')
 
 const Table = 'project_info'
 const TableAssets = 'assets'
+
+let currentOpenedProject = remote.getGlobal('sharedObject').openedProject
+
+export function getModelPagination(pagination, whereAttrs, filterFun) {
+    if (!currentOpenedProject) {
+        resolve({
+            code: 200,
+            data: []
+        })
+        return
+    }
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select * from p_station_info where flag!=-1 and proj_id=${currentOpenedProject.id}`;
+            if(whereAttrs) {
+                if(whereAttrs.ps_name) {
+                    sql = sql + ` and ps_name like '%${whereAttrs.ps_name}%'`
+                }
+            }
+            db.query(sql, function(err, values, fields) {
+                let total = values.length;
+                if(pagination.sortBy) {
+                    sql = sql + ` order by ${pagination.sortBy} ${pagination.descending?'desc':'asc'}`
+                }
+                sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+
+                db.query(sql, function(err, values, fields) {
+                    resolve({
+                        code: 200,
+                        data: _.cloneDeep({total: total, list: values})
+                    })
+                })
+            });
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+
+
+
+
+
+
+
+
+
 
 export function getModelById(id) {
     return new Promise((resolve, reject) => {
@@ -71,41 +123,6 @@ export function getModelExport(filterFun) {
                 code: 200,
                 data: _.cloneDeep(list)
             })
-        } catch (err) {
-            return reject({
-                code: 400,
-                message: err.message
-            })
-        }
-    })
-}
-
-export function getModelPagination(pagination, whereAttrs, filterFun) {
-    return new Promise((resolve, reject) => {
-        try {
-            let sql = `select * from ${Table} where flag!=-1`;
-            if(whereAttrs) {
-                if(whereAttrs.dateStart) {
-                    sql = sql + ` and a_time>='${whereAttrs.dateStart}'`
-                }
-                if(whereAttrs.dateEnd) {
-                    sql = sql + ` and a_time<='${whereAttrs.dateEnd}'`
-                }
-            }
-            db.query(sql, function(err, values, fields) {
-                let total = values.length;
-                if(pagination.sortBy) {
-                    sql = sql + ` order by ${pagination.sortBy} ${pagination.descending?'desc':'asc'}`
-                }
-                sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-
-                db.query(sql, function(err, values, fields) {
-                    resolve({
-                        code: 200,
-                        data: _.cloneDeep({total: total, list: values})
-                    })
-                })
-            });
         } catch (err) {
             return reject({
                 code: 400,
