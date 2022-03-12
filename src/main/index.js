@@ -107,7 +107,7 @@ function createLoginWindow() {
 
     ipcMain.on('openMainWindow', (event, loginedUser) => {
         if(!loginedUser) {
-            //非登陆成功，不允许创建
+            //非登录成功，不允许创建
             return;
         }
 

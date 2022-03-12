@@ -63,7 +63,7 @@
                                     @click="validate"
                                     :loading="loadingSubmit"
                             >
-                                登陆
+                                登录
                             </v-btn>
                         </v-form>
                     </v-card-text>

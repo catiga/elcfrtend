@@ -776,17 +776,20 @@
                     ],
                     // 包含功能
                     properties: ['openFile']
-                }, (filepaths, bookmarks) => {
-
-                    if (filepaths) {
+                }).then((result) => {
+                    console.log('-----回调-----');
+                    console.log(result);
+                    console.log('是否取消:'+result.canceled+'文件路径:'+result.filePaths);
+                    if(!result.canceled){
                         // 读取文件
                         const workbook = new Excel.Workbook()
-                        workbook.xlsx.readFile(filepaths[0]).then(() => {
+                        workbook.xlsx.readFile(result.filePaths[0]).then(() => {
                             // 重新结构化数据
                             let data = []
 
                             // 获取工作表
-                            const worksheet = workbook.getWorksheet(1)
+                            const worksheet = workbook.getWorksheet(1);
+
                             // 迭代工作表中具有值的所有行
                             worksheet.eachRow(function (row, rowNumber) {
                                 console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
@@ -805,6 +808,7 @@
                                     data.push(model)
                                 }
                             })
+
                             // 业务处理
                             // console.log(data)
                             this._importData(data).then(result => {
@@ -826,9 +830,15 @@
                                 this.snackbarMsg = err.message
                             })
                         })
-                    } else {
-                        this.importing = false
+                    }else{
+                        console.log('-----取消-----');
                     }
+
+                    this.importing = false
+                })
+                .catch((err) => {
+                    console.log('-----异常取消-----');
+                    console.log(err);
                 })
             },
 
