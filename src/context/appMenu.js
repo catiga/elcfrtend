@@ -33,32 +33,36 @@ const systemMenus = [{
       focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/benchmark')
     }
   }, {
-    label: '厂站',
-    click: function (item, focusedWindow) {
-      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station')
-    }
-  }, {
     type: 'separator'
   }, {
     label: '母线',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/moline')
     }
   }, {
     label: '交流线',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/acline')
     }
   }, {
-    label: '并联电容/电抗器',
+    label: '两绕组变压器',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/_2transformer')
     }
-  },
-  {
-    label: '变压器',
+  }, {
+    label: '三绕组变压器',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/_3transformer')
+    }
+  }, {
+    label: '发电机',
+    click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/dynamo')
     }
   }, {
     label: '负荷',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/load')
     }
   },
   {

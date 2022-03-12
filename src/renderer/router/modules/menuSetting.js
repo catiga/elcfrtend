@@ -41,16 +41,22 @@ const reportRouter = {
           meta: { title:'交流线' }
         },
         {
-          path: 'paracap',
-          component: () => import('@/views/MenuSetting/elemdata/child/paracap'),
-          name: 'station_paracap',
-          meta: { title:'并联电容电抗' }
+          path: '_2transformer',
+          component: () => import('@/views/MenuSetting/elemdata/child/_2transformer'),
+          name: 'station__2transformer',
+          meta: { title:'两绕组变压器' }
         },
         {
-          path: 'transformer',
-          component: () => import('@/views/MenuSetting/elemdata/child/transformer'),
-          name: 'station_transformer',
-          meta: { title:'变压器' }
+          path: '_3transformer',
+          component: () => import('@/views/MenuSetting/elemdata/child/_3transformer'),
+          name: 'station__3transformer',
+          meta: { title:'三绕组变压器' }
+        },
+        {
+          path: 'dynamo',
+          component: () => import('@/views/MenuSetting/elemdata/child/dynamo'),
+          name: 'station_dynamo',
+          meta: { title:'发电机' }
         },
         {
           path: 'load',
