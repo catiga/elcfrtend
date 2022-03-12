@@ -84,7 +84,7 @@
                             :loading="loading"
                             select-all
                             item-key="id"
-                            class="elevation-1"
+                            :class="['elevation-1']"
                     >
                         <template v-slot:headers="props">
                             <tr>
@@ -146,6 +146,7 @@
                             </v-alert>
                         </template>
                     </v-data-table>
+                    
                 </v-card-text>
             </v-card>
         </v-flex>
@@ -1064,4 +1065,11 @@
         justify-content: center;
         display: flex;
     }
+</style>
+<style type="text/css" lang="scss">
+.projectmgr-container-list {
+    ::v-deep .v-btn--floating .v-btn__content {
+        height: auto !important;    
+    }
+}
 </style>

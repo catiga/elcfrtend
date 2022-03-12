@@ -84,7 +84,7 @@
                             :loading="loading"
                             select-all
                             item-key="id"
-                            class="elevation-1"
+                            class="elevation-1 projectmgr-container-list"
                     >
                         <template v-slot:headers="props">
                             <tr>
@@ -162,112 +162,48 @@
                             lazy-validation
                     >
                         <v-container grid-list-md>
-                            <v-layout wrap>
-                                <!--
+                            <!-- <v-layout wrap> -->
                                 <v-flex xs12>
-                                    <v-select
-                                            :items="assetsList"
-                                            item-text="text"
-                                            item-value="value"
-                                            label="Assets*"
-                                            :rules="[rules.required]"
-                                            v-model="editedItem.assetsId"
-                                    ></v-select>
-                                </v-flex>
-                                <v-flex xs12>
-                                    <v-select
-                                            :items="typeList"
-                                            item-text="text"
-                                            item-value="value"
-                                            label="Type*"
-                                            :rules="[rules.required]"
-                                            v-model="editedItem.type"
-                                    ></v-select>
-                                </v-flex>
-                                <v-flex xs12>
-                                    <v-autocomplete
-                                            v-model="editedItem.categoryId"
-                                            :items="categoryList"
-                                            label="Category*"
-                                            :rules="[rules.required]"
-                                            persistent-hint
-                                    >
-                                    </v-autocomplete>
-                                </v-flex>
-                                <v-flex xs12>
-                                    <v-text-field label="AmountOfMoney*"
-                                                  prefix="$"
-                                                  type="number"
-                                                  step="0.1"
-                                                  min="0"
-                                                  :rules="[rules.required]"
-                                                  v-model="editedItem.amountOfMoney"></v-text-field>
-                                </v-flex>
-                                <v-flex xs12>
-                                    <v-menu
-                                            v-model="menuTime"
-                                            :close-on-content-click="false"
-                                            :nudge-right="40"
-                                            lazy
-                                            transition="scale-transition"
-                                            offset-y
-                                            full-width
-                                            min-width="290px"
-                                    >
-                                        <template v-slot:activator="{ on }">
-                                            <v-text-field
-                                                    v-model="editedItem.createdAt"
-                                                    label="Time*"
-                                                    :rules="[rules.required]"
-                                                    readonly
-                                                    v-on="on"
-                                            ></v-text-field>
-                                        </template>
-                                        <v-date-picker v-model="editedItem.createdAt"
-                                                       @input="menuTime = false"></v-date-picker>
-                                    </v-menu>
-                                </v-flex>
-                                <v-flex xs12>
-                                    <v-text-field label="Remark"
-                                                  v-model="editedItem.remark"></v-text-field>
-                                </v-flex>
-                                -->
-
-                                <v-flex xs12>
-                                    <v-text-field label="名称*"
+                                    <v-text-field label="作业名称*"
                                         :rules="[rules.required]"
                                         v-model="editedItem.title"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
-                                    <v-text-field label="说明*"
+                                    <v-select
+                                        :items="items"
+                                        item-text="lable"
+                                        item-value="id"
+                                        label="方法*"
+                                        v-model="editedItem.info"
                                         :rules="[rules.required]"
-                                        v-model="editedItem.info"></v-text-field>
+                                    ></v-select>
                                 </v-flex>
-                                
                                 <v-flex xs12>
-                                    <el-upload
-                                            class="upload-demo"
-                                            action="https://jsonplaceholder.typicode.com/posts/"
-                                            :on-preview="handlePreview"
-                                            :on-remove="handleRemove"
-                                            :before-remove="beforeRemove"
-                                            multiple
-                                            :on-exceed="handleExceed"
-                                            :file-list="fileList">
-                                        <!--<el-button size="small" type="primary">点击上传</el-button>-->
-                                        <v-btn color="blue darken-1">Upload</v-btn>
-                                        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                                    </el-upload>
+                                    <v-text-field label="允许误差*"
+                                        :rules="[rules.required]"
+                                        v-model="editedItem.title"></v-text-field>
                                 </v-flex>
-                            </v-layout>
+                                <v-flex xs12>
+                                    <v-text-field label="迭代次数上限*"
+                                        :rules="[rules.required]"
+                                        v-model="editedItem.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-textarea
+                                        label="备注"
+                                        v-model="editedItem.title"
+                                    ></v-textarea>
+                                </v-flex>
+                            <!-- </v-layout> -->
                         </v-container>
                         <small>*代表必填信息</small>
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click="closeDialogEdit">关闭</v-btn>
-                    <v-btn color="blue darken-1" flat @click="saveEdit">保存</v-btn>
+                    <v-btn color="blue darken-1" flat @click="closeDialogEdit">开始计算</v-btn>
+                    <v-btn color="blue darken-1" flat @click="saveEdit">输出结果</v-btn>
+                    <v-btn color="blue darken-1" flat @click="closeDialogEdit">取消</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -417,6 +353,7 @@
                 // 导出路径
                 userDataPath: '',
                 exportPath: '',
+                items: [{lable:'Foo', id:1},{lable:'Foo1', id:2},{lable:'Foo2', id:3},{lable:'Foo3', id:4}]
             }
         },
         computed: {
@@ -1064,4 +1001,16 @@
         justify-content: center;
         display: flex;
     }
+</style>
+<style type="text/css" lang="scss">
+// .projectmgr-container-list {
+    .title-area {
+        font-size: 20px;
+        display: block;
+        font-weight: bold;
+    }
+    .v-btn--floating .v-btn__content {
+        height: auto !important;    
+    }
+// }
 </style>
