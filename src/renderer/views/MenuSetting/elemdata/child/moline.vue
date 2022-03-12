@@ -2,15 +2,6 @@
     <v-layout row>
         <v-flex xs12 d-flex>
             <v-card>
-                <v-sheet
-                        class="v-sheet--offset pa-2"
-                        color="orange"
-                        elevation="12"
-                        width="60"
-                        height="60"
-                >
-                    <v-icon large>assignment</v-icon>
-                </v-sheet>
                 <v-card-title>
                     <v-menu
                             single-line
