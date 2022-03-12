@@ -123,6 +123,8 @@
                                 </td>
                                 <td>{{ props.item.title }}</td>
                                 <td>{{ props.item.info }}</td>
+                                <td>{{ props.item.info }}</td>
+                                <td>{{ props.item.info }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
                                 <td class="text-xs-right" width="180">
                                     <v-btn fab small color="success" @click="editItem(props.item)">
@@ -293,8 +295,10 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '工程名称', value: 'title', align: 'left', sortable: true},
-                    {text: '工程说明', value: 'info', align: 'left', sortable: false},
+                    {text: '作业名称', value: 'title', align: 'left', sortable: true},
+                    {text: '方法', value: 'info', align: 'left', sortable: false},
+                    {text: '允许误差', value: 'info', align: 'left', sortable: false},
+                    {text: '迭代次数上限', value: 'info', align: 'left', sortable: false},
                     {text: '创建时间', value: 'a_time', align: 'left', sortable: true},
                     {text: '操作', value: 'id', align: 'right', sortable: false},
                     {text: '工程数据', value: 'id', align: 'right', sortable: false}

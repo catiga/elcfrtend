@@ -2,15 +2,6 @@
     <v-layout row>
         <v-flex xs12 d-flex>
             <v-card>
-                <v-sheet
-                        class="v-sheet--offset pa-2"
-                        color="orange"
-                        elevation="12"
-                        width="60"
-                        height="60"
-                >
-                    <v-icon large>assignment</v-icon>
-                </v-sheet>
                 <v-card-title>
                     <v-menu
                             single-line
@@ -27,7 +18,7 @@
                             <v-text-field
                                     style="width: 50px;margin-left: 15px;"
                                     v-model="search.ps_name"
-                                    label="厂站名称"
+                                    label="发电机名称"
                                     single-line
                                     hide-details
                                     v-on="on"
@@ -166,8 +157,8 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '厂站名称', value: 'ps_name', align: 'left', sortable: true},
-                    {text: '厂站类型', value: 'stat_type', align: 'left', sortable: true},
+                    {text: '发电机名称', value: 'ps_name', align: 'left', sortable: true},
+                    {text: '发电机类型', value: 'stat_type', align: 'left', sortable: true},
                     {text: '区域编号', value: 'zone_no', align: 'left', sortable: true},
                     {text: '有效位', value: 'id', align: 'right', sortable: false},
                 ],
