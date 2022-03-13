@@ -2,15 +2,6 @@
     <v-layout row>
         <v-flex xs12 d-flex>
             <v-card>
-                <v-sheet
-                        class="v-sheet--offset pa-2"
-                        color="orange"
-                        elevation="12"
-                        width="60"
-                        height="60"
-                >
-                    <v-icon large>assignment</v-icon>
-                </v-sheet>
                 <v-card-title>
                     <v-menu
                             single-line
@@ -122,11 +113,11 @@
                                     ></v-checkbox>
                                 </td>
                                 <td>{{ props.item.title }}</td>
-                                <td>{{ props.item.info }}</td>
-                                <td>{{ props.item.info }}</td>
-                                <td>{{ props.item.info }}</td>
+                                <td>{{ '--' }}</td>
+                                <td>{{ '--' }}</td>
+                                <td>{{ '--' }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
-                                <td class="text-xs-right" width="180">
+                                <td class="text-xs-right" width="170">
                                     <v-btn fab small color="success" @click="editItem(props.item)">
                                         <v-icon>edit</v-icon>
                                     </v-btn>
@@ -158,10 +149,10 @@
                 </v-card-title>
                 <v-card-text>
                     <v-form
-                            wrap
-                            ref="form"
-                            v-model="valid"
-                            lazy-validation
+                        wrap
+                        ref="form"
+                        v-model="valid"
+                        lazy-validation
                     >
                         <v-container grid-list-md>
                             <!-- <v-layout wrap> -->
@@ -514,6 +505,7 @@
                         // setTimeout(() => {
                         this.loading = false
                         this.desserts = items
+                        console.log('=========>>>>>>>>>', this.desserts)
                         this.totalDesserts = total
                         // }, 1000)
                     } else {

@@ -17,7 +17,7 @@
                         <template v-slot:activator="{ on }">
                             <v-text-field
                                     style="width: 50px;margin-left: 15px;"
-                                    v-model="search.ps_name"
+                                    v-model="search.id_name"
                                     label="负荷名称"
                                     single-line
                                     hide-details
@@ -28,7 +28,9 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
+                    <!--
                     <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
+                    -->
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
@@ -134,7 +136,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/stationMgr'
+    import { getModelPagination, saveStatData } from '../../../../../api/station/load'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -157,14 +159,13 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '负荷名称', value: 'ps_name', align: 'left', sortable: true},
-                    {text: '负荷类型', value: 'stat_type', align: 'left', sortable: true},
-                    {text: '区域编号', value: 'zone_no', align: 'left', sortable: true},
-                    {text: '有效位', value: 'id', align: 'right', sortable: false},
+                    {text: 'id_name', value: 'id_name', align: 'left', sortable: true},
+                    {text: 'pl', value: 'pl', align: 'left', sortable: true},
+                    {text: 'ql', value: 'ql', align: 'left', sortable: true},
                 ],
                 noDataMessage: '',
                 search: {
-                    ps_name: ''
+                    id_name: ''
                 },
                 pagination: {
                     sortBy: 'a_time'
@@ -272,7 +273,7 @@
                 const {sortBy, descending, page, rowsPerPage} = this.pagination
 
                 let whereAttrs = {
-                    ps_name: this.search.ps_name
+                    id_name: this.search.id_name
                 }
                 const filterFun = (o => {
                     let check1, check2 = false

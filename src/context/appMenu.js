@@ -93,6 +93,7 @@ const systemMenus = [{
   }, {
     label: '检修作业定义',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/tooldata/work')
     }
   }, {
     type: 'separator'

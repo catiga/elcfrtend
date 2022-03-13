@@ -26,9 +26,34 @@
                             ></v-text-field>
                         </template>
                     </v-menu>
+                    <v-menu
+                            single-line
+                            v-model="menuTimeStart"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            lazy
+                            transition="scale-transition"
+                            offset-y
+                            full-width
+                            min-width="290px"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <v-text-field
+                                    style="width: 50px;margin-left: 15px;"
+                                    v-model="search.bus_name"
+                                    label="母线名称"
+                                    single-line
+                                    hide-details
+                                    v-on="on"
+                                    clearable
+                            ></v-text-field>
+                        </template>
+                    </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
+                    <!--
                     <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
+                    -->
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
@@ -71,7 +96,7 @@
                                 </td>
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.stat_type"
+                                    v-model="props.item.bus_name"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
@@ -80,6 +105,14 @@
                                 <td>
                                     <v-text-field
                                     v-model="props.item.zone_no"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
+                                </td>
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.base_kv"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
@@ -134,7 +167,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/stationMgr'
+    import { getModelPagination, saveStatData } from '../../../../../api/station/moline'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -158,13 +191,15 @@
                 desserts: [],
                 headers: [
                     {text: '厂站名称', value: 'ps_name', align: 'left', sortable: true},
-                    {text: '厂站类型', value: 'stat_type', align: 'left', sortable: true},
+                    {text: '母线名称', value: 'bus_name', align: 'left', sortable: true},
                     {text: '区域编号', value: 'zone_no', align: 'left', sortable: true},
+                    {text: 'base_kv', value: 'base_kv', align: 'left', sortable: true},
                     {text: '有效位', value: 'id', align: 'right', sortable: false},
                 ],
                 noDataMessage: '',
                 search: {
-                    ps_name: ''
+                    ps_name: '',
+                    bus_name: ''
                 },
                 pagination: {
                     sortBy: 'a_time'
@@ -272,7 +307,8 @@
                 const {sortBy, descending, page, rowsPerPage} = this.pagination
 
                 let whereAttrs = {
-                    ps_name: this.search.ps_name
+                    ps_name: this.search.ps_name,
+                    bus_name: this.search.bus_name
                 }
                 const filterFun = (o => {
                     let check1, check2 = false
@@ -298,7 +334,6 @@
                 })
 
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
-                    console.log('result', result)
                     if (result.code === 200) {
                         let items = result.data.list
                         const total = result.data.total

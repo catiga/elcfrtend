@@ -28,7 +28,6 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
-                    <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
@@ -63,7 +62,7 @@
                             <tr :active="props.selected" @click="props.selected = !props.selected">
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.ps_name"
+                                    v-model="props.item.l_name"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
@@ -71,7 +70,7 @@
                                 </td>
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.stat_type"
+                                    v-model="props.item.j_name"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
@@ -79,18 +78,44 @@
                                 </td>
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.zone_no"
+                                    v-model="props.item.r1"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
                                     ></v-text-field>
                                 </td>
-                                <td width="50">
-                                    <v-checkbox
-                                            :input-value="props.selected"
-                                            primary
-                                            hide-details
-                                    ></v-checkbox>
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.x1"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
+                                </td>
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.b1_half"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
+                                </td>
+
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.rate_ka"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
+                                </td>
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.up_limit"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
                                 </td>
                             </tr>
                         </template>
@@ -134,7 +159,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/stationMgr'
+    import { getModelPagination, saveStatData } from '../../../../../api/station/acline'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -157,10 +182,13 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '交流线名称', value: 'ps_name', align: 'left', sortable: true},
-                    {text: '交流线类型', value: 'stat_type', align: 'left', sortable: true},
-                    {text: '区域编号', value: 'zone_no', align: 'left', sortable: true},
-                    {text: '有效位', value: 'id', align: 'right', sortable: false},
+                    {text: 'l_name', value: 'l_name', align: 'left', sortable: true},
+                    {text: 'j_name', value: 'j_name', align: 'left', sortable: true},
+                    {text: 'r1', value: 'r1', align: 'left', sortable: true},
+                    {text: 'x1', value: 'x1', align: 'left', sortable: true},
+                    {text: 'b1_half', value: 'b1_half', align: 'left', sortable: true},
+                    {text: 'rate_ka', value: 'rate_ka', align: 'left', sortable: true},
+                    {text: 'up_limit', value: 'up_limit', align: 'left', sortable: true}
                 ],
                 noDataMessage: '',
                 search: {

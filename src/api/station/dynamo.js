@@ -1,30 +1,30 @@
 
-import db from '../datastore/index_mysql'
+import db from '../../datastore/index_mysql'
 import _ from 'lodash'
 const electron = require('electron');
 const remote = electron.remote;
 
 const moment = require('moment')
 
-const Table = 'project_info'
+const Table = 'p_alternator_info'
 const TableAssets = 'assets'
 
 let currentOpenedProject = remote.getGlobal('sharedObject').openedProject
 
 export function getModelPagination(pagination, whereAttrs, filterFun) {
-    if (!currentOpenedProject) {
-        resolve({
-            code: 200,
-            data: []
-        })
-        return
-    }
     return new Promise((resolve, reject) => {
+        if (!currentOpenedProject) {
+            reject({
+                code: 404,
+                message: '请先打开工程'
+            })
+            return
+        }
         try {
-            let sql = `select * from p_station_info where flag!=-1 and proj_id=${currentOpenedProject.id}`;
+            let sql = `select * from ${Table} where flag!=-1 and proj_id=${currentOpenedProject.id}`;
             if(whereAttrs) {
-                if(whereAttrs.ps_name) {
-                    sql = sql + ` and ps_name like '%${whereAttrs.ps_name}%'`
+                if(whereAttrs.name_1) {
+                    sql = sql + ` and id_name like '%${whereAttrs.id_name}%'`
                 }
             }
             db.query(sql, function(err, values, fields) {
@@ -51,8 +51,7 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
 }
 
 export function saveStatData(obj) {
-    let sql = `update p_station_info set ps_name='${obj.ps_name}', stat_type=${obj.stat_type}, zone_no='${obj.zone_no}' where id=${obj.id}`
-    console.log('sql=', sql)
+    let sql = `update ${Table} set id_name='${obj.id_name}' where id=${obj.id}`
     return new Promise((resolve, reject) => { 
         try {
             db.query(sql, function(err, values, fields) {
