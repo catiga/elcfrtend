@@ -1,5 +1,5 @@
 
-import db from '../datastore/index_mysql'
+import db from '../../datastore/index_mysql'
 import _ from 'lodash'
 const electron = require('electron');
 const remote = electron.remote;

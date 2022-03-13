@@ -167,7 +167,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/stationMgr'
+    import { getModelPagination, saveStatData } from '../../../../../api/station/moline'
     import Excel from 'exceljs'
     
     import moment from 'moment'
