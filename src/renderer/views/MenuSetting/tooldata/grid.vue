@@ -74,17 +74,25 @@
                         <v-card>
                             <v-card-title class="text-h3">网络等值设置</v-card-title>
                             <v-card-text>
-                                <div class="row-flex">
+                                <div class="row-flex row-flex-start">
                                     <v-data-table
                                         :headers="headers"
                                         :items="desserts"
-                                        hide-default-footer
+                                        hide-actions
                                         class="elevation-1"
                                     >
+                                        <template slot="items" slot-scope="props">
+                                            <td>{{ props.item.name }}</td>
+                                            <td>{{ props.item.calories }}</td>
+                                            <td>{{ props.item.fat }}</td>
+                                            <td>{{ props.item.carbs }}</td>
+                                            <td>{{ props.item.protein }}</td>
+                                        </template>
                                     </v-data-table>
+                                    
                                     <div class="row-flex-right">
-                                        <v-btn color="success">添加</v-btn>
-                                        <v-btn color="error">删除</v-btn>
+                                        <v-btn color="success" @click="handleAddTableData">添加</v-btn>
+                                        <v-btn color="error" @click="handleDeleteTableData">删除</v-btn>
                                     </div>
                                 </div>
                             </v-card-text>
@@ -102,6 +110,22 @@
                     <v-btn color="primary">取消</v-btn>
                 </div>
             </v-form>
+                <!-- <v-data-table
+                    :headers="headers"
+                    :items="desserts"
+                    hide-default-header
+                    :hide-default-footer="true"
+                    class="elevation-1"
+                >
+                    <template slot="items" slot-scope="props">
+                        <td>{{ props.item.name }}</td>
+                        <td class="text-xs-right">{{ props.item.calories }}</td>
+                        <td class="text-xs-right">{{ props.item.fat }}</td>
+                        <td class="text-xs-right">{{ props.item.carbs }}</td>
+                        <td class="text-xs-right">{{ props.item.protein }}</td>
+                        <td class="text-xs-right">{{ props.item.iron }}</td>
+                    </template>
+                </v-data-table> -->
         </div>
 
     </v-layout>
@@ -115,7 +139,7 @@ export default {
             addvalid: true,
             setvalid: true,
             dialog: false,
-            dialogSet: true,
+            dialogSet: false,
             workForm: { // 表单提交数据
                 name: '',
             },
@@ -138,10 +162,10 @@ export default {
                     sortable: false,
                     value: 'name',
                 },
-                { text: 'I侧母线', value: 'calories' },
-                { text: 'J侧母线', value: 'fat' },
-                { text: 'I侧位置', value: 'carbs' },
-                { text: 'J侧位置', value: 'protein' },
+                { text: 'I侧母线', sortable: false, value: 'calories' },
+                { text: 'J侧母线', sortable: false, value: 'fat' },
+                { text: 'I侧位置', sortable: false, value: 'carbs' },
+                { text: 'J侧位置', sortable: false, value: 'protein' },
             ],
             desserts: [
                 {
@@ -162,8 +186,24 @@ export default {
         }
     },
     mounted() {
-        console.log('-========-------', this.desserts)
+        
     },
+    methods: {
+        // 网络等值设置 - 添加
+        handleAddTableData() {
+            let item = {
+                name: 'AC1203',
+                calories: '红石坡',
+                fat: '木兰',
+                carbs: '区内',
+                protein: '区外',
+            }
+            this.desserts.push(item)
+        },
+        handleDeleteTableData() {
+            this.desserts.splice(this.desserts.length-1, 1)
+        }
+    }
 }
 </script>
 
@@ -183,6 +223,9 @@ export default {
 .row-flex {
     display: flex;
     align-items: center;
+}
+.row-flex-start {
+    align-items: flex-start;
 }
 .text-h3 {
     font-size: 20px;
