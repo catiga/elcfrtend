@@ -75,4 +75,4 @@ if(!db.has('incomeAndExpenditure').value()) {
     db.set('incomeAndExpenditure', []).write()
 }
 
-export default db // 暴露出去
+// export default db // 暴露出去

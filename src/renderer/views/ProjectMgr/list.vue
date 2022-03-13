@@ -69,7 +69,7 @@
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
                     <v-btn color="primary" dark class="mb-2" @click="dialogEdit = true">新建工程</v-btn>
                     <v-btn color="error" dark class="mb-2" @click="dialogDeleteBatch = true">批量删除</v-btn>
-                    <v-btn :loading="importing" :disabled="importing" color="error" @click="importLocalFile">导入</v-btn>
+                    <!-- <v-btn :loading="importing" :disabled="importing" color="error" @click="importLocalFile">导入</v-btn> -->
                     <!--
                     <v-btn :loading="exporting" :disabled="exporting" color="purple" @click="exportLocalFile">导出</v-btn>
                     -->
@@ -133,8 +133,10 @@
                                     </v-btn>
                                 </td>
 
-                                <td class="text-xs-right" width="180">
-                                    <v-btn v-if="props.item.is_import==0" fab small color="success" @click="importLocalFile(props.item)">导入</v-btn>
+                                <td class="text-xs-right">
+                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile1(props.item)">基础库</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile2(props.item)">潮流作业</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile3(props.item)">潮流结果</v-btn>
                                     <v-btn v-if="props.item.is_import==1" fab small color="error" @click="openItem(props.item)">打开</v-btn>
                                 </td>
 
@@ -333,7 +335,7 @@
     import {app, remote, shell} from 'electron'
     import moment from 'moment'
     import fs from 'fs-extra'
-    import db from '../../../datastore'
+    import db from '../../../datastore/index_mysql'
 
     const pageMenus = require('../../../context/pageMenu')
 
@@ -826,7 +828,11 @@
                 })
             },
 
-            importLocalFile() {
+            importLocalFile1(dataitem) {
+                console.log('数据:'+JSON.stringify(dataitem));
+                // console.log('数据:'+db.query);
+                let proj_id = dataitem.id
+
                 this.importing = true
 
                 // 弹出文件选择框
@@ -840,38 +846,130 @@
                     ],
                     // 包含功能
                     properties: ['openFile']
-                }, (filepaths, bookmarks) => {
-
-                    if (filepaths) {
+                }).then((result) => {
+                    // console.log('-----回调-----');
+                    // console.log(result);
+                    // console.log('是否取消:'+result.canceled+'文件路径:'+result.filePaths);
+                    if(!result.canceled){
                         // 读取文件
                         const workbook = new Excel.Workbook()
-                        workbook.xlsx.readFile(filepaths[0]).then(() => {
+                        workbook.xlsx.readFile(result.filePaths[0]).then(() => {
                             // 重新结构化数据
-                            let data = []
+                            let data_moline = []
+                            let data_acline = []
+                            let data_tw_transformer = []
+                            let data_threew_transformer = []
+                            let data_alternator = []
 
                             // 获取工作表
-                            const worksheet = workbook.getWorksheet(1)
-                            // 迭代工作表中具有值的所有行
-                            worksheet.eachRow(function (row, rowNumber) {
-                                console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
+                            const moline = workbook.getWorksheet(6);//母线表
+                            const acline = workbook.getWorksheet(8);//交流线表
+                            const tw_transformer = workbook.getWorksheet(11);//两绕组变压器表
+                            const threew_transformer = workbook.getWorksheet(11);//三绕组变压器表
+                            const alternator = workbook.getWorksheet(12);//发电机表
+                            // 母线表
+                            moline.eachRow(function (row, rowNumber) {
+                                // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
                                 // 去掉两行表头
                                 if (rowNumber > 2) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
-                                        type: row.values[1] === 'Income' ? 'i' :'e',
-                                        amountOfMoney: row.values[2],
-                                        assetsName: row.values[3],
-                                        categoryName: row.values[4],
-                                        createdAt: moment(row.values[5]).format('YYYY-MM-DD'),
-                                        remark: row.values[6],
+                                        proj_id: proj_id,
+                                        code: row.values[1],
+                                        bus_name: row.values[2],
+                                        phy_pos: row.values[3],
+                                        zone_no: row.values[4],
+                                        ps_name: row.values[5],
+                                        base_kv: row.values[6],
+                                        vmax_kv: row.values[7],
+                                        vmin_kv: row.values[8],
+                                        sc1_mva: row.values[9],
+                                        sc3_mva: row.values[10],
+                                        hasnode: row.values[11],
+                                        bustype: row.values[12],
+                                        dispname: row.values[13],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
                                     }
 
-                                    data.push(model)
+                                    data_moline.push(model)
                                 }
                             })
+
+                            // 交流线表
+                            acline.eachRow(function (row,rowNumber){
+                                if (rowNumber > 2) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    const model = {
+                                        proj_id: proj_id,
+                                        l_name: row.values[6],
+                                        j_name: row.values[7],
+                                        r1: row.values[12],
+                                        x1: row.values[13],
+                                        b1_half: row.values[14],
+                                        rate_ka: row.values[19],
+                                        up_limit: row.values[20],
+                                        type: row.values[22],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_acline.push(model)
+                                }
+                            })
+
+                            // 两晓表
+                            tw_transformer.eachRow(function (row,rowNumber){
+                                if (rowNumber > 2) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    const model = {
+                                        proj_id: proj_id,
+                                        l_name: row.values[6],
+                                        j_name: row.values[7],
+                                        v0_tap1: row.values[32],
+                                        v0_tap2: row.values[38],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_tw_transformer.push(model)
+                                }
+                            })
+
+                            // 三晓表
+                            threew_transformer.eachRow(function (row,rowNumber){
+                                if (rowNumber > 2) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    const model = {
+                                        proj_id: proj_id,
+                                        name_1: row.values[8],
+                                        name_2: row.values[9],
+                                        name_3: row.values[10],
+                                        tap1: '',
+                                        tap2: '',
+                                        tap3: '',
+                                        up_limit: row.values[36],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_threew_transformer.push(model)
+                                }
+                            })
+
+                            // 发电机表
+                            alternator.eachRow(function (row,rowNumber){
+                                if (rowNumber > 2) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    const model = {
+                                        proj_id: proj_id,
+                                        id_name: row.values[3],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_alternator.push(model)
+                                }
+                            })
+
                             // 业务处理
                             // console.log(data)
-                            this._importData(data).then(result => {
+                            this._importData1(data_moline,data_acline,data_tw_transformer,data_threew_transformer,data_alternator).then(result => {
                                 if (result.code === 200) {
                                     this.submitResult = true
                                     this.importing = false
@@ -890,55 +988,563 @@
                                 this.snackbarMsg = err.message
                             })
                         })
-                    } else {
-                        this.importing = false
+                    }else{
+                        console.log('-----取消-----');
+                    }
+
+                    this.importing = false
+                })
+                .catch((err) => {
+                    console.log('-----异常取消-----');
+                    console.log(err);
+                })
+            },
+
+            _importData1(data_moline,data_acline,data_tw_transformer,data_threew_transformer,data_alternator) {
+                return new Promise((resolve, reject) => {
+                    try {
+                        if(data_moline.length > 0){//母线
+                            
+                            let p_id = data_moline[0].proj_id
+
+                            data_moline.forEach(item => {
+                                // console.log('item:'+JSON.stringify(item));
+                                let proj_id = item.proj_id
+                                let code = item.code
+                                let bus_name = item.bus_name
+                                let phy_pos = item.phy_pos
+                                let zone_no = item.zone_no
+                                let ps_name = item.ps_name
+                                let base_kv = item.base_kv
+                                let vmax_kv = item.vmax_kv
+                                let vmin_kv = item.vmin_kv
+                                let sc1_mva = item.sc1_mva
+                                let sc3_mva = item.sc3_mva
+                                let hasnode = item.hasnode
+                                let bustype = item.bustype
+                                let dispname = item.dispname
+                                let a_time = item.a_time
+                                let sql = `INSERT INTO p_moline_info (code, bus_name, phy_pos, zone_no, ps_name, base_kv, vmax_kv, vmin_kv, sc1_mva, sc3_mva, hasnode, bustype, dispname, proj_id, flag, a_time) VALUES ('${code}', '${bus_name}', '${phy_pos}', '${zone_no}', '${ps_name}', '${base_kv}', '${vmax_kv}', '${vmin_kv}', '${sc1_mva}', '${sc3_mva}', '${hasnode}', '${bustype}', '${dispname}', '${proj_id}', 0, '${a_time}')`;
+    
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        if(data_acline.length > 0){//交流线
+                             
+                            let p_id = data_acline[0].proj_id
+
+                            data_acline.forEach(item => {
+                                console.log('data_acline:'+JSON.stringify(item));                            
+
+                                let proj_id = item.proj_id
+                                let l_name = item.l_name
+                                let j_name = item.j_name
+                                let r1 = item.r1
+                                let x1 = item.x1
+                                let b1_half = item.b1_half
+                                let rate_ka = item.rate_ka
+                                let up_limit = item.up_limit
+                                let type = item.type
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_acline_info (proj_id, l_name, j_name, r1, x1, b1_half, rate_ka, up_limit, type, flag, a_time) VALUES (${proj_id}, '${l_name}', '${j_name}', '${r1}', '${x1}', '${b1_half}', '${rate_ka}', '${up_limit}', '${type}', 0, '${a_time}')`;
+
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        if(data_tw_transformer.length > 0){//两晓
+                            
+                            let p_id = data_tw_transformer[0].proj_id
+
+                            data_tw_transformer.forEach(item => {
+                                console.log('data_tw_transformer:'+JSON.stringify(item));                            
+
+                                let proj_id = item.proj_id
+                                let l_name = item.l_name
+                                let j_name = item.j_name
+                                let v0_tap1 = item.v0_tap1
+                                let v0_tap2 = item.v0_tap2
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_tw_transformer_info (proj_id, l_name, j_name, v0_tap1, v0_tap2, flag, a_time) VALUES (${proj_id}, '${l_name}', '${j_name}', '${v0_tap1}', '${v0_tap2}', 0, '${a_time}')`;
+                                console.log(sql);
+
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        if(data_threew_transformer.length > 0){//三晓
+                            
+                            let p_id = data_threew_transformer[0].proj_id
+
+                            data_threew_transformer.forEach(item => {
+                                console.log('data_threew_transformer:'+JSON.stringify(item));                            
+
+                                let proj_id = item.proj_id
+                                let name_1 = item.name_1
+                                let name_2 = item.name_2
+                                let name_3 = item.name_3
+                                let tap1 = item.tap1
+                                let tap2 = item.tap2
+                                let tap3 = item.tap2
+                                let up_limit = item.up_limit
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_threew_transformer_info (proj_id, name_1, name_2, name_3, tap1, tap2, tap3, flag, a_time) VALUES (${proj_id}, '${name_1}', '${name_2}', '${name_3}', '${tap1}', '${tap2}', '${tap3}', 0, '${a_time}')`;
+    
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                    console.log(err)
+                                 })
+                            })
+                        }
+
+                        if(data_alternator.length > 0){//发电机表
+                            
+                            let p_id = data_alternator[0].proj_id
+
+                            data_alternator.forEach(item => {
+                                console.log('data_alternator:'+JSON.stringify(item));                            
+
+                                let proj_id = item.proj_id
+                                let id_name = item.id_name
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_alternator_info (proj_id, id_name, flag, a_time) VALUES (${proj_id}, '${id_name}', 0, '${a_time}')`;
+    
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        resolve({
+                            code: 200
+                        })
+                    } catch (err) {
+                        return reject({
+                            code: 400,
+                            message: err.message
+                        })
                     }
                 })
             },
 
-            _importData(data) {
+            importLocalFile2(dataitem) {
+                console.log('数据:'+JSON.stringify(dataitem));
+                // console.log('数据:'+db.query);
+                let proj_id = dataitem.id
+
+                this.importing = true
+
+                // 弹出文件选择框
+                remote.dialog.showOpenDialog({
+                    // title: '请选择需要导入的文件',
+                    defaultPath: this.exportPath,
+                    // buttonLabel: '确认',
+                    // 过滤
+                    filters: [
+                        {name: 'xlsx', extensions: ['xlsx']}
+                    ],
+                    // 包含功能
+                    properties: ['openFile']
+                }).then((result) => {
+                    // console.log('-----回调-----');
+                    // console.log(result);
+                    // console.log('是否取消:'+result.canceled+'文件路径:'+result.filePaths);
+                    if(!result.canceled){
+                        // 读取文件
+                        const workbook = new Excel.Workbook()
+                        workbook.xlsx.readFile(result.filePaths[0]).then(() => {
+                            // 重新结构化数据
+                            let data_acline_trend = []
+                            let data_alternator_trend = []
+                            let data_load_trend = []
+
+                            // 获取工作表
+                            const acline_trend = workbook.getWorksheet(8);//交流线表
+                            const alternator_trend = workbook.getWorksheet(11);//发电机表
+                            const load_trend = workbook.getWorksheet(12);//负荷表
+
+                            // 交流线表
+                            acline_trend.eachRow(function (row, rowNumber) {
+                                // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
+                                // 去掉两行表头
+                                if (rowNumber > 2) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    let model = {
+                                        proj_id: proj_id,
+                                        id_name: row.values[2],
+                                        valid: row.values[3],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_acline_trend.push(model)
+                                }
+                            })
+
+                            // 发电机表
+                            alternator_trend.eachRow(function (row,rowNumber){
+                                if (rowNumber > 2) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    const model = {
+                                        proj_id: proj_id,
+                                        id_name: row.values[2],
+                                        valid: row.values[3],
+                                        v0: row.values[8],
+                                        angle: row.values[9],
+                                        qmax: row.values[10],
+                                        qmin: row.values[11],
+                                        pmax: row.values[12],
+                                        pmin: row.values[13],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_alternator_trend.push(model)
+                                }
+                            })
+
+                            // 负荷表
+                            load_trend.eachRow(function (row,rowNumber){
+                                if (rowNumber > 2) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    const model = {
+                                        proj_id: proj_id,
+                                        id_name: row.values[2],
+                                        pl: row.values[7],
+                                        ql: row.values[8],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_load_trend.push(model)
+                                }
+                            })
+
+                            // 业务处理
+                            // console.log(data)
+                            this._importData2(data_acline_trend,data_alternator_trend,data_load_trend).then(result => {
+                                if (result.code === 200) {
+                                    this.submitResult = true
+                                    this.importing = false
+                                    this.snackbar = true
+                                    this.snackbarMsg = 'Successfully imported'
+
+                                    // 刷新所有列表
+                                    Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
+                                        this.initialize()
+                                    })
+                                }
+                            }).catch(err => {
+                                this.submitResult = false
+                                this.importing = false
+                                this.snackbar = true
+                                this.snackbarMsg = err.message
+                            })
+                        })
+                    }else{
+                        console.log('-----取消-----');
+                    }
+
+                    this.importing = false
+                })
+                .catch((err) => {
+                    console.log('-----异常取消-----');
+                    console.log(err);
+                })
+            },
+
+            _importData2(data_acline_trend,data_alternator_trend,data_load_trend) {
                 return new Promise((resolve, reject) => {
                     try {
-                        // TODO:由于没有事物，这里写的乱七八糟，而且直接操作db会比使用自己封装的API方便很多，但不专业
+                        if(data_acline_trend.length > 0){//交流线
+                            
+                            let p_id = data_acline_trend[0].proj_id
 
-                        data.forEach(item => {
-                            const collectionCategory = db.get('category')
-                            const collectionAssets = db.get('assets')
-                            const collectionIncomeAndExpenditure = db.get('incomeAndExpenditure')
-                            const listCategory = collectionCategory.filter({category: item.categoryName}).value()
-                            const listAssets = collectionAssets.filter({assetsName: item.assetsName}).value()
-                            let categoryId,assetsId
-                            if(!listCategory.length) {
-                                // 如果没有分类则新建
-                                categoryId = collectionCategory.insert({category: item.categoryName, remark:''}).write().id
-                            } else  {
-                                categoryId = listCategory[0].id
-                            }
-                            if(!listAssets.length) {
-                                // 如果没有资产表则新建
-                                assetsId = collectionAssets.insert({assetsName: item.assetsName, assetsDetailed:'', assetsAmountOfMoney: 0}).write().id
-                            } else  {
-                                assetsId = listAssets[0].id
-                            }
-
-                            const model = {
-                                categoryId: categoryId,
-                                type: item.type,
-                                assetsId: assetsId,
-                                remark: item.remark,
-                                createdAt: item.createdAt,
-                                amountOfMoney: item.amountOfMoney,
-                            }
-                            // 插入主表
-                            collectionIncomeAndExpenditure.insert(model).write()
-
-                            // 更新资产表
-                            let assetsAmountOfMoney = 0
-                            collectionIncomeAndExpenditure.filter({assetsId: model.assetsId}).value().forEach(item => {
-                                assetsAmountOfMoney += item.type ==='e' ? -item.amountOfMoney : item.amountOfMoney
+                            data_acline_trend.forEach(item => {
+                                console.log('item:'+JSON.stringify(item));
+                                let proj_id = item.proj_id
+                                let id_name = item.id_name
+                                let valid = item.valid
+                                let a_time = item.a_time
+                                let sql = `INSERT INTO p_acline_trend_info (proj_id, id_name, valid, flag, a_time) VALUES (${proj_id}, '${id_name}', ${valid}, 0, '${a_time}')`;
+                                console.log(sql);
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
                             })
-                            collectionAssets.updateById(model.assetsId, {assetsAmountOfMoney: assetsAmountOfMoney}).write()
+                        }
+
+                        if(data_alternator_trend.length > 0){//发电机线
+                             
+                            let p_id = data_alternator_trend[0].proj_id
+
+                            data_alternator_trend.forEach(item => {
+                                console.log('data_alternator_trend:'+JSON.stringify(item));                            
+
+                                let proj_id = item.proj_id
+                                let id_name = item.id_name
+                                let valid = item.valid
+                                let v0 = item.v0
+                                let angle = item.angle
+                                let qmax = item.qmax
+                                let qmin = item.qmin
+                                let pmax = item.pmax
+                                let pmin = item.pmin
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_alternator_trend_info (proj_id, id_name, valid, v0, angle, qmax, qmin, pmax, pmin, flag, a_time) VALUES (${proj_id}, '${id_name}', '${valid}', '${v0}', '${angle}', '${qmax}', '${qmin}', '${pmax}', '${pmin}', 0, '${a_time}')`;
+                                console.log(sql);
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        if(data_load_trend.length > 0){//负荷表
+                            
+                            let p_id = data_load_trend[0].proj_id
+
+                            data_load_trend.forEach(item => {
+                                console.log('data_load_trend:'+JSON.stringify(item));                            
+
+                                let proj_id = item.proj_id
+                                let id_name = item.id_name
+                                let pl = item.pl
+                                let ql = item.ql
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_load_trend_info (proj_id, id_name, pl, ql, flag, a_time) VALUES (${proj_id}, '${id_name}', '${pl}', '${ql}', 0, '${a_time}')`;
+                                console.log(sql);
+
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        resolve({
+                            code: 200
                         })
+                    } catch (err) {
+                        return reject({
+                            code: 400,
+                            message: err.message
+                        })
+                    }
+                })
+            },
+
+            importLocalFile3(dataitem) {
+                console.log('数据:'+JSON.stringify(dataitem));
+                // console.log('数据:'+db.query);
+                let proj_id = dataitem.id
+
+                this.importing = true
+
+                // 弹出文件选择框
+                remote.dialog.showOpenDialog({
+                    // title: '请选择需要导入的文件',
+                    defaultPath: this.exportPath,
+                    // buttonLabel: '确认',
+                    // 过滤
+                    filters: [
+                        {name: 'xlsx', extensions: ['xlsx']}
+                    ],
+                    // 包含功能
+                    properties: ['openFile']
+                }).then((result) => {
+                    // console.log('-----回调-----');
+                    // console.log(result);
+                    // console.log('是否取消:'+result.canceled+'文件路径:'+result.filePaths);
+                    if(!result.canceled){
+                        // 读取文件
+                        const workbook = new Excel.Workbook()
+                        workbook.xlsx.readFile(result.filePaths[0]).then(() => {
+                            // 重新结构化数据
+                            let data_alternator_result = []
+                            let data_tw_transformer_result = []
+                            let data_threew_transformer_result = []
+
+                            // 获取工作表
+                            const alternator_result = workbook.getWorksheet(1);//发电机
+                            const tw_transformer_result = workbook.getWorksheet(2);//两绕组变压器结果报表
+                            const threew_transformer_result = workbook.getWorksheet(3);//三绕组变压器结果报表
+
+                            // 发电机表
+                            alternator_result.eachRow(function (row, rowNumber) {
+                                // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
+                                // 去掉两行表头
+                                if (rowNumber > 3) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    let model = {
+                                        proj_id: proj_id,
+                                        alternator_name: row.values[1],
+                                        moline_name: row.values[2],
+                                        type: row.values[3],
+                                        active_power_generation: row.values[4],
+                                        reactive_power_generation: row.values[5],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_alternator_result.push(model)
+                                }
+                            })
+
+                            // 两绕组变压器结果报表
+                            tw_transformer_result.eachRow(function (row,rowNumber){
+                                if (rowNumber > 3) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    const model = {
+                                        proj_id: proj_id,
+                                        name: row.values[1],
+                                        j_cmx: row.values[2],
+                                        c_active_power_generation: row.values[3],
+                                        c_reactive_power_generation: row.values[4],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_tw_transformer_result.push(model)
+                                }
+                            })
+
+                            // 负荷表
+                            threew_transformer_result.eachRow(function (row,rowNumber){
+                                if (rowNumber > 3) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    const model = {
+                                        proj_id: proj_id,
+                                        name: row.values[1],
+                                        side_bus1: row.values[2],
+                                        side_bus2: row.values[3],
+                                        side_bus3: row.values[4],
+                                        active_power_generation1: row.values[5],
+                                        reactive_power_generation1: row.values[6],
+                                        active_power_generation2: row.values[7],
+                                        reactive_power_generation2: row.values[8],
+                                        active_power_generation3: row.values[9],
+                                        reactive_power_generation3: row.values[10],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_threew_transformer_result.push(model)
+                                }
+                            })
+
+                            // 业务处理
+                            // console.log(data)
+                            this._importData3(data_alternator_result,data_tw_transformer_result,data_threew_transformer_result).then(result => {
+                                if (result.code === 200) {
+                                    this.submitResult = true
+                                    this.importing = false
+                                    this.snackbar = true
+                                    this.snackbarMsg = 'Successfully imported'
+
+                                    // 刷新所有列表
+                                    Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
+                                        this.initialize()
+                                    })
+                                }
+                            }).catch(err => {
+                                this.submitResult = false
+                                this.importing = false
+                                this.snackbar = true
+                                this.snackbarMsg = err.message
+                            })
+                        })
+                    }else{
+                        console.log('-----取消-----');
+                    }
+
+                    this.importing = false
+                })
+                .catch((err) => {
+                    console.log('-----异常取消-----');
+                    console.log(err);
+                })
+            },
+
+            _importData3(data_alternator_result,data_tw_transformer_result,data_threew_transformer_result) {
+                return new Promise((resolve, reject) => {
+                    try {
+                        if(data_alternator_result.length > 0){//发电机
+                            
+                            let p_id = data_alternator_result[0].proj_id
+
+                            data_alternator_result.forEach(item => {
+                                // console.log('item:'+JSON.stringify(item));
+                                let proj_id = item.proj_id
+                                let alternator_name = item.alternator_name
+                                let moline_name = item.moline_name
+                                let type = item.type
+                                let active_power_generation = item.active_power_generation
+                                let reactive_power_generation = item.reactive_power_generation
+                                let a_time = item.a_time
+                                let sql = `INSERT INTO p_alternator_result_info (proj_id, alternator_name, moline_name, type, active_power_generation, reactive_power_generation, flag, a_time) VALUES (${proj_id}, '${alternator_name}', '${moline_name}', '${type}', '${active_power_generation}', '${reactive_power_generation}', 0, '${a_time}')`;
+                                // console.log(sql);
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        if(data_tw_transformer_result.length > 0){//两绕组变压器
+                             
+                            let p_id = data_tw_transformer_result[0].proj_id
+
+                            data_tw_transformer_result.forEach(item => {
+                                console.log('data_tw_transformer_result:'+JSON.stringify(item));                            
+
+                                let proj_id = item.proj_id
+                                let name = item.name
+                                let j_cmx = item.j_cmx
+                                let c_active_power_generation = item.c_active_power_generation
+                                let c_reactive_power_generation = item.c_reactive_power_generation
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_tw_transformer_result_info (proj_id, name, j_cmx, c_active_power_generation, c_reactive_power_generation, flag, a_time) VALUES (${proj_id}, '${name}', '${j_cmx}', '${c_active_power_generation}', '${c_reactive_power_generation}', 0, '${a_time}')`;
+                                console.log(sql);
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        if(data_threew_transformer_result.length > 0){//负荷表
+                            
+                            let p_id = data_threew_transformer_result[0].proj_id
+
+                            data_threew_transformer_result.forEach(item => {
+                                // console.log('data_threew_transformer_result:'+JSON.stringify(item));                            
+
+                                let proj_id = item.proj_id
+                                let name = item.name
+                                let side_bus1 = item.side_bus1
+                                let side_bus2 = item.side_bus2
+                                let side_bus3 = item.side_bus3
+                                let active_power_generation1 = item.active_power_generation1
+                                let reactive_power_generation1 = item.reactive_power_generation1
+                                let active_power_generation2 = item.active_power_generation2
+                                let reactive_power_generation2 = item.reactive_power_generation2
+                                let active_power_generation3 = item.active_power_generation3
+                                let reactive_power_generation3 = item.reactive_power_generation3
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_threew_transformer_result_info (proj_id, name, side_bus1, side_bus2, side_bus3, active_power_generation1, reactive_power_generation1, active_power_generation2, reactive_power_generation2, active_power_generation3, reactive_power_generation3,flag,a_time) VALUES (${proj_id}, '${name}', '${side_bus1}', '${side_bus2}', '${side_bus3}', '${active_power_generation1}', '${reactive_power_generation1}', '${active_power_generation2}', '${reactive_power_generation2}', '${active_power_generation3}', '${reactive_power_generation3}', 0, '${a_time}')`;
+                                // console.log(sql);
+
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
 
                         resolve({
                             code: 200
