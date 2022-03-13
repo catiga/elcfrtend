@@ -6,25 +6,28 @@ const remote = electron.remote;
 
 const moment = require('moment')
 
-const Table = 'project_info'
+const Table = 'p_moline_info'
 const TableAssets = 'assets'
 
 let currentOpenedProject = remote.getGlobal('sharedObject').openedProject
 
 export function getModelPagination(pagination, whereAttrs, filterFun) {
-    if (!currentOpenedProject) {
-        resolve({
-            code: 200,
-            data: []
-        })
-        return
-    }
     return new Promise((resolve, reject) => {
+        if (!currentOpenedProject) {
+            reject({
+                code: 404,
+                message: '请先打开工程'
+            })
+            return
+        }
         try {
-            let sql = `select * from p_station_info where flag!=-1 and proj_id=${currentOpenedProject.id}`;
+            let sql = `select * from ${Table} where flag!=-1 and proj_id=${currentOpenedProject.id}`;
             if(whereAttrs) {
                 if(whereAttrs.ps_name) {
                     sql = sql + ` and ps_name like '%${whereAttrs.ps_name}%'`
+                }
+                if(whereAttrs.bus_name) {
+                    sql = sql + ` and bus_name like '%${whereAttrs.bus_name}%'`
                 }
             }
             db.query(sql, function(err, values, fields) {
@@ -51,8 +54,7 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
 }
 
 export function saveStatData(obj) {
-    let sql = `update p_station_info set ps_name='${obj.ps_name}', stat_type=${obj.stat_type}, zone_no='${obj.zone_no}' where id=${obj.id}`
-    console.log('sql=', sql)
+    let sql = `update ${Table} set ps_name='${obj.ps_name}', bus_name='${obj.bus_name}', zone_no='${obj.zone_no}', base_kv=${obj.base_kv} where id=${obj.id}`
     return new Promise((resolve, reject) => { 
         try {
             db.query(sql, function(err, values, fields) {
