@@ -100,6 +100,7 @@ const systemMenus = [{
   }, {
     label: '区域电网自动等值',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/tooldata/grid')
     }
   }]
 },
