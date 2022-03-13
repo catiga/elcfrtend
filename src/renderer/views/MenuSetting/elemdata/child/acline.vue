@@ -28,7 +28,6 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
-                    <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
