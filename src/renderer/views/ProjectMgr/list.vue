@@ -134,9 +134,9 @@
                                 </td>
 
                                 <td class="text-xs-right">
-                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile1(props.item)">基础库</v-btn>
-                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile2(props.item)">潮流作业</v-btn>
-                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile3(props.item)">潮流结果</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile1(props.item)">基础库</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile2(props.item)">潮流<br/>作业</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile3(props.item)">潮流<br/>结果</v-btn>
                                     <v-btn v-if="props.item.is_import==1" fab small color="error" @click="openItem(props.item)">打开</v-btn>
                                 </td>
 
