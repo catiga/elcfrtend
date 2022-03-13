@@ -17,7 +17,7 @@
                         <template v-slot:activator="{ on }">
                             <v-text-field
                                     style="width: 50px;margin-left: 15px;"
-                                    v-model="search.ps_name"
+                                    v-model="search.id_name"
                                     label="发电机名称"
                                     single-line
                                     hide-details
@@ -63,34 +63,11 @@
                             <tr :active="props.selected" @click="props.selected = !props.selected">
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.ps_name"
+                                    v-model="props.item.id_name"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
                                     ></v-text-field>
-                                </td>
-                                <td>
-                                    <v-text-field
-                                    v-model="props.item.stat_type"
-                                    single-line
-                                    hide-details
-                                    @blur="saveValue(props.item)"
-                                    ></v-text-field>
-                                </td>
-                                <td>
-                                    <v-text-field
-                                    v-model="props.item.zone_no"
-                                    single-line
-                                    hide-details
-                                    @blur="saveValue(props.item)"
-                                    ></v-text-field>
-                                </td>
-                                <td width="50">
-                                    <v-checkbox
-                                            :input-value="props.selected"
-                                            primary
-                                            hide-details
-                                    ></v-checkbox>
                                 </td>
                             </tr>
                         </template>
@@ -134,7 +111,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/station/moline'
+    import { getModelPagination, saveStatData } from '../../../../../api/station/dynamo'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -157,14 +134,11 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '发电机名称', value: 'ps_name', align: 'left', sortable: true},
-                    {text: '发电机类型', value: 'stat_type', align: 'left', sortable: true},
-                    {text: '区域编号', value: 'zone_no', align: 'left', sortable: true},
-                    {text: '有效位', value: 'id', align: 'right', sortable: false},
+                    {text: '发电机名称', value: 'id_name', align: 'left', sortable: true},
                 ],
                 noDataMessage: '',
                 search: {
-                    ps_name: ''
+                    id_name: ''
                 },
                 pagination: {
                     sortBy: 'a_time'
@@ -272,7 +246,7 @@
                 const {sortBy, descending, page, rowsPerPage} = this.pagination
 
                 let whereAttrs = {
-                    ps_name: this.search.ps_name
+                    id_name: this.search.id_name
                 }
                 const filterFun = (o => {
                     let check1, check2 = false

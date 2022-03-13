@@ -18,7 +18,7 @@
                             <v-text-field
                                     style="width: 50px;margin-left: 15px;"
                                     v-model="search.ps_name"
-                                    label="并联电容电抗w名称"
+                                    label="name_1"
                                     single-line
                                     hide-details
                                     v-on="on"
@@ -28,7 +28,9 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
+                    <!--
                     <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
+                    -->
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
@@ -63,7 +65,7 @@
                             <tr :active="props.selected" @click="props.selected = !props.selected">
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.ps_name"
+                                    v-model="props.item.name_1"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
@@ -71,7 +73,7 @@
                                 </td>
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.stat_type"
+                                    v-model="props.item.name_2"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
@@ -79,18 +81,35 @@
                                 </td>
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.zone_no"
+                                    v-model="props.item.name_3"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
                                     ></v-text-field>
                                 </td>
-                                <td width="50">
-                                    <v-checkbox
-                                            :input-value="props.selected"
-                                            primary
-                                            hide-details
-                                    ></v-checkbox>
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.tap1"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
+                                </td>
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.tap2"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
+                                </td>
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.tap3"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
                                 </td>
                             </tr>
                         </template>
@@ -134,7 +153,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/station/moline'
+    import { getModelPagination, saveStatData } from '../../../../../api/station/_3transformer'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -157,14 +176,16 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '并联电容电抗w名称', value: 'ps_name', align: 'left', sortable: true},
-                    {text: '并联电容电抗w类型', value: 'stat_type', align: 'left', sortable: true},
-                    {text: '区域编号', value: 'zone_no', align: 'left', sortable: true},
-                    {text: '有效位', value: 'id', align: 'right', sortable: false},
+                    {text: 'name_1', value: 'name_1', align: 'left', sortable: true},
+                    {text: 'name_2', value: 'name_2', align: 'left', sortable: true},
+                    {text: 'name_3', value: 'name_3', align: 'left', sortable: true},
+                    {text: 'tap1', value: 'tap1', align: 'left', sortable: true},
+                    {text: 'tap2', value: 'tap2', align: 'left', sortable: true},
+                    {text: 'tap3', value: 'tap3', align: 'left', sortable: true},
                 ],
                 noDataMessage: '',
                 search: {
-                    ps_name: ''
+                    name_1: ''
                 },
                 pagination: {
                     sortBy: 'a_time'
@@ -272,7 +293,7 @@
                 const {sortBy, descending, page, rowsPerPage} = this.pagination
 
                 let whereAttrs = {
-                    ps_name: this.search.ps_name
+                    name_1: this.search.name_1
                 }
                 const filterFun = (o => {
                     let check1, check2 = false

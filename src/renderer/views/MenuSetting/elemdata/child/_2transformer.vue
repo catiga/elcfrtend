@@ -17,7 +17,7 @@
                         <template v-slot:activator="{ on }">
                             <v-text-field
                                     style="width: 50px;margin-left: 15px;"
-                                    v-model="search.ps_name"
+                                    v-model="search.l_name"
                                     label="变压器名称"
                                     single-line
                                     hide-details
@@ -28,7 +28,9 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
+                    <!--
                     <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
+                    -->
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
@@ -63,7 +65,7 @@
                             <tr :active="props.selected" @click="props.selected = !props.selected">
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.ps_name"
+                                    v-model="props.item.l_name"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
@@ -71,7 +73,7 @@
                                 </td>
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.stat_type"
+                                    v-model="props.item.j_name"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
@@ -79,18 +81,19 @@
                                 </td>
                                 <td>
                                     <v-text-field
-                                    v-model="props.item.zone_no"
+                                    v-model="props.item.v0_tap1"
                                     single-line
                                     hide-details
                                     @blur="saveValue(props.item)"
                                     ></v-text-field>
                                 </td>
-                                <td width="50">
-                                    <v-checkbox
-                                            :input-value="props.selected"
-                                            primary
-                                            hide-details
-                                    ></v-checkbox>
+                                <td>
+                                    <v-text-field
+                                    v-model="props.item.v0_tap2"
+                                    single-line
+                                    hide-details
+                                    @blur="saveValue(props.item)"
+                                    ></v-text-field>
                                 </td>
                             </tr>
                         </template>
@@ -134,7 +137,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/station/moline'
+    import { getModelPagination, saveStatData } from '../../../../../api/station/_2transformer'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -157,14 +160,14 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '变压器名称', value: 'ps_name', align: 'left', sortable: true},
-                    {text: '变压器类型', value: 'stat_type', align: 'left', sortable: true},
-                    {text: '区域编号', value: 'zone_no', align: 'left', sortable: true},
-                    {text: '有效位', value: 'id', align: 'right', sortable: false},
+                    {text: 'l_name', value: 'l_name', align: 'left', sortable: true},
+                    {text: 'j_name', value: 'j_name', align: 'left', sortable: true},
+                    {text: 'v0_tap1', value: 'zone_no', align: 'left', sortable: true},
+                    {text: 'v0_tap2', value: 'zone_no', align: 'left', sortable: true}
                 ],
                 noDataMessage: '',
                 search: {
-                    ps_name: ''
+                    l_name: ''
                 },
                 pagination: {
                     sortBy: 'a_time'
@@ -272,7 +275,7 @@
                 const {sortBy, descending, page, rowsPerPage} = this.pagination
 
                 let whereAttrs = {
-                    ps_name: this.search.ps_name
+                    l_name: this.search.l_name
                 }
                 const filterFun = (o => {
                     let check1, check2 = false
