@@ -25,7 +25,7 @@
                                 flat
                                 hide-details
                                 maxlength="1023"
-                                placeholder="What needs to be done?"
+                                placeholder="没有正在进行中的计算任务"
                                 solo
                                 v-model="newTodo"
                         ></v-text-field>
