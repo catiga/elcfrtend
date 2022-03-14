@@ -235,7 +235,7 @@ export default {
     align-items: flex-start;
 }
 .text-h3 {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
 }
 .row-title {
