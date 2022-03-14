@@ -942,9 +942,9 @@
                                         name_1: row.values[8],
                                         name_2: row.values[9],
                                         name_3: row.values[10],
-                                        tap1: '',
-                                        tap2: '',
-                                        tap3: '',
+                                        tap1: row.values[55],
+                                        tap2: row.values[61],
+                                        tap3: row.values[67],
                                         up_limit: row.values[36],
                                         a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
                                     }
