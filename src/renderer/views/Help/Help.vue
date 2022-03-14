@@ -2,7 +2,7 @@
     <div class="intro-wrapper">
         <canvas></canvas>
         <div class="info-wrapper">
-            <h1>https://github.com/hilanmiao/LanMiaoDesktop</h1>
+            <h1>欢迎使用电网智能决策系统帮助中心</h1>
         </div>
     </div>
 </template>

@@ -2,7 +2,7 @@
     <v-layout>
         <div class="work-container">
             <!-- 标题 -->
-            <div class="title">系统薄弱环节分析</div>
+            <div class="title">区域电网等值作业定义</div>
             <!-- 表单 -->
             <v-form
                 ref="form"
@@ -13,7 +13,9 @@
                 <div class="row-flex">
                     <v-text-field
                         v-model="workForm.name"
+                        :rules="nameRules"
                         label="作业名称"
+                        required
                     ></v-text-field>
 
                     <v-dialog
@@ -51,57 +53,60 @@
                         </v-card>
                     </v-dialog>
                 </div>
-                <v-spacer></v-spacer>
-                <div class="label-title">系统运行方式选择</div>
-                <v-select
-                    v-model="workForm.select"
-                    :items="selectItems"
-                    item-text="label"
-                    item-value="id"
-                    label="风险评估方案"
-                    required
-                ></v-select>
-                <div class="row-flex center">
+                <div class="row-flex">
+                    <v-text-field
+                        v-model="workForm.name"
+                        :rules="nameRules"
+                        label="待评估区域节点规模"
+                        required
+                    ></v-text-field>
+                    <v-btn color="primary">计算</v-btn>
+                </div>
+                <div class="row-flex">
                     <v-dialog
                         v-model="dialogSet"
                         persistent
                         max-width="800"
                     >
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn v-bind="attrs" v-on="on" color="primary">开始分析</v-btn>
+                            <v-btn v-bind="attrs" v-on="on" color="primary" class="center-btn">网络等值设置</v-btn>
                         </template>
                         <v-card>
                             <v-card-title class="text-h3">网络等值设置</v-card-title>
                             <v-card-text>
-                                <v-text-field
-                                    v-model="settingName"
-                                    label="作业名称"
-                                    style="width: 400px"
-                                ></v-text-field>
-                                <v-spacer></v-spacer>
-                                <v-data-table
-                                    :headers="headers"
-                                    :items="desserts"
-                                    hide-actions
-                                    class="elevation-1"
-                                >
-                                    <template slot="items" slot-scope="props">
-                                        <td>{{ props.item.name }}</td>
-                                        <td>{{ props.item.calories }}</td>
-                                        <td>{{ props.item.fat }}</td>
-                                        <td>{{ props.item.carbs }}</td>
-                                    </template>
-                                </v-data-table>
+                                <div class="row-flex row-flex-start">
+                                    <v-data-table
+                                        :headers="headers"
+                                        :items="desserts"
+                                        hide-actions
+                                        class="elevation-1"
+                                    >
+                                        <template slot="items" slot-scope="props">
+                                            <td>{{ props.item.name }}</td>
+                                            <td>{{ props.item.calories }}</td>
+                                            <td>{{ props.item.fat }}</td>
+                                            <td>{{ props.item.carbs }}</td>
+                                            <td>{{ props.item.protein }}</td>
+                                        </template>
+                                    </v-data-table>
+                                    
+                                    <div class="row-flex-right">
+                                        <v-btn color="success" @click="handleAddTableData">添加</v-btn>
+                                        <v-btn color="error" @click="handleDeleteTableData">删除</v-btn>
+                                    </div>
+                                </div>
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn text @click="dialogSet = false" color="success">输出报表</v-btn>
+                                <v-btn text @click="dialogSet = false" color="success">结果预览</v-btn>
                                 <v-btn text @click="dialogSet = false" color="success">确认</v-btn>
                                 <v-btn text @click="dialogSet = false">取消</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
-                    
+                </div>
+                <div class="row-flex center">
+                    <v-btn color="primary">开始等值</v-btn>
                     <v-btn color="primary">取消</v-btn>
                 </div>
             </v-form>
@@ -121,26 +126,30 @@ export default {
             dialogSet: false,
             workForm: { // 表单提交数据
                 name: '',
-                select: ''
             },
             addForm: {  // 添加表单数据
                 name: ''
             },
-            selectItems: [ // 下拉框数据
-                {label: '方案一', id: 1},
-                {label: '方案二', id: 2},
-                {label: '方案三', id: 3},
+            items: [ // 下拉框数据
+                {label: 'Item 1', id: 1},
+                {label: 'Item 2', id: 2},
+                {label: 'Item 3', id: 3},
+            ],
+            nameRules: [ // 表单验证
+                v => !!v || 'Name is required',
+                v => (v && v.length <= 10) || 'Name must be less than 10 characters',
             ],
             headers: [
                 {
-                    text: '元件名称',
+                    text: '支路名称',
                     align: 'start',
                     sortable: false,
                     value: 'name',
                 },
-                { text: '元件类型', sortable: false, value: 'calories' },
-                { text: '元件位置', sortable: false, value: 'fat' },
-                { text: '元件失效后系统主要风险指标', sortable: false, value: 'carbs' },
+                { text: 'I侧母线', sortable: false, value: 'calories' },
+                { text: 'J侧母线', sortable: false, value: 'fat' },
+                { text: 'I侧位置', sortable: false, value: 'carbs' },
+                { text: 'J侧位置', sortable: false, value: 'protein' },
             ],
             desserts: [
                 {
@@ -148,15 +157,16 @@ export default {
                     calories: '红石坡1',
                     fat: '木兰1',
                     carbs: '区内1',
+                    protein: '区外1',
                 },
                 {
                     name: 'AC1202',
                     calories: '红石坡',
                     fat: '木兰',
                     carbs: '区内',
+                    protein: '区外',
                 },
             ],
-            settingName: '',   // 
         }
     },
     mounted() {
@@ -205,12 +215,6 @@ export default {
     font-size: 20px;
     font-weight: bold;
 }
-.label-title {
-    font-size: 18px;
-    color: hsla(0,0%,100%,0.7);
-    font-weight: bold;
-    margin-top: 12px;
-}
 </style>
 <style type="text/css" lang="scss">
 ::v-deep .v-btn--floating .v-btn__content {
@@ -221,5 +225,11 @@ export default {
 }
 .center-btn {
     margin: 0 auto;
+}
+.v-dialog .elevation-1 {
+    width: 680px;
+}
+.row-flex-right {
+    width: 120px;
 }
 </style>

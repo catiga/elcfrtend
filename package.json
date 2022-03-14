@@ -19,16 +19,16 @@
     "dist": "node .electron-vue/build.js && electron-builder"
   },
   "build": {
-    "productName": "PocketBook",
-    "appId": "com.electron.PocketBook",
-    "copyright": "Copyright © 2019 lanmiao",
+    "productName": "SmartGrid",
+    "appId": "com.electron.SmartGrid",
+    "copyright": "Copyright © 2022 catiga",
     "directories": {
       "output": "build"
     },
     "publish": {
       "provider": "github",
-      "repo": "LanMiaoDesktop",
-      "owner": "hilanmiao",
+      "repo": "SmartGridDesktop",
+      "owner": "catiga",
       "releaseType": "release",
       "private": false
     },

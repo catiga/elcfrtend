@@ -17,7 +17,7 @@
                         </v-flex>
                     </v-layout>
                 </v-sheet>
-                <span class="money font-weight-bolod display-1">${{item.money}}</span>
+                <span class="money font-weight-bolod display-1">{{item.value}}</span>
                 <v-card-text class="pt-0 title font-weight-bold">
                     {{item.text}}
                 </v-card-text>
@@ -28,30 +28,43 @@
 </template>
 
 <script>
+    import {
+        countForStat
+    } from '../../../../../api/projectMgr'
     export default {
         name: "statsIcon",
         data: () => ({
             stats: [
                 {
+                    id: 'total_project_num',
                     icon: 'equalizer',
-                    money: '6800',
-                    text: 'Income Today',
+                    value: '0',
+                    text: '工程总量',
                     color: 'black'
                 },
                 {
                     icon: 'equalizer',
-                    money: '6800',
-                    text: 'Accounts Today',
+                    value: '0',
+                    text: '作业总量',
                     color: 'black'
                 },
                 {
                     icon: 'equalizer',
-                    money: '6800',
-                    text: 'Payments Today',
+                    value: '0',
+                    text: '执行中任务',
                     color: 'orange'
                 }
             ]
-        })
+        }),
+        mounted() {
+            countForStat().then(result => {
+                if (result.code === 200) {
+                    this.stats[0].value = result.data[0].t_num
+                }
+            }).catch(err => {
+
+            })
+        },
     }
 </script>
 

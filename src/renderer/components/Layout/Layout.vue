@@ -16,9 +16,11 @@
                         <v-flex xs6>
                             <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
                         </v-flex>
+                        <!--
                         <v-flex xs6 class="text-xs-right" v-if="item.heading === 'Home'" v-show="!mini">
                             <v-btn small flat color="orange" @click="updateDialog(true)">Add</v-btn>
                         </v-flex>
+                        -->
                     </v-layout>
                     <v-divider dark v-else-if="item.divider" class="my-3" :key="i"></v-divider>
                     <v-list-tile :to="item.to" :key="i" v-else-if="item.isSingle" @click="" active-class="orange">
@@ -120,7 +122,7 @@
         data: () => ({
             currentUser : remote.getGlobal('sharedObject').loginedUser,
             currentProject : remote.getGlobal('sharedObject').openedProject,
-            title: '智能决策平台',
+            title: '智能决策系统',
             drawer: null,
             items: remote.getGlobal('sharedObject').pageMenus,
             mini: false,

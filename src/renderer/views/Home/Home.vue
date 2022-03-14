@@ -12,7 +12,7 @@
                                 xs12>
                             <v-card>
                                 <v-card-title class="pb-0">
-                                    <span class="title font-weight-light">Monthly statistics</span>
+                                    <span class="title font-weight-light">当月统计</span>
                                 </v-card-title>
                                 <v-card-text class="pt-0">
                                     <StatsCurve></StatsCurve>
@@ -23,7 +23,7 @@
                                 xs12>
                             <v-card>
                                 <v-card-title class="pb-0">
-                                    <span class="title font-weight-light">Reminder</span>
+                                    <span class="title font-weight-light">提醒</span>
                                 </v-card-title>
                                 <v-card-text>
                                     <Todo></Todo>

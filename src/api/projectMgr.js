@@ -355,4 +355,25 @@ export function saveProjectParams(project, attrs) {
     })
 }
 
+export function countForStat(whereAttrs) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select count(id) t_num from ${Table} where flag!=-1`
+            if (whereAttrs && whereAttrs.is_import != -1) {
+                sql = sql + ` and is_import=${whereAttrs.is_import}`
+            }
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
 

@@ -74,6 +74,12 @@ const reportRouter = {
       name: "ms_tooldata_work",
       meta: { title: "检修作业定义", noCache: true },
     },
+    {
+      path: "ms/tooldata/grid",
+      component: () => import("@/views/MenuSetting/tooldata/grid"),
+      name: "ms_tooldata_grid",
+      meta: { title: "检修作业定义", noCache: true },
+    },
   ],
 };
 
