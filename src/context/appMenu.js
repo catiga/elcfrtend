@@ -71,6 +71,7 @@ const systemMenus = [{
   {
     label: '一次主接线拓扑',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/topology')
     }
   },
   {
@@ -79,6 +80,7 @@ const systemMenus = [{
   {
     label: '元件可靠线参数',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/relaible')
     }
   }]
 },
@@ -147,6 +149,7 @@ const systemMenus = [{
   submenu: [{
     label: '用户信息管理',
     click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/userdata/user')
     }
   }]
 },
