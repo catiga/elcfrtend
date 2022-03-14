@@ -84,13 +84,16 @@ const systemMenus = [{
 },
 {
   label: '工具',
-  submenu: [{
-    label: 'PSASP数据导入',
-    click: function (item, focusedWindow) {
-    }
-  }, {
+  submenu: [
+  // {
+  //   label: 'PSASP数据导入',
+  //   click: function (item, focusedWindow) {
+  //   }
+  // }, 
+  {
     type: 'separator'
-  }, {
+  }, 
+  {
     label: '检修作业定义',
     click: function (item, focusedWindow) {
       focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/tooldata/work')
@@ -104,6 +107,8 @@ const systemMenus = [{
     }
   }]
 },
+
+/*
 {
   label: '功能控制',
   submenu: [{
@@ -136,6 +141,7 @@ const systemMenus = [{
     }
   }]
 },
+*/
 {
   label: '用户管理',
   submenu: [{

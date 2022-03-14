@@ -80,27 +80,27 @@ const pageMenus = [
     ],
   },
 
-  { divider: true },
+  // { divider: true },
+  // {
+  //   isSingle: true,
+  //   icon: "import_export",
+  //   text: "IncomeAndExpenditure",
+  //   to: "/incomeAndExpenditure",
+  // },
+  // { isSingle: true, icon: "category", text: "Category", to: "/category" },
+  // {
+  //   isSingle: true,
+  //   icon: "account_balance_wallet",
+  //   text: "Assets",
+  //   to: "/assets",
+  // },
 
-  {
-    isSingle: true,
-    icon: "import_export",
-    text: "IncomeAndExpenditure",
-    to: "/incomeAndExpenditure",
-  },
-  { isSingle: true, icon: "category", text: "Category", to: "/category" },
-  {
-    isSingle: true,
-    icon: "account_balance_wallet",
-    text: "Assets",
-    to: "/assets",
-  },
   { divider: true },
   { heading: "系统" },
   { isSingle: true, icon: "settings", text: "设置", to: "/settings" },
   { isSingle: true, icon: "visibility_off", text: "密码", to: "/password" },
-  { isSingle: true, icon: "lightbulb_outline", text: "Notes", to: "/notes" },
-  { isSingle: true, icon: "help", text: "Help", to: "/help" },
+  //{ isSingle: true, icon: "lightbulb_outline", text: "Notes", to: "/notes" },
+  { isSingle: true, icon: "help", text: "帮助", to: "/help" },
 ];
 
 var buildDynamicMenu = function (user, openedProject) {
