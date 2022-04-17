@@ -137,6 +137,8 @@
                                     <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile1(props.item)">基础库</v-btn>
                                     <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile2(props.item)">潮流<br/>作业</v-btn>
                                     <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile3(props.item)">潮流<br/>结果</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile4(props.item)">一次<br/>主线</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile5(props.item)">元件<br/>可靠</v-btn>
                                     <v-btn v-if="props.item.is_import==1" fab small color="error" @click="openItem(props.item)">打开</v-btn>
                                 </td>
 
@@ -1539,6 +1541,249 @@
 
                                 let sql = `INSERT INTO p_threew_transformer_result_info (proj_id, name, side_bus1, side_bus2, side_bus3, active_power_generation1, reactive_power_generation1, active_power_generation2, reactive_power_generation2, active_power_generation3, reactive_power_generation3,flag,a_time) VALUES (${proj_id}, '${name}', '${side_bus1}', '${side_bus2}', '${side_bus3}', '${active_power_generation1}', '${reactive_power_generation1}', '${active_power_generation2}', '${reactive_power_generation2}', '${active_power_generation3}', '${reactive_power_generation3}', 0, '${a_time}')`;
                                 // console.log(sql);
+
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        resolve({
+                            code: 200
+                        })
+                    } catch (err) {
+                        return reject({
+                            code: 400,
+                            message: err.message
+                        })
+                    }
+                })
+            },
+
+            importLocalFile4(dataitem) {
+                console.log('数据:'+JSON.stringify(dataitem));
+                // console.log('数据:'+db.query);
+                let proj_id = dataitem.id
+
+                this.importing = true
+
+                // 弹出文件选择框
+                remote.dialog.showOpenDialog({
+                    // title: '请选择需要导入的文件',
+                    defaultPath: this.exportPath,
+                    // buttonLabel: '确认',
+                    // 过滤
+                    filters: [
+                        {name: 'xlsx', extensions: ['xlsx']}
+                    ],
+                    // 包含功能
+                    properties: ['openFile']
+                }).then((result) => {
+                    // console.log('-----回调-----');
+                    // console.log(result);
+                    // console.log('是否取消:'+result.canceled+'文件路径:'+result.filePaths);
+                    if(!result.canceled){
+                        // 读取文件
+                        const workbook = new Excel.Workbook()
+                        workbook.xlsx.readFile(result.filePaths[0]).then(() => {
+                            // 重新结构化数据
+                            let data_component_branch_result = []
+
+                            // 获取工作表
+                            const component_branch = workbook.getWorksheet(9);//元件支路表
+
+                            // 发电机表
+                            component_branch.eachRow(function (row, rowNumber) {
+                                console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values[2]))
+                                // 去掉两行表头
+                                if (rowNumber > 1) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    let model = {
+                                        proj_id: proj_id,
+                                        serial_number: row.values[1],
+                                        name: row.values[2],
+                                        first_node: row.values[3],
+                                        last_node: row.values[4],
+                                        type: row.values[5],
+                                        run_state: row.values[6],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_component_branch_result.push(model)
+                                }
+                            })
+
+                            // 业务处理
+                            // console.log(data)
+                            this._importData4(data_component_branch_result).then(result => {
+                                if (result.code === 200) {
+                                    this.submitResult = true
+                                    this.importing = false
+                                    this.snackbar = true
+                                    this.snackbarMsg = 'Successfully imported'
+
+                                    // 刷新所有列表
+                                    Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
+                                        this.initialize()
+                                    })
+                                }
+                            }).catch(err => {
+                                this.submitResult = false
+                                this.importing = false
+                                this.snackbar = true
+                                this.snackbarMsg = err.message
+                            })
+                        })
+                    }else{
+                        console.log('-----取消-----');
+                    }
+
+                    this.importing = false
+                })
+                .catch((err) => {
+                    console.log('-----异常取消-----');
+                    console.log(err);
+                })
+            },
+
+            _importData4(data_component_branch_result) {
+                return new Promise((resolve, reject) => {
+                    try {
+                        if(data_component_branch_result.length > 0){//发电机
+                            
+                            let p_id = data_component_branch_result[0].proj_id
+
+                            data_component_branch_result.forEach(item => {
+                                // console.log('item:'+JSON.stringify(item));
+                                let proj_id = item.proj_id
+                                let serial_number = item.serial_number
+                                let name = item.name
+                                let first_node = item.first_node
+                                let last_node = item.last_node
+                                let type = item.type
+                                let run_state = item.run_state
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_component_branch_info (proj_id, serial_number, name, first_node, last_node, type, run_state, flag, a_time) VALUES (${proj_id}, '${serial_number}', '${name}', '${first_node}', '${last_node}', '${type}','${run_state}', 0, '${a_time}')`;
+
+                                // 插入主表
+                                db.query(sql, function(err, values, fields) {
+                                 })
+                            })
+                        }
+
+                        resolve({
+                            code: 200
+                        })
+                    } catch (err) {
+                        return reject({
+                            code: 400,
+                            message: err.message
+                        })
+                    }
+                })
+            },
+
+            importLocalFile5(dataitem) {
+                console.log('数据:'+JSON.stringify(dataitem));
+                // console.log('数据:'+db.query);
+                let proj_id = dataitem.id
+
+                this.importing = true
+
+                // 弹出文件选择框
+                remote.dialog.showOpenDialog({
+                    // title: '请选择需要导入的文件',
+                    defaultPath: this.exportPath,
+                    // buttonLabel: '确认',
+                    // 过滤
+                    filters: [
+                        {name: 'xlsx', extensions: ['xlsx']}
+                    ],
+                    // 包含功能
+                    properties: ['openFile']
+                }).then((result) => {
+                    // console.log('-----回调-----');
+                    // console.log(result);
+                    // console.log('是否取消:'+result.canceled+'文件路径:'+result.filePaths);
+                    if(!result.canceled){
+                        // 读取文件
+                        const workbook = new Excel.Workbook()
+                        workbook.xlsx.readFile(result.filePaths[0]).then(() => {
+                            // 重新结构化数据
+                            let data_component_reliability_result = []
+
+                            // 获取工作表
+                            const component_reliability = workbook.getWorksheet(5);//元件可靠性
+                            console.log(workbook);
+    
+                            // 元件可靠性
+                            component_reliability.eachRow(function (row, rowNumber) {
+                                // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
+                                // 去掉两行表头
+                                if (rowNumber > 1) {
+                                    // 重新组织数据，excel无论单元格还是行都是从1开始的
+                                    let model = {
+                                        proj_id: proj_id,
+                                        branch_type: row.values[1],
+                                        failure_rate: row.values[2],
+                                        repair_time: row.values[3],
+                                        a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                                    }
+
+                                    data_component_reliability_result.push(model)
+                                }
+                            })
+
+                            // 业务处理
+                            // console.log(data)
+                            this._importData5(data_component_reliability_result).then(result => {
+                                if (result.code === 200) {
+                                    this.submitResult = true
+                                    this.importing = false
+                                    this.snackbar = true
+                                    this.snackbarMsg = 'Successfully imported'
+
+                                    // 刷新所有列表
+                                    Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
+                                        this.initialize()
+                                    })
+                                }
+                            }).catch(err => {
+                                this.submitResult = false
+                                this.importing = false
+                                this.snackbar = true
+                                this.snackbarMsg = err.message
+                            })
+                        })
+                    }else{
+                        console.log('-----取消-----');
+                    }
+
+                    this.importing = false
+                })
+                .catch((err) => {
+                    console.log('-----异常取消-----');
+                    console.log(err);
+                })
+            },
+
+            _importData5(data_component_reliability_result) {
+                return new Promise((resolve, reject) => {
+                    try {
+                        if(data_component_reliability_result.length > 0){//发电机
+                            
+                            let p_id = data_component_reliability_result[0].proj_id
+
+                            data_component_reliability_result.forEach(item => {
+                                // console.log('item:'+JSON.stringify(item));
+                                let proj_id = item.proj_id
+                                let branch_type = item.branch_type
+                                let failure_rate = item.failure_rate
+                                let repair_time = item.repair_time
+                                let a_time = item.a_time
+
+                                let sql = `INSERT INTO p_component_reliability_info (proj_id, branch_type, failure_rate, repair_time, flag, a_time) VALUES (${proj_id}, '${branch_type}', '${failure_rate}', '${repair_time}', 0, '${a_time}')`;
 
                                 // 插入主表
                                 db.query(sql, function(err, values, fields) {
