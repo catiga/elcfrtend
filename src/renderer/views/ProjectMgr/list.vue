@@ -1590,18 +1590,25 @@
                             let data_component_branch_result = []
 
                             // 获取工作表
-                            const component_branch = workbook.getWorksheet(9);//元件支路表
+                            const component_branch = workbook.getWorksheet(1);//元件支路表
 
                             // 发电机表
                             component_branch.eachRow(function (row, rowNumber) {
-                                console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values[2]))
+                                // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values[2]))
+                                let names = row.values[2];
+                                let name = names;
+                                if(names instanceof Array){
+                                    for(let i = 0;i < names.length;i++){
+                                        name += names[i].text 
+                                    }
+                                }
                                 // 去掉两行表头
                                 if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     let model = {
                                         proj_id: proj_id,
                                         serial_number: row.values[1],
-                                        name: row.values[2],
+                                        name: name,
                                         first_node: row.values[3],
                                         last_node: row.values[4],
                                         type: row.values[5],
@@ -1714,7 +1721,7 @@
                             let data_component_reliability_result = []
 
                             // 获取工作表
-                            const component_reliability = workbook.getWorksheet(5);//元件可靠性
+                            const component_reliability = workbook.getWorksheet(1);//元件可靠性
                             console.log(workbook);
     
                             // 元件可靠性
