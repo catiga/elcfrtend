@@ -17,6 +17,31 @@
                         </v-list-tile-content>
                     </v-list-tile>
 
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <v-list-tile-title>VMAX</v-list-tile-title>
+                            <v-list-tile-sub-title>
+                                <v-text-field
+                                        v-model="vmaxValue"
+                                        label="设置vmax"
+                                        required
+                                ></v-text-field>
+                            </v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-list-tile-content>
+                            <v-list-tile-title>VMIN</v-list-tile-title>
+                            <v-list-tile-sub-title>
+                                <v-text-field
+                                        v-model="vminValue"
+                                        label="设置vmin"
+                                        required
+                                ></v-text-field>
+                            </v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+
                     <!--
                     <v-list-tile>
                         <v-list-tile-content>
@@ -134,7 +159,9 @@
             snackbar: false,
             snackbarMsg: '',
 
-            benchValue: 0
+            benchValue: 0,
+            vmaxValue: 0,
+            vminValue: 0
         }),
         watch: {
             snackbar: {
@@ -164,7 +191,11 @@
                     for (let x in result.data) {
                         if (result.data[x].param_k === 'bench_value') {
                             this.benchValue = result.data[x].param_v
-                        }
+                        } else if (result.data[x].param_k === 'vmax_value') {
+                            this.vmaxValue = result.data[x].param_v
+                        } else if (result.data[x].param_k === 'vmin_value') {
+                            this.vminValue = result.data[x].param_v
+                        } 
                     }
                 }
             }).catch(err => {
@@ -188,7 +219,7 @@
                 // this.$store.dispatch('FedLogOut')
                 // ipcRenderer.send('loggedOut')
                 //ipcRenderer.send('openLoginWindow')
-                saveProjectParams(currentProject, {bench_value: this.benchValue}).then(result => {
+                saveProjectParams(currentProject, {bench_value: this.benchValue, vmax_value: this.vmaxValue, vmin_value: this.vminValue}).then(result => {
                     if (result.code === 200) {
                         this.submitResult = true
                     } else {
