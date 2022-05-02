@@ -153,7 +153,7 @@ function createMainWindow() {
         minWidth: 900,
         minHeight: 600,
         useContentSize: true,
-        frame: false, // 无边框
+        frame: true, // 无边框
         transparent: true, // 透明
         // fullscreen: true, // 全屏
         webPreferences: {
