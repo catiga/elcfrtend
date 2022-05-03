@@ -18,6 +18,7 @@
                         required
                     ></v-text-field>
 
+                    <!--
                     <v-dialog
                         v-model="dialog"
                         persistent
@@ -52,56 +53,63 @@
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
+                    -->
                 </div>
+
                 <v-select
-                    v-model="workForm.select"
-                    :items="items"
-                    item-text="label"
-                    item-value="id"
-                    :rules="[v => !!v || 'Item is required']"
-                    label="检查厂站选择"
-                    required
-                ></v-select>
-                <v-select
-                    v-model="workForm.select"
-                    :items="items"
-                    item-text="label"
-                    item-value="id"
+                    v-model="workForm.base_kv"
+                    :items="vol_items"
+                    item-text="base_kv"
+                    item-value="base_kv"
                     :rules="[v => !!v || 'Item is required']"
                     label="检修电压等级"
+                    @change="selKv"
                     required
                 ></v-select>
-                <div class="row-flex">
-                    <v-select
-                        v-model="workForm.select"
-                        :items="items"
-                        item-text="label"
-                        item-value="id"
-                        :rules="[v => !!v || 'Item is required']"
-                        label="一次主线拓扑"
-                        required
-                    ></v-select>
-                    <v-btn color="primary">选择</v-btn>
-                </div>
-                <div class="row-flex">
-                    <v-select
-                        v-model="workForm.select"
-                        :items="items"
-                        item-text="label"
-                        item-value="id"
-                        :rules="[v => !!v || 'Item is required']"
-                        label="元件可靠性参数"
-                        required
-                    ></v-select>
-                    <v-btn color="primary">选择</v-btn>
-                </div>
+                <v-select
+                    v-model="workForm.station_name"
+                    :items="bus_items"
+                    item-text="bus_name"
+                    item-value="id"
+                    :rules="[v => !!v || 'Item is required']"
+                    label="检修厂站选择"
+                    @change="selBus"
+                    required
+                ></v-select>
+                
+                <v-list-tile>
+                    <v-list-tile-content>
+                        <v-btn class="error" large @click="save">保存</v-btn>
+                    </v-list-tile-content>
+                </v-list-tile>
             </v-form>
         </div>
 
+        <v-snackbar
+                v-model="snackbar"
+                right
+                top
+                :color="submitResult ? 'success' : 'error'"
+        >
+            {{ snackbarMsg}}
+            <v-btn
+                    flat
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-layout>
 </template>
 
 <script>
+import {ipcRenderer, app, remote, shell} from 'electron'
+import {
+    loadProjectParams,
+    saveProjectParams,
+    loadVolItems,
+    loadBusItems
+} from '../../../../api/work/manager'
 export default {
     data() {
         return {
@@ -110,19 +118,112 @@ export default {
             dialog: false,
             workForm: { // 表单提交数据
                 name: '',
+                base_kv: '',
+                station_code: '',
+                station_name: ''
             },
-            addForm: {  // 添加表单数据
-                name: ''
-            },
-            items: [
-                {label: 'Item 1', id: 1},
-                {label: 'Item 2', id: 2},
-                {label: 'Item 3', id: 3},
-            ],
+            addForm: {},
+
+            // 操作提示
+            submitResult: false,
+            snackbar: false,
+            snackbarMsg: '',
+
+            bus_items: [],
+            vol_items: [],
+
             nameRules: [
                 v => !!v || 'Name is required',
                 v => (v && v.length <= 10) || 'Name must be less than 10 characters',
             ]
+        }
+    },
+    mounted() {
+        let currentProject = remote.getGlobal('sharedObject').openedProject
+        if (!currentProject) {
+            this.snackbar = true
+            this.snackbarMsg = '请先选择打开工程'
+            return
+        }
+        loadProjectParams(currentProject).then(result => {
+            console.log(result)
+            if(result.code === 200 && result.data) {
+                this.workForm.name = result.data[0]['name']
+                this.workForm.station_code = result.data[0]['station_code']
+                this.workForm.station_name = result.data[0]['station_name']
+                this.workForm.base_kv = result.data[0]['base_kv']
+
+                console.log('this.workForm', this.workForm)
+
+                this.$http.get('http://127.0.0.1:8081/index').catch(function(error) {
+                    console.log(error)
+                }).then(function(response) {
+                    console.log(response)
+                })
+
+            }
+        }).catch(err => {
+            this.submitResult = false
+            this.snackbar = true
+            this.snackbarMsg = err.message
+        })
+        this.kvItemData()
+        if (process.env.NODE_ENV === 'production') {
+            //this.getAutoStartValue()
+        }
+    },
+    methods: {
+        selBus(id) {
+            for(let x in this.bus_items) {
+                if(this.bus_items[x].id === id) {
+                    this.workForm.station_code = this.bus_items[x].code
+                    this.workForm.station_name = this.bus_items[x].bus_name
+                }
+            }
+        },
+        selKv(item) {
+            console.log('切换电压等级', item)
+            loadBusItems(item).then(result => {
+                if(result.code === 200) {
+                    this.bus_items = result.data
+                    this.workForm.base_kv = item
+                }
+            })
+        },
+        kvItemData() {
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                return
+            }
+            loadVolItems(currentProject).then(result => {
+                console.log('result===', result)
+                if(result.code === 200) {
+                    this.vol_items = result.data
+                }
+            })
+        },
+        save() {
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                return
+            }
+            saveProjectParams(currentProject, this.workForm).then(result => {
+                if (result.code === 200) {
+                    this.submitResult = true
+                } else {
+                    this.submitResult = false
+                }
+                this.snackbarMsg = '操作成功'
+                this.snackbar = true
+            }).catch(err => {
+                this.submitResult = false
+                this.snackbar = true
+                this.snackbarMsg = err.message
+            })
         }
     }
 }

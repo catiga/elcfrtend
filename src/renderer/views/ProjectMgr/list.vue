@@ -121,6 +121,7 @@
                                             hide-details
                                     ></v-checkbox>
                                 </td>
+                                <td>{{ props.item.id }}</td>
                                 <td>{{ props.item.title }}</td>
                                 <td>{{ props.item.info }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
