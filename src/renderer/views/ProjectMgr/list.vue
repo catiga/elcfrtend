@@ -868,8 +868,8 @@
                             const moline = workbook.getWorksheet(6);//母线表
                             const acline = workbook.getWorksheet(8);//交流线表
                             const tw_transformer = workbook.getWorksheet(11);//两绕组变压器表
-                            const threew_transformer = workbook.getWorksheet(11);//三绕组变压器表
-                            const alternator = workbook.getWorksheet(12);//发电机表
+                            const threew_transformer = workbook.getWorksheet(12);//三绕组变压器表
+                            const alternator = workbook.getWorksheet(15);//发电机表
                             // 母线表
                             moline.eachRow(function (row, rowNumber) {
                                 // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
@@ -879,11 +879,11 @@
                                     const model = {
                                         proj_id: proj_id,
                                         code: row.values[1],
-                                        bus_name: row.values[2],
+                                        bus_name: row.values[2],//416字段
                                         phy_pos: row.values[3],
                                         zone_no: row.values[4],
-                                        ps_name: row.values[5],
-                                        base_kv: row.values[6],
+                                        ps_name: row.values[5],//416字段
+                                        base_kv: row.values[6],//416字段
                                         vmax_kv: row.values[7],
                                         vmin_kv: row.values[8],
                                         sc1_mva: row.values[9],
@@ -906,11 +906,12 @@
                                         proj_id: proj_id,
                                         l_name: row.values[6],
                                         j_name: row.values[7],
+                                        id_no: row.values[8],
                                         r1: row.values[12],
                                         x1: row.values[13],
-                                        b1_half: row.values[14],
+                                        b1_half: row.values[14]? row.values[14] * 2 : 0,
                                         rate_ka: row.values[19],
-                                        up_limit: row.values[20],
+                                        up_limit: row.values[20]? row.values[20] / 100 : 1,
                                         type: row.values[22],
                                         a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
                                     }
@@ -938,6 +939,7 @@
 
                             // 三晓表
                             threew_transformer.eachRow(function (row,rowNumber){
+                                console.log('data_threew_transformer.push(model):'+JSON.stringify(row.values[55]));
                                 if (rowNumber > 2) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
@@ -951,7 +953,7 @@
                                         up_limit: row.values[36],
                                         a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
                                     }
-
+                                    
                                     data_threew_transformer.push(model)
                                 }
                             })
@@ -1045,6 +1047,7 @@
                                 let proj_id = item.proj_id
                                 let l_name = item.l_name
                                 let j_name = item.j_name
+                                let id_no = item.id_no
                                 let r1 = item.r1
                                 let x1 = item.x1
                                 let b1_half = item.b1_half
@@ -1053,7 +1056,7 @@
                                 let type = item.type
                                 let a_time = item.a_time
 
-                                let sql = `INSERT INTO p_acline_info (proj_id, l_name, j_name, r1, x1, b1_half, rate_ka, up_limit, type, flag, a_time) VALUES (${proj_id}, '${l_name}', '${j_name}', '${r1}', '${x1}', '${b1_half}', '${rate_ka}', '${up_limit}', '${type}', 0, '${a_time}')`;
+                                let sql = `INSERT INTO p_acline_info (proj_id, l_name, j_name, id_no, r1, x1, b1_half, rate_ka, up_limit, type, flag, a_time) VALUES (${proj_id}, '${l_name}', '${j_name}', '${id_no}','${r1}', '${x1}', '${b1_half}', '${rate_ka}', '${up_limit}', '${type}', 0, '${a_time}')`;
 
                                 // 插入主表
                                 db.query(sql, function(err, values, fields) {
@@ -1185,8 +1188,11 @@
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     let model = {
                                         proj_id: proj_id,
-                                        id_name: row.values[2],
+                                        i_name: row.values[4],
+                                        j_name: row.values[5],
+                                        id_no: row.values[6],
                                         valid: row.values[3],
+                                        nt_type: row.values[25],
                                         a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
                                     }
 
@@ -1271,14 +1277,18 @@
                             
                             let p_id = data_acline_trend[0].proj_id
 
+
                             data_acline_trend.forEach(item => {
-                                console.log('item:'+JSON.stringify(item));
+
                                 let proj_id = item.proj_id
-                                let id_name = item.id_name
+                                let i_name = item.i_name
+                                let j_name = item.j_name
+                                let id_no = item.id_no
                                 let valid = item.valid
+                                let nt_type = item.nt_type
                                 let a_time = item.a_time
-                                let sql = `INSERT INTO p_acline_trend_info (proj_id, id_name, valid, flag, a_time) VALUES (${proj_id}, '${id_name}', ${valid}, 0, '${a_time}')`;
-                                console.log(sql);
+                                let sql = `INSERT INTO p_acline_trend_info (proj_id, i_name, j_name, id_no, valid, nt_type, flag, a_time) VALUES (${proj_id}, '${i_name}','${j_name}','${id_no}',${valid}, '${nt_type}', 0, '${a_time}')`;
+                                // console.log(sql);
                                 // 插入主表
                                 db.query(sql, function(err, values, fields) {
                                  })
@@ -1304,7 +1314,7 @@
                                 let a_time = item.a_time
 
                                 let sql = `INSERT INTO p_alternator_trend_info (proj_id, id_name, valid, v0, angle, qmax, qmin, pmax, pmin, flag, a_time) VALUES (${proj_id}, '${id_name}', '${valid}', '${v0}', '${angle}', '${qmax}', '${qmin}', '${pmax}', '${pmin}', 0, '${a_time}')`;
-                                console.log(sql);
+                                // console.log(sql);
                                 // 插入主表
                                 db.query(sql, function(err, values, fields) {
                                  })
@@ -1316,7 +1326,7 @@
                             let p_id = data_load_trend[0].proj_id
 
                             data_load_trend.forEach(item => {
-                                console.log('data_load_trend:'+JSON.stringify(item));                            
+                                // console.log('data_load_trend:'+JSON.stringify(item));                            
 
                                 let proj_id = item.proj_id
                                 let id_name = item.id_name
@@ -1325,7 +1335,7 @@
                                 let a_time = item.a_time
 
                                 let sql = `INSERT INTO p_load_trend_info (proj_id, id_name, pl, ql, flag, a_time) VALUES (${proj_id}, '${id_name}', '${pl}', '${ql}', 0, '${a_time}')`;
-                                console.log(sql);
+                                // console.log(sql);
 
                                 // 插入主表
                                 db.query(sql, function(err, values, fields) {
@@ -1385,7 +1395,7 @@
                             alternator_result.eachRow(function (row, rowNumber) {
                                 // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
                                 // 去掉两行表头
-                                if (rowNumber > 3) {
+                                if (rowNumber > 4) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     let model = {
                                         proj_id: proj_id,
@@ -1403,7 +1413,7 @@
 
                             // 两绕组变压器结果报表
                             tw_transformer_result.eachRow(function (row,rowNumber){
-                                if (rowNumber > 3) {
+                                if (rowNumber > 4) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -1418,9 +1428,9 @@
                                 }
                             })
 
-                            // 负荷表
+                            // 三晓组变压器表
                             threew_transformer_result.eachRow(function (row,rowNumber){
-                                if (rowNumber > 3) {
+                                if (rowNumber > 4) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -1520,7 +1530,7 @@
                             })
                         }
 
-                        if(data_threew_transformer_result.length > 0){//负荷表
+                        if(data_threew_transformer_result.length > 0){//三绕组变压器
                             
                             let p_id = data_threew_transformer_result[0].proj_id
 
