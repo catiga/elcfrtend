@@ -32,37 +32,50 @@ const systemMenus = [{
     click: function (item, focusedWindow) {
       focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/benchmark')
     }
-  }, {
+  }, 
+  {
     type: 'separator'
-  }, {
-    label: '母线',
+  }, 
+  {
+    label: '母线节点',
     click: function (item, focusedWindow) {
       focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/moline')
     }
-  }, {
+  }, 
+  {
     label: '交流线',
     click: function (item, focusedWindow) {
       focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/acline')
     }
-  }, {
-    label: '两绕组变压器',
-    click: function (item, focusedWindow) {
-      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/_2transformer')
-    }
-  }, {
-    label: '三绕组变压器',
-    click: function (item, focusedWindow) {
-      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/_3transformer')
-    }
-  }, {
+  }, 
+  // {
+  //   label: '两绕组变压器',
+  //   click: function (item, focusedWindow) {
+  //     focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/_2transformer')
+  //   }
+  // }, 
+  // {
+  //   label: '三绕组变压器',
+  //   click: function (item, focusedWindow) {
+  //     focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/_3transformer')
+  //   }
+  // }, 
+  {
     label: '发电机',
     click: function (item, focusedWindow) {
       focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/dynamo')
     }
-  }, {
+  }, 
+  {
     label: '负荷',
     click: function (item, focusedWindow) {
       focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/load')
+    }
+  },
+  {
+    label: '变电站设备参数',
+    click: function (item, focusedWindow) {
+      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/devparams')
     }
   },
   {

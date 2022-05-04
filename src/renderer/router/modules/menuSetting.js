@@ -66,6 +66,12 @@ const reportRouter = {
           name: "station_load",
           meta: { title: "负荷" },
         },
+        {
+          path: "devparams",
+          component: () => import("@/views/MenuSetting/elemdata/child/devparams"),
+          name: "station_devparams",
+          meta: { title: "负荷" },
+        }
       ],
     },
     {
