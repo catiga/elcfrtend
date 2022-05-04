@@ -28,55 +28,31 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
+                    <v-btn color="info" dark class="mb-2" @click="handleCreate">新建</v-btn>
                     <!--
                     <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
                     -->
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
-                            v-model="selected"
-                            :headers="headers"
-                            :items="desserts"
-                            :total-items="totalDesserts"
-                            :pagination.sync="pagination"
-                            :loading="loading"
-                            select-all
-                            item-key="id"
-                            class="elevation-1"
+                        :headers="headers"
+                        :items="desserts"
+                        class="elevation-1"
                     >
-                        <template v-slot:headers="props">
-                            <tr>
-                                <th
-                                        v-for="(header, index) in props.headers"
-                                        :key="header.text"
-                                        :class="['column sortable',
-                                            pagination.descending ? 'desc' : 'asc',
-                                            header.value === pagination.sortBy ? 'active' : '',
-                                            index === props.headers.length -1 ? 'text-xs-right' : 'text-xs-left'
-                                            ]"
-                                        @click="header.sortable && changeSort(header.value)"
-                                >
-                                    <v-icon small v-if="header.sortable">arrow_upward</v-icon>
-                                    {{ header.text }}
-                                </th>
-                            </tr>
-                        </template>
                         <template v-slot:items="props">
-                            <tr :active="props.selected" @click="props.selected = !props.selected">
-                                <td>
-                                    <v-text-field
-                                    v-model="props.item.id_name"
-                                    single-line
-                                    hide-details
-                                    @blur="saveValue(props.item)"
-                                    ></v-text-field>
-                                </td>
-                            </tr>
-                        </template>
-                        <template v-slot:no-data>
-                            <v-alert :value="showNoData" color="error" icon="warning">
-                                {{noDataMessage ? noDataMessage : 'Sorry, nothing to display here :('}}
-                            </v-alert>
+                        <td>{{ props.item.ps_name }}</td>
+                        <td class="text-xs-right">{{ props.item.ps_name }}</td>
+                        <td class="text-xs-right">{{ props.item.bus_name }}</td>
+                        <td class="text-xs-right">{{ props.item.zone_no }}</td>
+                        <td class="text-xs-right">{{ props.item.base_kv }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="justify-center layout px-0">
+                            <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
+                            <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
+                        </td>
                         </template>
                     </v-data-table>
                 </v-card-text>
@@ -109,6 +85,79 @@
                 Close
             </v-btn>
         </v-snackbar>
+
+        <!-- 新增编辑 -->
+        <v-dialog v-model="dialogEdit" max-width="600px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-form
+                        wrap
+                        ref="form"
+                        v-model="valid"
+                        lazy-validation
+                    >
+                        <v-container grid-list-md>
+                            <!-- <v-layout wrap> -->
+                                <v-flex xs12>
+                                    <v-text-field label="发电机节点*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="有功MW*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="无功MVAR*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="无功上限MVAR*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="无功下限MVAR*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="有功上限MW*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="有功下限MW*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-select
+                                        :items="items"
+                                        item-text="lable"
+                                        item-value="id"
+                                        label="状态*"
+                                        v-model="addForm.info"
+                                        :rules="[rules.required]"
+                                    ></v-select>
+                                </v-flex>
+                            <!-- </v-layout> -->
+                        </v-container>
+                        <small>*代表必填信息</small>
+                    </v-form>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat @click="handleSaveForm">保存</v-btn>
+                    <v-btn color="blue darken-1" flat @click="handleCancelFomr">取消</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-layout>
 </template>
 
@@ -136,7 +185,15 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '发电机名称', value: 'id_name', align: 'left', sortable: true},
+                    {text: '发电机节点', value: 'ps_name', align: 'left', sortable: false},
+                    {text: '有功MW', value: 'bus_name', align: 'left', sortable: false},
+                    {text: '无功MVAR', value: 'zone_no', align: 'left', sortable: false},
+                    {text: '无功上限MVAR', value: 'base_kv', align: 'left', sortable: false},
+                    {text: '无功下限MVAR', value: 'id', align: 'left', sortable: false},
+                    {text: '有功上限MW', value: 'id', align: 'left', sortable: false},
+                    {text: '有功下限MW', value: 'id', align: 'left', sortable: false},
+                    {text: '状态', value: 'id', align: 'left', sortable: false},
+                    { text: '操作', sortable: false }
                 ],
                 noDataMessage: '',
                 search: {
@@ -191,6 +248,13 @@
                 // 导出路径
                 userDataPath: '',
                 exportPath: '',
+                // 新增编辑
+                dialogEdit: false,
+                editedIndex: -1, 
+                addForm: {
+
+                },
+                items: [{lable:'Foo', id:1},{lable:'Foo1', id:2},{lable:'Foo2', id:3},{lable:'Foo3', id:4}]
             }
         },
         computed: {
@@ -415,6 +479,27 @@
                     }
                 }
             },
+
+            // 编辑
+            handleEditItem(item) {
+
+            },
+            // 删除
+            handleDeleteItem(item) {
+                this.dialogDelete = true
+            },
+            // 新建弹窗
+            handleCreate() {
+                this.dialogEdit = true
+            },
+            // 添加表单
+            handleSaveForm() {
+                this.dialogEdit = false
+            },
+            // 取消表单
+            handleCancelFomr() {
+                this.dialogEdit = false
+            }
         }
     }
 </script>

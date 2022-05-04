@@ -31,25 +31,25 @@ export default {
           name: "交流线",
           router: "/menuSetting/ms/elemdata/station/acline",
         },
+        // {
+          //   id: 4,
+        //   name: "三绕组变压器",
+        //   router: "/menuSetting/ms/elemdata/station/_3transformer",
+        // },
         {
           id: 3,
-          name: "两绕组变压器",
-          router: "/menuSetting/ms/elemdata/station/_2transformer",
-        },
-        {
-          id: 4,
-          name: "三绕组变压器",
-          router: "/menuSetting/ms/elemdata/station/_3transformer",
-        },
-        {
-          id: 5,
           name: "发电机",
           router: "/menuSetting/ms/elemdata/station/dynamo",
         },
         {
-          id: 6,
+          id: 4,
           name: "负荷",
           router: "/menuSetting/ms/elemdata/station/load",
+        },
+        {
+          id: 5,
+          name: "变电站设备参数",
+          router: "/menuSetting/ms/elemdata/station/devparams",
         },
       ],
     };

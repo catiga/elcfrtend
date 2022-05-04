@@ -51,86 +51,32 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
+                    <v-btn color="info" dark class="mb-2" @click="handleCreate">新建</v-btn>
                     <!--
                     <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
                     -->
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
-                            v-model="selected"
-                            :headers="headers"
-                            :items="desserts"
-                            :total-items="totalDesserts"
-                            :pagination.sync="pagination"
-                            :loading="loading"
-                            select-all
-                            item-key="id"
-                            class="elevation-1"
+                        :headers="headers"
+                        :items="desserts"
+                        class="elevation-1"
                     >
-                        <template v-slot:headers="props">
-                            <tr>
-                                <th
-                                        v-for="(header, index) in props.headers"
-                                        :key="header.text"
-                                        :class="['column sortable',
-                                            pagination.descending ? 'desc' : 'asc',
-                                            header.value === pagination.sortBy ? 'active' : '',
-                                            index === props.headers.length -1 ? 'text-xs-right' : 'text-xs-left'
-                                            ]"
-                                        @click="header.sortable && changeSort(header.value)"
-                                >
-                                    <v-icon small v-if="header.sortable">arrow_upward</v-icon>
-                                    {{ header.text }}
-                                </th>
-                            </tr>
-                        </template>
                         <template v-slot:items="props">
-                            <tr :active="props.selected" @click="props.selected = !props.selected">
-                                <td>
-                                    <v-text-field
-                                    v-model="props.item.ps_name"
-                                    single-line
-                                    hide-details
-                                    @blur="saveValue(props.item)"
-                                    ></v-text-field>
-                                </td>
-                                <td>
-                                    <v-text-field
-                                    v-model="props.item.bus_name"
-                                    single-line
-                                    hide-details
-                                    @blur="saveValue(props.item)"
-                                    ></v-text-field>
-                                </td>
-                                <td>
-                                    <v-text-field
-                                    v-model="props.item.zone_no"
-                                    single-line
-                                    hide-details
-                                    @blur="saveValue(props.item)"
-                                    ></v-text-field>
-                                </td>
-                                <td>
-                                    <v-text-field
-                                    v-model="props.item.base_kv"
-                                    single-line
-                                    hide-details
-                                    @blur="saveValue(props.item)"
-                                    ></v-text-field>
-                                </td>
-                                <td width="50">
-                                    <v-checkbox
-                                            :input-value="props.selected"
-                                            primary
-                                            hide-details
-                                    ></v-checkbox>
-                                </td>
-                            </tr>
-                        </template>
-                        <template v-slot:no-data>
-                            <v-alert :value="showNoData" color="error" icon="warning">
-                                {{noDataMessage ? noDataMessage : 'Sorry, nothing to display here :('}}
-                            </v-alert>
+                        <td>{{ props.item.ps_name }}</td>
+                        <td class="text-xs-right">{{ props.item.bus_name }}</td>
+                        <td class="text-xs-right">{{ props.item.zone_no }}</td>
+                        <td class="text-xs-right">{{ props.item.base_kv }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="justify-center layout px-0">
+                            <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
+                            <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
+                        </td>
                         </template>
                     </v-data-table>
                 </v-card-text>
@@ -163,6 +109,79 @@
                 Close
             </v-btn>
         </v-snackbar>
+
+        <!-- 新增编辑 -->
+        <v-dialog v-model="dialogEdit" max-width="600px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-form
+                        wrap
+                        ref="form"
+                        v-model="valid"
+                        lazy-validation
+                    >
+                        <v-container grid-list-md>
+                            <!-- <v-layout wrap> -->
+                                <v-flex xs12>
+                                    <v-text-field label="支路编号*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="元件名称*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="首端节点*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="尾端节点*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="元件类型*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-select
+                                        :items="items"
+                                        item-text="lable"
+                                        item-value="id"
+                                        label="投运状态*"
+                                        v-model="addForm.info"
+                                        :rules="[rules.required]"
+                                    ></v-select>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="失效率(次/年) *"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="修复时间(h)*"
+                                        :rules="[rules.required]"
+                                        v-model="addForm.title"></v-text-field>
+                                </v-flex>
+                            <!-- </v-layout> -->
+                        </v-container>
+                        <small>*代表必填信息</small>
+                    </v-form>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat @click="handleSaveForm">保存</v-btn>
+                    <v-btn color="blue darken-1" flat @click="handleCancelFomr">取消</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-layout>
 </template>
 
@@ -190,12 +209,19 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '厂站名称', value: 'ps_name', align: 'left', sortable: true},
-                    {text: '母线名称', value: 'bus_name', align: 'left', sortable: true},
-                    {text: '区域编号', value: 'zone_no', align: 'left', sortable: true},
-                    {text: 'base_kv', value: 'base_kv', align: 'left', sortable: true},
-                    {text: '有效位', value: 'id', align: 'right', sortable: false},
+                    {text: '节点名称', value: 'ps_name', align: 'left', sortable: false},
+                    {text: '属性', value: 'bus_name', align: 'left', sortable: false},
+                    {text: '电导p.u.', value: 'zone_no', align: 'left', sortable: false},
+                    {text: '电纳p.u.', value: 'base_kv', align: 'left', sortable: false},
+                    {text: '电压基准kV', value: 'id', align: 'left', sortable: false},
+                    {text: '电压幅值p.u.', value: 'id', align: 'left', sortable: false},
+                    {text: '电压相角de', value: 'id', align: 'left', sortable: false},
+                    {text: '电压上限p.u.', value: 'id', align: 'left', sortable: false},
+                    {text: '电压下限p.u.', value: 'id', align: 'left', sortable: false},
+                    {text: '分区', value: 'id', align: 'left', sortable: false},
+                    { text: '操作', sortable: false }
                 ],
+
                 noDataMessage: '',
                 search: {
                     ps_name: '',
@@ -250,9 +276,19 @@
                 // 导出路径
                 userDataPath: '',
                 exportPath: '',
+                // 新增编辑
+                dialogEdit: false,
+                editedIndex: -1, 
+                addForm: {
+
+                },
+                items: [{lable:'Foo', id:1},{lable:'Foo1', id:2},{lable:'Foo2', id:3},{lable:'Foo3', id:4}]
             }
         },
         computed: {
+            formTitle() {
+                return this.editedIndex === -1 ? '新建工程' : '编辑工程'
+            },
         },
         watch: {
             pagination: {
@@ -474,17 +510,44 @@
                     }
                 }
             },
+
+            // 编辑
+            handleEditItem(item) {
+
+            },
+            // 删除
+            handleDeleteItem(item) {
+                this.dialogDelete = true
+            },
+            // 新建弹窗
+            handleCreate() {
+                this.dialogEdit = true
+            },
+            // 添加表单
+            handleSaveForm() {
+                this.dialogEdit = false
+            },
+            // 取消表单
+            handleCancelFomr() {
+                this.dialogEdit = false
+            }
         }
     }
 </script>
 
-<style scoped>
-    .v-sheet--offset {
-        top: -15px;
-        left: 15px;
-        position: relative;
-        align-items: center;
-        justify-content: center;
-        display: flex;
+<style scoped lang="scss">
+.elevation-1 {
+    background: blue;
+    ::v-deep table.v-table thead th{
+        padding: 0 6px !important;
     }
+}
+.v-sheet--offset {
+    top: -15px;
+    left: 15px;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
 </style>
