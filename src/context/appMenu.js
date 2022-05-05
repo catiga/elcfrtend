@@ -78,24 +78,26 @@ const systemMenus = [{
       focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/station/devparams')
     }
   },
-  {
-    type: 'separator'
-  },
-  {
-    label: '一次主接线拓扑',
-    click: function (item, focusedWindow) {
-      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/topology')
-    }
-  },
-  {
-    type: 'separator'
-  },
-  {
-    label: '元件可靠线参数',
-    click: function (item, focusedWindow) {
-      focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/relaible')
-    }
-  }]
+
+  // {
+  //   type: 'separator'
+  // },
+  // {
+  //   label: '一次主接线拓扑',
+  //   click: function (item, focusedWindow) {
+  //     focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/topology')
+  //   }
+  // },
+  // {
+  //   type: 'separator'
+  // },
+  // {
+  //   label: '元件可靠线参数',
+  //   click: function (item, focusedWindow) {
+  //     focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/elemdata/relaible')
+  //   }
+  // }
+]
 },
 {
   label: '工具',
