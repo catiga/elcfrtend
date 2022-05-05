@@ -12,95 +12,98 @@ const reportRouter = {
   children: [
     {
       path: "ms/elemdata/benchmark",
-      component: () => import("@/views/MenuSetting/elemdata/benchmark"),
+      component: require("@/views/MenuSetting/elemdata/benchmark").default,
       name: "ms_elemdata_benchmark",
       meta: { title: "基准值修正", noCache: true },
     },
     {
       path: "ms/elemdata/station",
-      component: () => import("@/views/MenuSetting/elemdata/station"),
+      component: require("@/views/MenuSetting/elemdata/station").default,
       name: "ms_elemdata_station",
       meta: { title: "厂站数据修正", noCache: true },
       children: [
         {
           path: "stat",
-          component: () => import("@/views/MenuSetting/elemdata/child/stat"),
+          component: require("@/views/MenuSetting/elemdata/child/stat").default,
           name: "station_stat",
           meta: { title: "厂站" },
         },
         {
           path: "moline",
-          component: () => import("@/views/MenuSetting/elemdata/child/moline"),
+          component: require("@/views/MenuSetting/elemdata/child/moline").default,
           name: "station_moline",
           meta: { title: "母线" },
         },
         {
           path: "acline",
-          component: () => import("@/views/MenuSetting/elemdata/child/acline"),
+          component: require("@/views/MenuSetting/elemdata/child/acline")
+            .default,
           name: "station_acline",
           meta: { title: "交流线" },
         },
         {
           path: "_2transformer",
-          component: () =>
-            import("@/views/MenuSetting/elemdata/child/_2transformer"),
+          component: require("@/views/MenuSetting/elemdata/child/_2transformer")
+            .default,
           name: "station__2transformer",
           meta: { title: "两绕组变压器" },
         },
         {
           path: "_3transformer",
-          component: () =>
-            import("@/views/MenuSetting/elemdata/child/_3transformer"),
+          component: require("@/views/MenuSetting/elemdata/child/_3transformer")
+            .default,
           name: "station__3transformer",
           meta: { title: "三绕组变压器" },
         },
         {
           path: "dynamo",
-          component: () => import("@/views/MenuSetting/elemdata/child/dynamo"),
+          component: require("@/views/MenuSetting/elemdata/child/dynamo")
+            .default,
           name: "station_dynamo",
           meta: { title: "发电机" },
         },
         {
           path: "load",
-          component: () => import("@/views/MenuSetting/elemdata/child/load"),
+          component: require("@/views/MenuSetting/elemdata/child/load").default,
           name: "station_load",
           meta: { title: "负荷" },
         },
         {
           path: "devparams",
-          component: () => import("@/views/MenuSetting/elemdata/child/devparams"),
+          component: require("@/views/MenuSetting/elemdata/child/devparams")
+            .default,
           name: "station_devparams",
           meta: { title: "负荷" },
-        }
+        },
       ],
     },
     {
       path: "ms/elemdata/topology",
-      component: () => import("@/views/MenuSetting/elemdata/child/topology"),
+      component: require("@/views/MenuSetting/elemdata/child/topology").default,
       name: "station_topology",
       meta: { title: "一次主接线拓扑" },
     },
     {
       path: "ms/elemdata/relaible",
-      component: () => import("@/views/MenuSetting/elemdata/child/relaible"),
+      component: require("@/views/MenuSetting/elemdata/child/relaible").default,
       name: "station_relaible",
       meta: { title: "元件可靠线参数" },
     },
     {
       path: "ms/tooldata/work",
-      component: () => import("@/views/MenuSetting/tooldata/work"),
+      component: require("@/views/MenuSetting/tooldata/work").default,
       name: "ms_tooldata_work",
       meta: { title: "检修作业定义", noCache: true },
     },
     {
       path: "ms/tooldata/grid",
-      component: () => import("@/views/MenuSetting/tooldata/grid"),
+      component: require("@/views/MenuSetting/tooldata/grid").default,
       name: "ms_tooldata_grid",
       meta: { title: "检修作业定义", noCache: true },
     },
     {
       path: "ms/userdata/user",
-      component: () => import("@/views/MenuSetting/userdata/user"),
+      component: require("@/views/MenuSetting/userdata/user").default,
       name: "ms_tooldata_grid",
       meta: { title: "用户信息管理", noCache: true },
     },

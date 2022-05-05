@@ -12,37 +12,37 @@ const reportRouter = {
   children: [
     {
       path: "p/list",
-      component: () => import("@/views/ProjectMgr/list"),
+      component: require("@/views/ProjectMgr/list").default,
       name: "p_list",
       meta: { title: "工程列表", noCache: true },
     },
     {
       path: "loadflow/list",
-      component: () => import("@/views/ProjectMgr/loadflow/list"),
+      component: require("@/views/ProjectMgr/loadflow/list").default,
       name: "loadflow_list",
       meta: { title: "潮流计算", noCache: true },
     },
     {
       path: "loadflow/station",
-      component: () => import("@/views/ProjectMgr/station"),
+      component: require("@/views/ProjectMgr/station").default,
       name: "loadflow_station",
       meta: { title: "站外进线拓扑结构", noCache: true },
     },
     {
       path: "loadflow/risk",
-      component: () => import("@/views/ProjectMgr/risk"),
+      component: require("@/views/ProjectMgr/risk").default,
       name: "loadflow_risk",
       meta: { title: "风险评估", noCache: true },
     },
     {
       path: "loadflow/weak",
-      component: () => import("@/views/ProjectMgr/weak"),
+      component: require("@/views/ProjectMgr/weak").default,
       name: "loadflow_weak",
       meta: { title: "风险评估", noCache: true },
     },
     {
       path: "loadflow/overhaul",
-      component: () => import("@/views/ProjectMgr/overhaul"),
+      component: require("@/views/ProjectMgr/overhaul").default,
       name: "loadflow_overhaul",
       meta: { title: "检修方案智能决策", noCache: true },
     },
