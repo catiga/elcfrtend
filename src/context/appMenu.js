@@ -4,9 +4,7 @@ const { Menu, BrowserWindow, dialog, app, remote, shell, ipcRenderer } = require
 let processMainWindow = global.sharedObject.mainWindow;
 
 const sendMenuEvent = async(url) => {
-  if(processMainWindow) {
     processMainWindow.webContents.send('change-view', url);
-  }
 }
 
 const url =
@@ -18,7 +16,10 @@ const systemMenus = [{
   submenu: [{
     label: '工程管理',
     click: async (item, focusedWindow) => {
-      focusedWindow.loadURL(`${url}/#/projectMgr/p/list`);
+      //focusedWindow.loadURL(`${url}/#/projectMgr/p/list`);
+      //sendMenuEvent({route: '/about'})
+      console.log('准备发送消息')
+      focusedWindow.webContents.send('change-view', {route: '/projectMgr/p/list'});
     }
   }, {
     type: 'separator'

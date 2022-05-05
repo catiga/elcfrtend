@@ -30,3 +30,15 @@ new Vue({
 // if (process.env.NODE_ENV === 'development') {
 //     devtools.connect('localhost', '9080')
 // }
+
+
+if (window && window.process && window.process.type === 'renderer') {
+  const { ipcRenderer } = require('electron')
+
+  ipcRenderer.on('change-view', (event, data) => {
+    console.log('这里收到消息了', data)
+    if (data.route) {
+      router.push(data.route)
+    }
+  })
+}
