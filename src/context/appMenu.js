@@ -20,7 +20,7 @@ const systemMenus = [{
       //sendMenuEvent({route: '/about'})
       console.log('准备发送消息')
       focusedWindow.webContents.send('change-view', {route: '/projectMgr/p/list'});
-    }
+    } 
   }, {
     type: 'separator'
   }, {
@@ -35,7 +35,8 @@ const systemMenus = [{
   submenu: [{
     label: '基准值修正',
     click: function (item, focusedWindow) {
-      focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/benchmark`);
+      //focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/benchmark`);
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/elemdata/benchmark'});
     }
   }, 
   {
@@ -45,13 +46,15 @@ const systemMenus = [{
     label: '母线节点',
     click: function (item, focusedWindow) {
       console.log("~~~~~~~~~~~~~~我是 log", process.env.NODE_ENV, __dirname, url);
-      focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/moline`);
+      //focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/moline`);
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/elemdata/station/moline'});
     }
   }, 
   {
     label: '交流线',
     click: function (item, focusedWindow) {
-      focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/acline`);
+      //focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/acline`);
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/elemdata/station/acline'});
     }
   }, 
   // {
@@ -69,19 +72,22 @@ const systemMenus = [{
   {
     label: '发电机',
     click: function (item, focusedWindow) {
-      focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/dynamo`);
+      //focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/dynamo`);
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/elemdata/station/dynamo'});
     }
   }, 
   {
     label: '负荷',
     click: function (item, focusedWindow) {
-      focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/load`);
+      //focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/load`);
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/elemdata/station/load'});
     }
   },
   {
     label: '变电站设备参数',
     click: function (item, focusedWindow) {
-      focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/devparams`)
+      // focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/devparams`)
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/elemdata/station/devparams'});
     }
   },
 
@@ -119,7 +125,8 @@ const systemMenus = [{
   {
     label: '检修作业定义',
     click: function (item, focusedWindow) {
-      focusedWindow.loadURL(`${url}/#/menuSetting/ms/tooldata/work`);
+      // focusedWindow.loadURL(`${url}/#/menuSetting/ms/tooldata/work`);
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/tooldata/work'});
     }
   }, {
     type: 'separator'
@@ -172,7 +179,8 @@ const systemMenus = [{
   submenu: [{
     label: '用户信息管理',
     click: function (item, focusedWindow) {
-      focusedWindow.loadURL(`${url}/#/menuSetting/ms/userdata/user`);
+      // focusedWindow.loadURL(`${url}/#/menuSetting/ms/userdata/user`);
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/userdata/user'});
     }
   }]
 },
