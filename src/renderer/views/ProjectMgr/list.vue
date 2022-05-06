@@ -886,7 +886,7 @@
                             moline.eachRow(function (row, rowNumber) {
                                 // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
                                 // 去掉两行表头
-                                if (rowNumber > 2) {
+                                if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -912,7 +912,7 @@
 
                             // 交流线表
                             acline.eachRow(function (row,rowNumber){
-                                if (rowNumber > 2) {
+                                if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -934,7 +934,7 @@
 
                             // 两晓表
                             tw_transformer.eachRow(function (row,rowNumber){
-                                if (rowNumber > 2) {
+                                if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -952,7 +952,7 @@
                             // 三晓表
                             threew_transformer.eachRow(function (row,rowNumber){
                                 console.log('data_threew_transformer.push(model):'+JSON.stringify(row.values[55]));
-                                if (rowNumber > 2) {
+                                if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -972,7 +972,7 @@
 
                             // 发电机表
                             alternator.eachRow(function (row,rowNumber){
-                                if (rowNumber > 2) {
+                                if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -1196,7 +1196,7 @@
                             acline_trend.eachRow(function (row, rowNumber) {
                                 // console.log('Row ' + rowNumber + ' = ' + JSON.stringify(row.values))
                                 // 去掉两行表头
-                                if (rowNumber > 2) {
+                                if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     let model = {
                                         proj_id: proj_id,
@@ -1214,7 +1214,7 @@
 
                             // 发电机表
                             alternator_trend.eachRow(function (row,rowNumber){
-                                if (rowNumber > 2) {
+                                if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -1235,7 +1235,7 @@
 
                             // 负荷表
                             load_trend.eachRow(function (row,rowNumber){
-                                if (rowNumber > 2) {
+                                if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     const model = {
                                         proj_id: proj_id,
@@ -1605,6 +1605,10 @@
                     // console.log('-----回调-----');
                     // console.log(result);
                     // console.log('是否取消:'+result.canceled+'文件路径:'+result.filePaths);
+
+                    if(result.length == 0){
+                        return;
+                    }
                     if(!result.canceled){
                         // 读取文件
                         const workbook = new Excel.Workbook()
@@ -1625,7 +1629,7 @@
                                         name += names[i].text 
                                     }
                                 }
-                                // 去掉两行表头
+                                // 去掉1行表头
                                 if (rowNumber > 1) {
                                     // 重新组织数据，excel无论单元格还是行都是从1开始的
                                     let model = {
