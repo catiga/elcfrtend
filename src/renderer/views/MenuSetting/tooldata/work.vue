@@ -147,7 +147,7 @@ export default {
         }
         loadProjectParams(currentProject).then(result => {
             console.log(result)
-            if(result.code === 200 && result.data) {
+            if(result.code === 200 && result.data && result.data.length>0) {
                 this.workForm.name = result.data[0]['name']
                 this.workForm.station_code = result.data[0]['station_code']
                 this.workForm.station_name = result.data[0]['station_name']
