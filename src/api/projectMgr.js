@@ -377,3 +377,22 @@ export function countForStat(whereAttrs) {
     })
 }
 
+export function finishProjectUpload(whereAttrs) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `update ${Table} set is_import=1 where id=${whereAttrs.id}`
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
