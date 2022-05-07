@@ -65,7 +65,7 @@
                         <!-- 左右多选下拉框 -->
                         <div class="row-flex" style="margin: 20px 0 0 0;">
                             <select id="sel_all_area" multiple="multiple" class="multiple-select" v-model="parentValue">
-                                <option v-for="(item, index) in allParentList" :key="index" :value="item.id + '-' + index ">{{item.value}}</option>
+                                <option v-for="(item, index) in projBranchList" :key="index" :value="item.id + '-' + index ">{{item.value}}</option>
                             </select>
                             <div class="multiple-center">
                                 <v-btn small color="success" class="white--text" @click="handleMultipleAdd">
@@ -94,16 +94,20 @@
                             ></v-select>
                             <v-btn color="primary">新建</v-btn>
                         </div>
+
+                        
                         <div class="row-flex row-flex-start">
                             <div class="row-title">线路对接方案</div>
                             <select id="sel_all_area" multiple="multiple" class="multiple-select" v-model="linesValue">
-                                <option v-for="(item, index) in linesList" :key="index" :value="id">{{item.value}}</option>
+                                <option v-for="(item, index) in linesList" :key="index" :value="item.id">{{item.value}}</option>
                             </select>
                             <div class="multiple-center">
                                 <v-btn small color="success" class="white--text">添加</v-btn>
                                 <v-btn small color="blue-grey" class="white--text">删除</v-btn>
                             </div>
                         </div>
+
+                        
                         <div class="row-flex btn-group">
                             <v-dialog
                                 v-model="resultDialog"
@@ -157,6 +161,10 @@
 </template>
 
 <script>
+import {
+    loadBranchInfo
+} from '../../../../api/compute_station'
+import {app, remote, shell} from 'electron'
 export default {
     data() {
         return {
@@ -177,7 +185,8 @@ export default {
                 {label: 'Item 2', id: 2},
                 {label: 'Item 3', id: 3},
             ],
-            allParentList: [
+            //检修一次性设备列表
+            projBranchList: [
                 {id: 1, value: '北京'},
                 {id: 2, value: '上海'},
                 {id: 3, value: '深圳'},
@@ -193,7 +202,29 @@ export default {
             linesValue: []
         }
     },
+    mounted() {
+        this.loadProjBranchList()
+    },
     methods: {
+        loadProjBranchList() {
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            loadBranchInfo(currentProject.id).then(result => {
+                if(result.code === 200) {
+                    let tmpData = []
+                    for(let x in result.data) {
+                        let tmp = result.data[x]
+                        tmpData.push({id:tmp.id, value:tmp.name})
+                    }
+                    this.projBranchList = tmpData
+                }
+            })
+        },
         handleMultipleAdd() {
             if (this.parentValue.length === 0) return;
             let checkedIndexArr = this.parentValue.map(v => {
@@ -201,7 +232,7 @@ export default {
             })
             let checkedItem = ''
             checkedIndexArr.forEach((v) => {
-                checkedItem = this.allParentList.splice(v, 1)
+                checkedItem = this.projBranchList.splice(v, 1)
                 checkedItem[0].parentIndex = v
                 this.todoChildList.push(checkedItem[0])
             })
@@ -215,7 +246,7 @@ export default {
             let checkedItem = ''
             checkedIndexArr.forEach((v) => {
                 checkedItem = this.todoChildList.splice(v.split('|')[0], 1)
-                this.allParentList.splice(v.split('|')[1], 0, checkedItem[0])
+                this.projBranchList.splice(v.split('|')[1], 0, checkedItem[0])
             })
             this.childValue = []
         }

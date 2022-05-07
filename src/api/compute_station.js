@@ -97,7 +97,6 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
                     sql = sql + ` order by ${pagination.sortBy} ${pagination.descending?'desc':'asc'}`
                 }
                 sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-                console.log(sql)
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200,
@@ -376,10 +375,10 @@ export function countForStat(whereAttrs) {
     })
 }
 
-export function finishProjectUpload(whereAttrs) {
+export function loadBranchInfo(proj_id) {
     return new Promise((resolve, reject) => {
         try {
-            let sql = `update ${Table} set is_import=1 where id=${whereAttrs.id}`
+            let sql = `select * from p_component_branch_info where proj_id=${proj_id}`
             db.query(sql, function(err, values, fields) {
                 resolve({
                     code: 200,
