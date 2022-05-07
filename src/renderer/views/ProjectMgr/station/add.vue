@@ -79,7 +79,8 @@
                                 <option v-for="(item, index) in todoChildList" :key="index" :value="item.id + '-' + index + '|' + item.parentIndex">{{item.value}}</option>
                             </select>
                         </div>
-                        <v-radio-group label="重构方法选择" v-model="workForm.radio" row>
+
+                        <!-- <v-radio-group label="重构方法选择" v-model="workForm.radio" row>
                             <v-radio label="手动" value="0" ></v-radio>
                             <v-radio label="自动" value="1" ></v-radio>
                         </v-radio-group>
@@ -105,51 +106,116 @@
                                 <v-btn small color="success" class="white--text">添加</v-btn>
                                 <v-btn small color="blue-grey" class="white--text">删除</v-btn>
                             </div>
+                        </div> -->
+
+                        <!-- new -->
+                        <div class="bottom-wrapper">
+                            <div class="bottom-title">站内外对接节点</div>
+                            <div class="bottom-wrapper-inner">
+                                <v-card class="bottom-wrapper-left">
+                                    <div class="table-header">
+                                        <v-card-title><h4>序号</h4></v-card-title>
+                                        <v-card-title><h4>变电站节点编号</h4></v-card-title>
+                                        <v-card-title><h4>站外母线名称</h4></v-card-title>
+                                    </div>
+                                    <div class="table-row" v-for="(item,index) in tableFormList" :key="index">
+                                        <div class="order">{{index + 1}}</div>
+                                        <div class="select">
+                                            <v-select
+                                                v-model="item.select"
+                                                :items="selectItems"
+                                                item-text="label"
+                                                item-value="id"
+                                                label="检修类型"
+                                            ></v-select>
+                                        </div>
+                                        <div class="select">
+                                            <v-select
+                                                v-model="item.select1"
+                                                :items="selectItems"
+                                                item-text="label"
+                                                item-value="id"
+                                                label="检修类型"
+                                            ></v-select>
+                                        </div>
+                                    </div>
+                                </v-card>
+                                <div class="group-button">
+                                    <v-btn small color="success" class="white--text" @click="handleAddNew">新增行</v-btn>
+                                    <v-btn small color="blue-grey" class="white--text" @click="handleDelete">删除行</v-btn>
+                                </div>
+                            </div>
+                            <!-- 按钮 -->
+                            <div class="bottom-wrapper-button">
+                                <v-btn color="primary" small class="white--text">开始重构</v-btn>
+
+                                <v-dialog
+                                    v-model="resultDialog"
+                                    persistent
+                                    max-width="400"
+                                >
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn v-bind="attrs" v-on="on" color="primary" small class="white--text">结果预览</v-btn>
+                                    </template>
+                                    <v-card>
+                                        <v-card-title class="text-h3">重构方案结果预览</v-card-title>
+                                        <v-card-text>
+                                            <v-form
+                                                ref="form"
+                                                lazy-validation
+                                                class="pd-8"
+                                            >
+                                                <v-select
+                                                    v-model="workForm.select"
+                                                    :items="selectItems"
+                                                    item-text="label"
+                                                    item-value="id"
+                                                    label="方案名称"
+                                                    required
+                                                ></v-select>
+                                                <v-card>
+                                                    <v-card-title><h4>站外节点对接</h4></v-card-title>
+                                                    <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
+                                                        <v-tab
+                                                            v-for="n in 2"
+                                                            :key="n"
+                                                        >
+                                                            Item {{ n }}
+                                                        </v-tab>
+                                                        <v-tab-item
+                                                            v-for="n in 2"
+                                                            :key="n"
+                                                        >
+                                                            <v-list dense>
+                                                                <v-list-tile>
+                                                                    <v-list-tile-content>方案1</v-list-tile-content>
+                                                                    <v-list-tile-content>方案2</v-list-tile-content>
+                                                                </v-list-tile>
+                                                                <v-list-tile>
+                                                                    <v-list-tile-content>方案3</v-list-tile-content>
+                                                                </v-list-tile>
+                                                            </v-list>
+                                                        </v-tab-item>
+                                                    </v-tabs>
+                                                    
+                                                </v-card>
+                                            </v-form>
+                                        </v-card-text>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn text @click="resultDialog = false">取消</v-btn>
+                                            <v-btn text @click="resultDialog = false" color="success">保存</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+
+                                <v-btn color="primary" small class="white--text">重置方案</v-btn>
+                            </div>
                         </div>
 
                         
                         <div class="row-flex btn-group">
-                            <v-dialog
-                                v-model="resultDialog"
-                                persistent
-                                max-width="400"
-                            >
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn v-bind="attrs" v-on="on" small color="primary" class="white--text">结果输出</v-btn>
-                                </template>
-                                <v-card>
-                                    <v-card-title class="text-h3">重构方案拓扑检查</v-card-title>
-                                    <v-card-text>
-                                        <v-form
-                                            ref="form"
-                                            lazy-validation
-                                            class="pd-8"
-                                        >
-                                            <v-select
-                                                v-model="workForm.select"
-                                                :items="selectItems"
-                                                item-text="label"
-                                                item-value="id"
-                                                label="方案名称"
-                                                required
-                                            ></v-select>
-                                            <v-textarea
-                                                name="input-7-1"
-                                                label="Default style"
-                                                value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through."
-                                                hint="Hint text"
-                                            ></v-textarea>
-                                        </v-form>
-                                    </v-card-text>
-                                    <v-card-actions>
-                                        <v-spacer></v-spacer>
-                                        <v-btn text @click="resultDialog = false">取消</v-btn>
-                                        <v-btn text @click="resultDialog = false" color="success">保存</v-btn>
-                                    </v-card-actions>
-                                </v-card>
-                            </v-dialog>
-
-                            <v-btn small color="success" class="white--text" style="margin: 0 0 0 auto;">确定</v-btn>
+                            <v-btn small color="success" class="white--text">保存</v-btn>
                             <v-btn small color="blue-grey" class="white--text">取消</v-btn>
                         </div>
                     </v-form>
@@ -199,7 +265,13 @@ export default {
             todoChildList: [],
             parentValue: [],
             childValue: [],
-            linesValue: []
+            linesValue: [],
+
+            tableFormList: [
+                { select: '', select1: '' },
+                { select: '', select1: '' },
+            ],
+            dialogTabActive: 0,
         }
     },
     mounted() {
@@ -249,6 +321,19 @@ export default {
                 this.projBranchList.splice(v.split('|')[1], 0, checkedItem[0])
             })
             this.childValue = []
+        },
+        // 新增行
+        handleAddNew() {
+            this.tableFormList.push({
+                select: '', select1: ''
+            })
+        },
+        // 删除行
+        handleDelete() {
+            this.tableFormList.splice(this.tableFormList.length - 1, 1)
+        },
+        handleChangeTab(e) {
+            console.log('3333', e)
         }
     }
 }
@@ -284,5 +369,55 @@ export default {
 }
 .btn-group {
     margin: 20px 0 0 0;
+}
+
+.bottom-wrapper {
+    .bottom-wrapper-inner {
+        display: flex;
+        .v-card {
+            flex: 1;
+        }
+
+        .group-button {
+            width: 100px;
+        }
+    }
+    .bottom-title {
+        border-bottom: 1px solid #666;
+        font-size: 18px;
+        padding: 24px 0 6px;
+    }
+    .table-header {
+        display: flex;
+        align-items: center;
+        ::v-deep .v-card__title {
+            h4 {
+                width: 100%;
+                text-align: center;
+            }
+            flex: 1;
+        }
+    }
+    .table-row {
+        display: flex;
+        align-items: center;
+        .order {
+            text-align: center;
+        }
+        .order,
+        .select {
+            flex: 1;
+            margin: 0 5px;
+        }
+    }
+    .bottom-wrapper-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 100px;
+    }
+}
+.v-list > div {
+    cursor: pointer;
 }
 </style>
