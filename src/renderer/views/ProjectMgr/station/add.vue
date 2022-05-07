@@ -117,6 +117,7 @@
                                         <v-card-title><h4>序号</h4></v-card-title>
                                         <v-card-title><h4>变电站节点编号</h4></v-card-title>
                                         <v-card-title><h4>站外母线名称</h4></v-card-title>
+                                        <v-card-title><h4>操作</h4></v-card-title>
                                     </div>
                                     <div class="table-row" v-for="(item,index) in tableFormList" :key="index">
                                         <div class="order">{{index + 1}}</div>
@@ -138,11 +139,14 @@
                                                 label="检修类型"
                                             ></v-select>
                                         </div>
+                                        <div class="operate">
+                                            <v-icon>delete</v-icon>
+                                            <v-icon>save</v-icon>
+                                        </div>
                                     </div>
                                 </v-card>
                                 <div class="group-button">
                                     <v-btn small color="success" class="white--text" @click="handleAddNew">新增行</v-btn>
-                                    <v-btn small color="blue-grey" class="white--text" @click="handleDelete">删除行</v-btn>
                                 </div>
                             </div>
                             <!-- 按钮 -->
@@ -391,11 +395,21 @@ export default {
         display: flex;
         align-items: center;
         ::v-deep .v-card__title {
+            // flex: 1;
+            &:first-child {
+                width: 66px;
+            }
+            &:nth-of-type(3) {
+                margin: 0 0 0 30px;
+            }
+            &:nth-of-type(4) {
+                margin: 0 0 0 80px;
+            }
             h4 {
                 width: 100%;
                 text-align: center;
             }
-            flex: 1;
+            
         }
     }
     .table-row {
@@ -403,11 +417,14 @@ export default {
         align-items: center;
         .order {
             text-align: center;
+            width: 60px;
         }
-        .order,
         .select {
             flex: 1;
             margin: 0 5px;
+        }
+        .operate {
+            padding: 0 14px;
         }
     }
     .bottom-wrapper-button {
