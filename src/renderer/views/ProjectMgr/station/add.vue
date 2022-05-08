@@ -56,9 +56,9 @@
                         </div>
                         <v-select
                             v-model="workForm.select"
-                            :items="selectItems"
+                            :items="checkItems"
                             item-text="label"
-                            item-value="id"
+                            item-value="code"
                             label="检修类型"
                             required
                         ></v-select>
@@ -164,11 +164,7 @@
                                     <v-card>
                                         <v-card-title class="text-h3">重构方案结果预览</v-card-title>
                                         <v-card-text>
-                                            <v-form
-                                                ref="form"
-                                                lazy-validation
-                                                class="pd-8"
-                                            >
+                                            <v-form ref="form" lazy-validation class="pd-8">
                                                 <v-select
                                                     v-model="workForm.select"
                                                     :items="selectItems"
@@ -180,16 +176,10 @@
                                                 <v-card>
                                                     <v-card-title><h4>站外节点对接</h4></v-card-title>
                                                     <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
-                                                        <v-tab
-                                                            v-for="n in 2"
-                                                            :key="n"
-                                                        >
+                                                        <v-tab v-for="n in 2" :key="n">
                                                             Item {{ n }}
                                                         </v-tab>
-                                                        <v-tab-item
-                                                            v-for="n in 2"
-                                                            :key="n"
-                                                        >
+                                                        <v-tab-item v-for="n in 2" :key="n">
                                                             <v-list dense>
                                                                 <v-list-tile>
                                                                     <v-list-tile-content>方案1</v-list-tile-content>
@@ -219,7 +209,7 @@
 
                         
                         <div class="row-flex btn-group">
-                            <v-btn small color="success" class="white--text">保存</v-btn>
+                            <v-btn small color="success" class="white--text" @click="save">保存</v-btn>
                             <v-btn small color="blue-grey" class="white--text">取消</v-btn>
                         </div>
                     </v-form>
@@ -250,17 +240,14 @@ export default {
                 name: '',
                 select: ''
             },
+            checkItems: [{label:'单间隔检修', code:'sinterval'}],
             selectItems: [
                 {label: 'Item 1', id: 1},
                 {label: 'Item 2', id: 2},
                 {label: 'Item 3', id: 3},
             ],
             //检修一次性设备列表
-            projBranchList: [
-                {id: 1, value: '北京'},
-                {id: 2, value: '上海'},
-                {id: 3, value: '深圳'},
-            ],
+            projBranchList: [],
             linesList: [
                 {id: 1, value: '线路1'},
                 {id: 2, value: '线路2'},
@@ -282,6 +269,10 @@ export default {
         this.loadProjBranchList()
     },
     methods: {
+        save() {
+            console.log('这里保存输出')
+            console.log(this.todoChildList)
+        },
         loadProjBranchList() {
             let currentProject = remote.getGlobal('sharedObject').openedProject
             if (!currentProject) {
