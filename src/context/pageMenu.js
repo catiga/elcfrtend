@@ -25,7 +25,7 @@ const pageMenus = [
     text: "输变电联合系统潮流计算",
     key: "comp_folder_loadflow",
     parent: "comp_folder",
-    to: "/projectMgr/loadflow/list",
+    to: "/projectMgr/task/loadflow/list",
     items: [
       { icon: "", text: "作业列表1" },
       { icon: "", text: "作业列表2" },
@@ -37,7 +37,7 @@ const pageMenus = [
     text: "站外进线拓扑重构",
     key: "comp_folder_station",
     parent: "comp_folder",
-    to: "/projectMgr/loadflow/station",
+    to: "/projectMgr/task/station/list",
     items: [
       { icon: "", text: "作业列表1" },
       { icon: "", text: "作业列表2" },
@@ -49,7 +49,7 @@ const pageMenus = [
     text: "风险评估",
     key: "comp_folder_risk",
     parent: "comp_folder",
-    to: "/projectMgr/loadflow/risk",
+    to: "/projectMgr/task/risk/list",
     items: [
       { icon: "", text: "作业列表1" },
       { icon: "", text: "作业列表2" },
@@ -61,7 +61,7 @@ const pageMenus = [
     text: "薄弱环节分析",
     key: "comp_folder_weak",
     parent: "comp_folder",
-    to: "/projectMgr/loadflow/weak",
+    to: "/projectMgr/task/weak/list",
     items: [
       { icon: "", text: "作业列表1" },
       { icon: "", text: "作业列表2" },
@@ -73,7 +73,7 @@ const pageMenus = [
     text: "检修方案智能决策",
     key: "comp_folder_overhaul",
     parent: "comp_folder",
-    to: "/projectMgr/loadflow/overhaul",
+    to: "/projectMgr/task/overhaul/list",
     items: [
       { icon: "", text: "作业列表1" },
       { icon: "", text: "作业列表2" },

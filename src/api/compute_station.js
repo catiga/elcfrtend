@@ -5,8 +5,7 @@ import _ from 'lodash'
 
 const moment = require('moment')
 
-const Table = 'project_info'
-const TableAssets = 'assets'
+const Table = 'task_station_topo'
 
 export function getModelById(id) {
     return new Promise((resolve, reject) => {
@@ -98,7 +97,6 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
                     sql = sql + ` order by ${pagination.sortBy} ${pagination.descending?'desc':'asc'}`
                 }
                 sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200,
@@ -377,10 +375,30 @@ export function countForStat(whereAttrs) {
     })
 }
 
-export function finishProjectUpload(whereAttrs) {
+export function loadBranchInfo(proj_id) {
     return new Promise((resolve, reject) => {
         try {
-            let sql = `update ${Table} set is_import=1 where id=${whereAttrs.id}`
+            let sql = `select * from p_component_branch_info where proj_id=${proj_id}`
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+//加载变电站节点编号
+export function loadStationCode(proj_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select max(first_node) as first_node, max(last_node) as last_node from p_component_branch_info where proj_id=${proj_id}`
             db.query(sql, function(err, values, fields) {
                 resolve({
                     code: 200,

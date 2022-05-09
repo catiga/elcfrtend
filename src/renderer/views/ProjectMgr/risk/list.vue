@@ -58,7 +58,7 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
-                    <v-btn color="primary" dark class="mb-2" @click="dialogEdit = true">新建</v-btn>
+                    <v-btn color="primary" dark class="mb-2" @click="create">新建</v-btn>
                     <v-btn color="error" dark class="mb-2" @click="dialogDeleteBatch = true">批量删除</v-btn>
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
@@ -381,6 +381,9 @@
             this.initialize()
         },
         methods: {
+            create() {
+                this.$router.push('/projectMgr/task/station/add')
+            },
             openItem(item) {
                 if (item.is_import === 0) {
                     this.snackbar = true

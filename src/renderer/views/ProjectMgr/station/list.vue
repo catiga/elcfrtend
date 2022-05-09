@@ -58,7 +58,7 @@
                     </v-menu>
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
-                    <v-btn color="primary" dark class="mb-2" @click="dialogEdit = true">新建</v-btn>
+                    <v-btn color="primary" dark class="mb-2" @click="create">新建</v-btn>
                     <v-btn color="error" dark class="mb-2" @click="dialogDeleteBatch = true">批量删除</v-btn>
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">
@@ -109,9 +109,10 @@
                                     ></v-checkbox>
                                 </td>
                                 <td>{{ props.item.title }}</td>
+                                <td>{{ props.item.fix_type }}</td>
+                                <td>{{ props.item.fix_devices }}</td>
                                 <td>{{ props.item.method }}</td>
-                                <td>{{ props.item.allow_err }}</td>
-                                <td>{{ props.item.iterate_limit }}</td>
+                                <td>{{ props.item.pragram_name }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
                                 <td>
                                     <span v-if="props.item.computing==0">创建</span>
@@ -254,7 +255,7 @@
         putModelById,
         deleteModelById,
         deleteModelByIds
-    } from '../../../../api/compute_tide'
+    } from '../../../../api/compute_station'
     import {app, remote, shell} from 'electron'
     import moment from 'moment'
 
@@ -282,9 +283,10 @@
                 desserts: [],
                 headers: [
                     {text: '作业名称', value: 'title', align: 'left', sortable: true},
-                    {text: '方法', value: 'info', align: 'left', sortable: false},
-                    {text: '允许误差', value: 'info', align: 'left', sortable: false},
-                    {text: '迭代次数上限', value: 'info', align: 'left', sortable: false},
+                    {text: '检修类型', value: 'fix_type', align: 'left', sortable: false},
+                    {text: '检修设备', value: 'fix_devices', align: 'left', sortable: false},
+                    {text: '重构方法', value: 'method', align: 'left', sortable: false},
+                    {text: '方案名称', value: 'pragram_name', align: 'left', sortable: true},
                     {text: '创建时间', value: 'a_time', align: 'left', sortable: true},
                     {text: '状态', value: 'computing', align: 'left', sortable: true},
                     {text: '操作', value: 'id', align: 'right', sortable: false}
@@ -381,6 +383,9 @@
             this.initialize()
         },
         methods: {
+            create() {
+                this.$router.push('/projectMgr/task/station/add')
+            },
             openItem(item) {
                 if (item.is_import === 0) {
                     this.snackbar = true

@@ -70,7 +70,7 @@
                     v-model="workForm.station_name"
                     :items="bus_items"
                     item-text="bus_name"
-                    item-value="id"
+                    item-value="bus_name"
                     :rules="[v => !!v || 'Item is required']"
                     label="检修厂站选择"
                     @change="selBus"
@@ -146,8 +146,7 @@ export default {
             return
         }
         loadProjectParams(currentProject).then(result => {
-            console.log(result)
-            if(result.code === 200 && result.data) {
+            if(result.code === 200 && result.data && result.data.length>0) {
                 this.workForm.name = result.data[0]['name']
                 this.workForm.station_code = result.data[0]['station_code']
                 this.workForm.station_name = result.data[0]['station_name']
@@ -173,16 +172,15 @@ export default {
         }
     },
     methods: {
-        selBus(id) {
+        selBus(bus_name) {
             for(let x in this.bus_items) {
-                if(this.bus_items[x].id === id) {
+                if(this.bus_items[x].bus_name === bus_name) {
                     this.workForm.station_code = this.bus_items[x].code
                     this.workForm.station_name = this.bus_items[x].bus_name
                 }
             }
         },
         selKv(item) {
-            console.log('切换电压等级', item)
             loadBusItems(item).then(result => {
                 if(result.code === 200) {
                     this.bus_items = result.data

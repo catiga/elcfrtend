@@ -5,8 +5,7 @@ import _ from 'lodash'
 
 const moment = require('moment')
 
-const Table = 'project_info'
-const TableAssets = 'assets'
+const Table = 'task_loadflow_info'
 
 export function getModelById(id) {
     return new Promise((resolve, reject) => {

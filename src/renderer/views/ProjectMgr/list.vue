@@ -135,12 +135,13 @@
                                 </td>
 
                                 <td class="text-xs-right">
-                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile1(props.item)">基础库</v-btn>
-                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile2(props.item)">潮流<br/>作业</v-btn>
-                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile3(props.item)">潮流<br/>结果</v-btn>
-                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile4(props.item)">一次<br/>主线</v-btn>
-                                    <v-btn v-if="props.item.is_import==0" fab big :loading="importing" :disabled="importing" color="success" @click="importLocalFile5(props.item)">元件<br/>可靠</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile1(props.item)">基础库</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile2(props.item)">潮流<br/>作业</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile3(props.item)">潮流<br/>结果</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile4(props.item)">一次<br/>主线</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab small :loading="importing" :disabled="importing" color="success" @click="importLocalFile5(props.item)">元件<br/>可靠</v-btn>
                                     <v-btn v-if="props.item.is_import==1" fab small color="error" @click="openItem(props.item)">打开</v-btn>
+                                    <v-btn v-if="props.item.is_import==0" fab small color="error" @click="finishItem(props.item)">导入<br/>完成</v-btn>
                                 </td>
 
                             </tr>
@@ -325,7 +326,8 @@
         postModel,
         putModelById,
         deleteModelById,
-        deleteModelByIds
+        deleteModelByIds,
+        finishProjectUpload
     } from '../../../api/projectMgr'
 
     import {
@@ -363,11 +365,12 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
+                    {text: '工程ID', value: 'id', align: 'left', sortable: true},
                     {text: '工程名称', value: 'title', align: 'left', sortable: true},
                     {text: '工程说明', value: 'info', align: 'left', sortable: false},
                     {text: '创建时间', value: 'a_time', align: 'left', sortable: true},
-                    {text: '操作', value: 'id', align: 'right', sortable: false},
-                    {text: '工程数据', value: 'id', align: 'right', sortable: false}
+                    {text: '工程数据', value: 'id', align: 'right', sortable: false},
+                    {text: '操作', value: 'id', align: 'right', sortable: false}
                 ],
                 noDataMessage: '',
                 search: {
@@ -480,6 +483,15 @@
                     return
                 }
                 remote.getGlobal('sharedObject').openedProject = item
+            },
+            finishItem(item) {
+                if (item.is_import === 0) {
+                    finishProjectUpload(item).then(result => {
+                        if (result.code === 200) {
+                            this.initialize()
+                        }
+                    })
+                }
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
