@@ -1228,6 +1228,7 @@
                                     const model = {
                                         proj_id: proj_id,
                                         id_name: row.values[2],
+                                        node_name: row.values[4],
                                         pl: row.values[7],
                                         ql: row.values[8],
                                         a_time: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
@@ -1330,11 +1331,12 @@
 
                                 let proj_id = item.proj_id
                                 let id_name = item.id_name
+                                let node_name = item.node_name
                                 let pl = item.pl
                                 let ql = item.ql
                                 let a_time = item.a_time
 
-                                let sql = `INSERT INTO p_load_trend_info (proj_id, id_name, pl, ql, flag, a_time) VALUES (${proj_id}, '${id_name}', '${pl}', '${ql}', 0, '${a_time}')`;
+                                let sql = `INSERT INTO p_load_trend_info (proj_id, id_name, node_name, pl, ql, flag, a_time) VALUES (${proj_id}, '${id_name}', '${node_name}','${pl}', '${ql}', 0, '${a_time}')`;
                                 // console.log(sql);
 
                                 // 插入主表
