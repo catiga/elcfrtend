@@ -394,3 +394,23 @@ export function loadBranchInfo(proj_id) {
     })
 }
 
+//加载变电站节点编号
+export function loadStationCode(proj_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select max(first_node) as first_node, max(last_node) as last_node from p_component_branch_info where proj_id=${proj_id}`
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+

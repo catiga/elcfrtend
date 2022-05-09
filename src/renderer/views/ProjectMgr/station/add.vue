@@ -19,6 +19,7 @@
                                 required
                             ></v-text-field>
 
+                            <!--
                             <v-dialog
                                 v-model="addDialog"
                                 persistent
@@ -53,9 +54,10 @@
                                     </v-card-actions>
                                 </v-card>
                             </v-dialog>
+                            -->
                         </div>
                         <v-select
-                            v-model="workForm.select"
+                            v-model="workForm.checkItem"
                             :items="checkItems"
                             item-text="label"
                             item-value="code"
@@ -124,10 +126,10 @@
                                         <div class="select">
                                             <v-select
                                                 v-model="item.select"
-                                                :items="selectItems"
+                                                :items="nodeList"
                                                 item-text="label"
                                                 item-value="id"
-                                                label="检修类型"
+                                                label="节点编号"
                                             ></v-select>
                                         </div>
                                         <div class="select">
@@ -136,7 +138,7 @@
                                                 :items="selectItems"
                                                 item-text="label"
                                                 item-value="id"
-                                                label="检修类型"
+                                                label="母线名称"
                                             ></v-select>
                                         </div>
                                         <div class="operate">
@@ -222,7 +224,8 @@
 
 <script>
 import {
-    loadBranchInfo
+    loadBranchInfo,
+    loadStationCode
 } from '../../../../api/compute_station'
 import {app, remote, shell} from 'electron'
 export default {
@@ -234,7 +237,7 @@ export default {
             valid: true,
             workForm: { 
                 name: '',
-                radio: '',
+                checkItem:''
             },
             addForm: {
                 name: '',
@@ -248,6 +251,10 @@ export default {
             ],
             //检修一次性设备列表
             projBranchList: [],
+            //节点编号
+            nodeList: [],
+            molineList: [],
+
             linesList: [
                 {id: 1, value: '线路1'},
                 {id: 2, value: '线路2'},
@@ -267,10 +274,11 @@ export default {
     },
     mounted() {
         this.loadProjBranchList()
+        this.loadStationList()
     },
     methods: {
         save() {
-            console.log('这里保存输出')
+            console.log('这里保存输出', this.workForm)
             console.log(this.todoChildList)
         },
         loadProjBranchList() {
@@ -289,6 +297,33 @@ export default {
                         tmpData.push({id:tmp.id, value:tmp.name})
                     }
                     this.projBranchList = tmpData
+                }
+            })
+        },
+        loadStationList() {
+            //nodeList
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            loadStationCode(currentProject.id).then(result => {
+                if(result.code === 200 && result.data && result.data.length>0) {
+                    let tmpData = []
+                    let maxNodeValue = result.data[0]['first_node']>=result.data[0]['last_node'] ? result.data[0]['first_node'] : result.data[0]['last_node'];
+                    if(maxNodeValue) {
+                        while(true) {
+                            let tmpValue = maxNodeValue--
+                            if(tmpValue === 0) {
+                                break;
+                            }
+                            tmpData.push({id:tmpValue, label:tmpValue})
+                            tmpData.push(maxNodeValue--)
+                        }
+                    }
+                    this.nodeList = tmpData
                 }
             })
         },
