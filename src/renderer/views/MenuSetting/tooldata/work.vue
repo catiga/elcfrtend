@@ -133,8 +133,8 @@ export default {
             vol_items: [],
 
             nameRules: [
-                v => !!v || 'Name is required',
-                v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+                name => !!name || '请输入作业名称',
+                name => (name && name.length <= 3) || '请输入作业名称',
             ]
         }
     },
@@ -151,15 +151,6 @@ export default {
                 this.workForm.station_code = result.data[0]['station_code']
                 this.workForm.station_name = result.data[0]['station_name']
                 this.workForm.base_kv = result.data[0]['base_kv']
-
-                console.log('this.workForm', this.workForm)
-
-                this.$http.get('http://127.0.0.1:8081/index').catch(function(error) {
-                    console.log(error)
-                }).then(function(response) {
-                    console.log(response)
-                })
-
             }
         }).catch(err => {
             this.submitResult = false
@@ -209,13 +200,31 @@ export default {
                 this.snackbarMsg = '请先选择打开工程'
                 return
             }
+            if(!this.workForm.base_kv) {
+                this.snackbar = true
+                this.snackbarMsg = '请选择检修电压等级'
+                return
+            }
+            if(!this.workForm.station_name) {
+                this.snackbar = true
+                this.snackbarMsg = '请选择检修厂站'
+                return
+            }
             saveProjectParams(currentProject, this.workForm).then(result => {
                 if (result.code === 200) {
+                    this.snackbarMsg = '操作成功'
                     this.submitResult = true
+
+                    let taskObj = result.data
+                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/${taskObj.id}`).catch(function(error) {
+                        console.log(error)
+                    }).then(function(response) {
+                        console.log(response)
+                    })
                 } else {
+                    this.snackbarMsg = '操作失败'
                     this.submitResult = false
                 }
-                this.snackbarMsg = '操作成功'
                 this.snackbar = true
             }).catch(err => {
                 this.submitResult = false
