@@ -155,55 +155,7 @@
                             <div class="bottom-wrapper-button">
                                 <v-btn color="primary" small class="white--text">开始重构</v-btn>
 
-                                <v-dialog
-                                    v-model="resultDialog"
-                                    persistent
-                                    max-width="400"
-                                >
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn v-bind="attrs" v-on="on" color="primary" small class="white--text">结果预览</v-btn>
-                                    </template>
-                                    <v-card>
-                                        <v-card-title class="text-h3">重构方案结果预览</v-card-title>
-                                        <v-card-text>
-                                            <v-form ref="form" lazy-validation class="pd-8">
-                                                <v-select
-                                                    v-model="workForm.select"
-                                                    :items="selectItems"
-                                                    item-text="label"
-                                                    item-value="id"
-                                                    label="方案名称"
-                                                    required
-                                                ></v-select>
-                                                <v-card>
-                                                    <v-card-title><h4>站外节点对接</h4></v-card-title>
-                                                    <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
-                                                        <v-tab v-for="n in 2" :key="n">
-                                                            Item {{ n }}
-                                                        </v-tab>
-                                                        <v-tab-item v-for="n in 2" :key="n">
-                                                            <v-list dense>
-                                                                <v-list-tile>
-                                                                    <v-list-tile-content>方案1</v-list-tile-content>
-                                                                    <v-list-tile-content>方案2</v-list-tile-content>
-                                                                </v-list-tile>
-                                                                <v-list-tile>
-                                                                    <v-list-tile-content>方案3</v-list-tile-content>
-                                                                </v-list-tile>
-                                                            </v-list>
-                                                        </v-tab-item>
-                                                    </v-tabs>
-                                                    
-                                                </v-card>
-                                            </v-form>
-                                        </v-card-text>
-                                        <v-card-actions>
-                                            <v-spacer></v-spacer>
-                                            <v-btn text @click="resultDialog = false">取消</v-btn>
-                                            <v-btn text @click="resultDialog = false" color="success">保存</v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-dialog>
+                                <v-btn color="primary" small class="white--text" @click="handlePreview()">结果预览</v-btn>
 
                                 <v-btn color="primary" small class="white--text">重置方案</v-btn>
                             </div>
@@ -219,6 +171,54 @@
                 </v-card-text>
             </v-card>
         </v-flex>
+
+        <!-- 弹窗 -->
+        <v-dialog
+            v-model="resultDialog"
+            persistent
+            max-width="400"
+        >
+            <v-card>
+                <v-card-title class="text-h3">重构方案结果预览</v-card-title>
+                <v-card-text>
+                    <v-form ref="form" lazy-validation class="pd-8">
+                        <v-select
+                            v-model="workForm.select"
+                            :items="selectItems"
+                            item-text="label"
+                            item-value="id"
+                            label="方案名称"
+                            required
+                        ></v-select>
+                        <v-card>
+                            <v-card-title><h4>站外节点对接</h4></v-card-title>
+                            <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
+                                <v-tab v-for="n in 2" :key="n">
+                                    Item {{ n }}
+                                </v-tab>
+                                <v-tab-item v-for="n in 2" :key="n">
+                                    <v-list dense>
+                                        <v-list-tile>
+                                            <v-list-tile-content>方案1</v-list-tile-content>
+                                            <v-list-tile-content>方案2</v-list-tile-content>
+                                        </v-list-tile>
+                                        <v-list-tile>
+                                            <v-list-tile-content>方案3</v-list-tile-content>
+                                        </v-list-tile>
+                                    </v-list>
+                                </v-tab-item>
+                            </v-tabs>
+                            
+                        </v-card>
+                    </v-form>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="resultDialog = false">取消</v-btn>
+                    <v-btn text @click="resultDialog = false" color="success">保存</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-layout>
 </template>
 
@@ -364,6 +364,9 @@ export default {
         },
         handleChangeTab(e) {
             console.log('3333', e)
+        },
+        handlePreview() {
+            this.resultDialog = true
         }
     }
 }
