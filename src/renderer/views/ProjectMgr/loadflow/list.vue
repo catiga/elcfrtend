@@ -265,7 +265,8 @@
         <v-dialog
             v-model="resultDialog"
             persistent
-            max-width="400"
+            max-width="700"
+            width="700"
         >
             <v-card>
                 <v-card-title class="text-h3">母线计算数据</v-card-title>
@@ -280,21 +281,24 @@
                             required
                         ></v-select>
                         <v-card>
-                            <v-card-title><h4>站外节点对接</h4></v-card-title>
+                            <!-- <v-card-title><h4>站外节点对接</h4></v-card-title> -->
                             <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
                                 <v-tab v-for="n in 2" :key="n">
                                     Item {{ n }}
                                 </v-tab>
                                 <v-tab-item v-for="n in 2" :key="n">
-                                    <v-list dense>
-                                        <v-list-tile>
-                                            <v-list-tile-content>方案1</v-list-tile-content>
-                                            <v-list-tile-content>方案2</v-list-tile-content>
-                                        </v-list-tile>
-                                        <v-list-tile>
-                                            <v-list-tile-content>方案3</v-list-tile-content>
-                                        </v-list-tile>
-                                    </v-list>
+                                    <v-data-table
+                                        :headers="headersDiadlog"
+                                        :items="dessertsDialog"
+                                        class="dialog-table"
+                                        hide-actions
+                                    >
+                                        <template v-slot:items="props">
+                                        <td>{{ props.item.ps_name }}</td>
+                                        <td class="text-xs-right">{{ props.item.bus_name }}</td>
+                                        <td class="text-xs-right">{{ props.item.zone_no }}</td>
+                                        </template>
+                                    </v-data-table>
                                 </v-tab-item>
                             </v-tabs>
                             
@@ -414,7 +418,22 @@
                 userDataPath: '',
                 exportPath: '',
                 method_items: [{label:'牛拉法', code:'method_cow'}, {label:'误差法', code:'method_err'}],
-                err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}]
+                err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}],
+                // 弹窗
+                headersDiadlog: [
+                    {text: '节点名称', value: 'ps_name', align: 'left', sortable: false},
+                    {text: '属性', value: 'bus_name', align: 'left', sortable: false},
+                    {text: '电导p.u.', value: 'zone_no', align: 'left', sortable: false},
+                ],
+                dessertsDialog: [
+                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
+                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
+                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
+                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
+                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
+                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
+                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
+                ]
             }
         },
         computed: { 
@@ -731,6 +750,10 @@
     }
     .v-btn--floating .v-btn__content {
         height: auto !important;    
+    }
+    .dialog-table {
+        max-height: 300px;
+        overflow-y: scroll;
     }
 // }
 </style>
