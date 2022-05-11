@@ -129,7 +129,7 @@
                                     </v-btn>
                                 </td>
                                 <td class="text-xs-right">
-                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="refreshItem(props.item)">
+                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="openMoline(props.item)">
                                         母线
                                     </v-btn>
                                     <v-btn v-if="props.item.computing==2" fab small color="success" @click="refreshItem(props.item)">
@@ -256,6 +256,63 @@
                 Close
             </v-btn>
         </v-snackbar>
+
+
+
+
+        <!-- 计算结果展示 -->
+        <!-- 弹窗 -->
+        <v-dialog
+            v-model="resultDialog"
+            persistent
+            max-width="400"
+        >
+            <v-card>
+                <v-card-title class="text-h3">母线计算数据</v-card-title>
+                <v-card-text>
+                    <v-form ref="form" lazy-validation class="pd-8">
+                        <v-select
+                            v-model="workForm.select"
+                            :items="selectItems"
+                            item-text="label"
+                            item-value="id"
+                            label="方案名称"
+                            required
+                        ></v-select>
+                        <v-card>
+                            <v-card-title><h4>站外节点对接</h4></v-card-title>
+                            <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
+                                <v-tab v-for="n in 2" :key="n">
+                                    Item {{ n }}
+                                </v-tab>
+                                <v-tab-item v-for="n in 2" :key="n">
+                                    <v-list dense>
+                                        <v-list-tile>
+                                            <v-list-tile-content>方案1</v-list-tile-content>
+                                            <v-list-tile-content>方案2</v-list-tile-content>
+                                        </v-list-tile>
+                                        <v-list-tile>
+                                            <v-list-tile-content>方案3</v-list-tile-content>
+                                        </v-list-tile>
+                                    </v-list>
+                                </v-tab-item>
+                            </v-tabs>
+                            
+                        </v-card>
+                    </v-form>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="resultDialog = false">取消</v-btn>
+                    <v-btn text @click="resultDialog = false" color="success">保存</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+
+
+
+
     </v-layout>
 </template>
 
@@ -280,13 +337,19 @@
         },
         data() {
             return {
-                fileList: [{
-                    name: 'food.jpeg',
-                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                }, {
-                    name: 'food2.jpeg',
-                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                }],
+                // 弹窗相关
+                resultDialog: false, // 重构方案拓扑检查弹窗
+
+                selectItems: [
+                    {label: 'Item 1', id: 1},
+                    {label: 'Item 2', id: 2},
+                    {label: 'Item 3', id: 3},
+                ],
+                workForm: { 
+                    name: '',
+                    checkItem:''
+                },
+
                 // 表格相关
                 loading: true,
                 showNoData: false,
@@ -394,6 +457,15 @@
             this.initialize()
         },
         methods: {
+            openMoline(id) {
+                console.log('母线表数据', id)
+                this.resultDialog = true
+            },
+            handleChangeTab(e) {
+                console.log('3333', e)
+            },
+
+
             openItem(item) {
                 if (item.is_import === 0) {
                     this.snackbar = true
@@ -401,18 +473,6 @@
                     return
                 }
                 remote.getGlobal('sharedObject').openedProject = item
-            },
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
-            },
-            handlePreview(file) {
-                console.log(file);
-            },
-            handleExceed(files, fileList) {
-
-            },
-            beforeRemove(file, fileList) {
-
             },
 
             toggleAll() {
