@@ -109,17 +109,15 @@
                                     ></v-checkbox>
                                 </td>
                                 <td>{{ props.item.title }}</td>
-                                <td>{{ props.item.method }}</td>
-                                <td>{{ props.item.allow_err }}</td>
-                                <td>{{ props.item.iterate_limit }}</td>
-                                <td width="130">{{ props.item.a_time | formateTime }}</td>
+                                <td>{{ props.item.info }}</td>
+                                <td>{{ props.item.a_time | formateTime }}</td>
                                 <td>
                                     <span v-if="props.item.computing==0">创建</span>
                                     <span v-if="props.item.computing==1">计算中</span>
                                     <span v-if="props.item.computing==2">计算成功</span>
                                     <span v-if="props.item.computing==3">计算失败</span>
                                 </td>
-                                <td class="text-xs-right" width="170">
+                                <td class="text-xs-right">
                                     <v-btn v-if="props.item.computing!=2" fab small color="success" @click="editItem(props.item)">
                                         重算
                                     </v-btn>
@@ -128,6 +126,17 @@
                                     </v-btn>
                                     <v-btn v-if="props.item.computing==1" fab small color="error" @click="refreshItem(props.item)">
                                         刷新
+                                    </v-btn>
+                                </td>
+                                <td class="text-xs-right">
+                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="refreshItem(props.item)">
+                                        母线
+                                    </v-btn>
+                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="refreshItem(props.item)">
+                                        交流线
+                                    </v-btn>
+                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="refreshItem(props.item)">
+                                        发电机
                                     </v-btn>
                                 </td>
                             </tr>
@@ -161,6 +170,13 @@
                                         v-model="editedItem.title"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
+                                    <v-textarea
+                                        label="备注"
+                                        v-model="editedItem.info"
+                                    ></v-textarea>
+                                </v-flex>
+                                <!--
+                                <v-flex xs12>
                                     <v-select
                                         :items="method_items"
                                         item-text="label"
@@ -185,12 +201,8 @@
                                         :rules="[rules.required]"
                                         v-model="editedItem.iterate_limit"></v-text-field>
                                 </v-flex>
-                                <v-flex xs12>
-                                    <v-textarea
-                                        label="备注"
-                                        v-model="editedItem.info"
-                                    ></v-textarea>
-                                </v-flex>
+                                -->
+                                
                             <!-- </v-layout> -->
                         </v-container>
                         <small>*代表必填信息</small>
@@ -282,12 +294,13 @@
                 desserts: [],
                 headers: [
                     {text: '作业名称', value: 'title', align: 'left', sortable: true},
-                    {text: '方法', value: 'info', align: 'left', sortable: false},
-                    {text: '允许误差', value: 'info', align: 'left', sortable: false},
-                    {text: '迭代次数上限', value: 'info', align: 'left', sortable: false},
+                    {text: '备注信息', value: 'info', align: 'left', sortable: false},
+                    // {text: '允许误差', value: 'info', align: 'left', sortable: false},
+                    // {text: '迭代次数上限', value: 'info', align: 'left', sortable: false},
                     {text: '创建时间', value: 'a_time', align: 'left', sortable: true},
                     {text: '状态', value: 'computing', align: 'left', sortable: true},
-                    {text: '操作', value: 'id', align: 'right', sortable: false}
+                    {text: '操作', value: 'id', align: 'right', sortable: false},
+                    {text: '计算结果', value: 'computing', align: 'right', sortable: false}
                 ],
                 noDataMessage: '',
                 search: {
@@ -609,6 +622,12 @@
                         postModel(this.editedItem).then(result => {
                             if (result.code === 200) {
                                 this.submitResult = true
+
+                                this.$http.get(`http://127.0.0.1:8081/api/tide/compute/${result.data.id}`).catch(function(error) {
+                                    console.log(error)
+                                }).then(function(response) {
+                                    console.log(response)
+                                })
                             } else {
                                 this.submitResult = false
                             }
