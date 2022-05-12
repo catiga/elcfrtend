@@ -114,16 +114,16 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
     })
 }
 
-export function postModel(document) {
+export function postModel(document, projId) {
     return new Promise((resolve, reject) => {
         try {
             let title = document.title
             let info = document.info
             let a_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
-            let sql = `insert into ${Table}(title, info, a_time, flag) values('${title}', '${info}', '${a_time}', 0)`
+            let sql = `insert into ${Table}(title, info, a_time, flag, proj_id) values('${title}', '${info}', '${a_time}', 0, ${projId})`
 
             db.query(sql, function(err, values, fields) {
-                if(!err) {
+                if(err) {
                     resolve({
                         code: 500,
                         data: '保存失败'

@@ -754,7 +754,8 @@
                             this.initialize()
                         })
                     } else {
-                        postModel(this.editedItem).then(result => {
+                        postModel(this.editedItem, currentProject.id).then(result => {
+                            console.log('result=======', result)
                             if (result.code === 200) {
                                 this.submitResult = true
 
