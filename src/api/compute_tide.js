@@ -123,6 +123,13 @@ export function postModel(document) {
             let sql = `insert into ${Table}(title, info, a_time, flag) values('${title}', '${info}', '${a_time}', 0)`
 
             db.query(sql, function(err, values, fields) {
+                if(!err) {
+                    resolve({
+                        code: 500,
+                        data: '保存失败'
+                    })
+                    return;
+                }
                 let model = {
                     id : values.insertId,
                     title : title,
@@ -393,5 +400,85 @@ export function finishProjectUpload(whereAttrs) {
             })
         }
     })
+}
+
+export function loadComputeData(task_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select * from cpf_compute_result where task_id=${task_id}`
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    reject({
+                        code: 500,
+                        message: err
+                    })
+                    return
+                }
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+export function parseData(data0) {
+    try {
+        let bus_name = data0['bus_name']
+        let branch_fname = data0['branch_fname']
+        let branch_tname = data0['branch_tname']
+        let gen_name = data0['gen_name']
+        let bus = data0['bus']
+        let branch = data0['branch']
+        let gen = data0['gen']
+
+        //定义返回数据
+        const molineData = []
+        const alterData = []
+        const dynamoData = []
+
+        let arrBusName = bus_name.split(',')
+        let arrBus = bus.split(';')
+        for(let x in arrBusName) {
+            let bn = arrBusName[x]
+            let arrB = arrBus[x].split(',')
+            molineData.push({bn: bn, volF: arrB[8], volJ:arrB[9]})
+        }
+
+        let arrBranchFname = branch_fname.split(',')
+        let arrBranchTname = branch_tname.split(',')
+        let arrBranch = branch.split(';')
+        for(let x in arrBranchFname) {
+            let bf= arrBranchFname[x]
+            let bt = arrBranchTname[x]
+
+            let arrB = []
+            if(x<arrBranch.length) {
+                arrB = arrBranch[x].split(',')
+            }
+            let ypower = arrB.length>0 ? arrB[14] : -1
+            let npower = arrB.length>0 ? arrB[15] : -1
+            alterData.push({fname: bf, tname: bt, ypower: ypower, npower: npower})
+        }
+
+        let arrGenName = gen_name.split(',')
+        let arrGen = gen.split(';')
+        for(let x in arrGenName) {
+            let gn = arrGenName[x]
+            let arrG = arrGen[x].split(',')
+            dynamoData.push({gn: gn, ypower: arrG[2], npower: arrG[3]})
+        }
+
+        return {molineData, alterData, dynamoData}
+    } catch(err) {
+        console.log(err)
+        return null
+    }
 }
 

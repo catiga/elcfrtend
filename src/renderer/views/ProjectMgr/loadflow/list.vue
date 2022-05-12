@@ -269,24 +269,14 @@
             width="700"
         >
             <v-card>
-                <v-card-title class="text-h3">母线计算数据</v-card-title>
+                <v-card-title class="text-h3">潮流计算数据</v-card-title>
                 <v-card-text>
                     <v-form ref="form" lazy-validation class="pd-8">
-                        <v-select
-                            v-model="workForm.select"
-                            :items="selectItems"
-                            item-text="label"
-                            item-value="id"
-                            label="方案名称"
-                            required
-                        ></v-select>
                         <v-card>
                             <!-- <v-card-title><h4>站外节点对接</h4></v-card-title> -->
                             <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
-                                <v-tab v-for="n in 2" :key="n">
-                                    Item {{ n }}
-                                </v-tab>
-                                <v-tab-item v-for="n in 2" :key="n">
+                                <v-tab v-for="n in tabItems" :key="n.code">{{ n.name }}</v-tab>
+                                <v-tab-item>
                                     <v-data-table
                                         :headers="headersDiadlog"
                                         :items="dessertsDialog"
@@ -294,9 +284,40 @@
                                         hide-actions
                                     >
                                         <template v-slot:items="props">
-                                        <td>{{ props.item.ps_name }}</td>
-                                        <td class="text-xs-right">{{ props.item.bus_name }}</td>
-                                        <td class="text-xs-right">{{ props.item.zone_no }}</td>
+                                        <td>{{ props.item.bn }}</td>
+                                        <td class="text-xs-right">{{ props.item.volF }}</td>
+                                        <td class="text-xs-right">{{ props.item.volJ }}</td>
+                                        </template>
+                                    </v-data-table>
+                                </v-tab-item>
+
+                                <v-tab-item>
+                                    <v-data-table
+                                        :headers="headersDiadlog"
+                                        :items="dessertsDialog"
+                                        class="dialog-table"
+                                        hide-actions
+                                    >
+                                        <template v-slot:items="props">
+                                        <td>{{ props.item.fname }}</td>
+                                        <td>{{ props.item.tname }}</td>
+                                        <td class="text-xs-right">{{ props.item.ypower }}</td>
+                                        <td class="text-xs-right">{{ props.item.npower }}</td>
+                                        </template>
+                                    </v-data-table>
+                                </v-tab-item>
+
+                                <v-tab-item>
+                                    <v-data-table
+                                        :headers="headersDiadlog"
+                                        :items="dessertsDialog"
+                                        class="dialog-table"
+                                        hide-actions
+                                    >
+                                        <template v-slot:items="props">
+                                        <td>{{ props.item.gn }}</td>
+                                        <td class="text-xs-right">{{ props.item.ypower }}</td>
+                                        <td class="text-xs-right">{{ props.item.npower }}</td>
                                         </template>
                                     </v-data-table>
                                 </v-tab-item>
@@ -307,8 +328,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="resultDialog = false">取消</v-btn>
+                    <v-btn text @click="resultDialog = false">关闭</v-btn>
+                    <!--
                     <v-btn text @click="resultDialog = false" color="success">保存</v-btn>
+                    -->
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -326,7 +349,9 @@
         postModel,
         putModelById,
         deleteModelById,
-        deleteModelByIds
+        deleteModelByIds,
+        loadComputeData,
+        parseData
     } from '../../../../api/compute_tide'
     import {app, remote, shell} from 'electron'
     import moment from 'moment'
@@ -420,20 +445,14 @@
                 method_items: [{label:'牛拉法', code:'method_cow'}, {label:'误差法', code:'method_err'}],
                 err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}],
                 // 弹窗
-                headersDiadlog: [
-                    {text: '节点名称', value: 'ps_name', align: 'left', sortable: false},
-                    {text: '属性', value: 'bus_name', align: 'left', sortable: false},
-                    {text: '电导p.u.', value: 'zone_no', align: 'left', sortable: false},
-                ],
-                dessertsDialog: [
-                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
-                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
-                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
-                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
-                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
-                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
-                    { ps_name: '1', bus_name: '哈哈', zone_no: '啊啊啊啊'},
-                ]
+                headersDiadlog: [],
+                dessertsDialog: [],
+
+                //弹框显示数据
+                molineData: [],
+                alterData: [],
+                dynamoData: [],
+                tabItems: [{code: 1, name: '母线'}, {code: 2, name: '交流线'}, {code: 3, name: '发电机'}]
             }
         },
         computed: { 
@@ -476,12 +495,55 @@
             this.initialize()
         },
         methods: {
-            openMoline(id) {
-                console.log('母线表数据', id)
-                this.resultDialog = true
+            openMoline(row) {
+                loadComputeData(row.id).then((result) => {
+                    if(result.code === 200) {
+                        this.resultDialog = true
+                        const resultSet = result.data[0]
+                        //开始构造数据
+                        let realData = parseData(resultSet)
+                        if(realData) {
+                            this.molineData = realData['molineData']
+                            this.alterData = realData['alterData']
+                            this.dynamoData = realData['dynamoData']
+                        }
+                        this.handleChangeTab(0)
+                    } else {
+                        this.snackbar = true
+                        this.snackbarMsg = err.data
+                        return
+                    }
+                }).catch((err) => {
+                    this.snackbar = true
+                    this.snackbarMsg = err.data
+                    return
+                })
             },
             handleChangeTab(e) {
                 console.log('3333', e)
+                if(e === 0) {
+                    this.headersDiadlog = [
+                    {text: '节点名称', value: 'bn', align: 'left', sortable: false},
+                    {text: '电压幅值', value: 'volF', align: 'left', sortable: false},
+                    {text: '电压相角', value: 'volJ', align: 'left', sortable: false},
+                    ]
+                    this.dessertsDialog = this.molineData
+                } else if(e === 1) {
+                    this.headersDiadlog = [
+                    {text: '首端节点', value: 'ps_name', align: 'left', sortable: false},
+                    {text: '末端节点', value: 'bus_name', align: 'left', sortable: false},
+                    {text: '有功功率', value: 'zone_no', align: 'left', sortable: false},
+                    {text: '无功功率', value: 'zone_no', align: 'left', sortable: false},
+                    ]
+                    this.dessertsDialog = this.alterData
+                } else if(e === 2) {
+                    this.headersDiadlog = [
+                    {text: '节点名称', value: 'ps_name', align: 'left', sortable: false},
+                    {text: '有功功率', value: 'bus_name', align: 'left', sortable: false},
+                    {text: '无功功率', value: 'zone_no', align: 'left', sortable: false},
+                    ]
+                    this.dessertsDialog = this.dynamoData
+                }
             },
 
 
