@@ -130,13 +130,7 @@
                                 </td>
                                 <td class="text-xs-right">
                                     <v-btn v-if="props.item.computing==2" fab small color="success" @click="openMoline(props.item)">
-                                        母线
-                                    </v-btn>
-                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="refreshItem(props.item)">
-                                        交流线
-                                    </v-btn>
-                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="refreshItem(props.item)">
-                                        发电机
+                                        计算数据
                                     </v-btn>
                                 </td>
                             </tr>
