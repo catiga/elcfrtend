@@ -130,7 +130,7 @@
                                 </td>
                                 <td class="text-xs-right">
                                     <v-btn v-if="props.item.computing==2" fab small color="success" @click="openMoline(props.item)">
-                                        计算数据
+                                        计算<br/>数据
                                     </v-btn>
                                 </td>
                             </tr>
@@ -362,6 +362,7 @@
             return {
                 // 弹窗相关
                 resultDialog: false, // 重构方案拓扑检查弹窗
+                dialogTabActive: '',
 
                 selectItems: [
                     {label: 'Item 1', id: 1},
