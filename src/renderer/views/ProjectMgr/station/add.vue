@@ -125,7 +125,7 @@
                                         <div class="order">{{index + 1}}</div>
                                         <div class="select">
                                             <v-select
-                                                v-model="item.select"
+                                                v-model="item.selectNode"
                                                 :items="nodeList"
                                                 item-text="label"
                                                 item-value="id"
@@ -134,16 +134,16 @@
                                         </div>
                                         <div class="select">
                                             <v-select
-                                                v-model="item.select1"
-                                                :items="selectItems"
-                                                item-text="label"
-                                                item-value="id"
+                                                v-model="item.selectBus"
+                                                :items="molineList"
+                                                item-text="nsla_v"
+                                                item-value="nsla_v"
                                                 label="母线名称"
                                             ></v-select>
                                         </div>
                                         <div class="operate">
-                                            <v-icon>delete</v-icon>
-                                            <v-icon>save</v-icon>
+                                            <v-icon @click="deleteItem(item)">delete</v-icon>
+                                            <v-icon @click="saveItem(item)">save</v-icon>
                                         </div>
                                     </div>
                                 </v-card>
@@ -152,6 +152,7 @@
                                 </div>
                             </div>
                             <!-- 按钮 -->
+                            <!--
                             <div class="bottom-wrapper-button">
                                 <v-btn color="primary" small class="white--text">开始重构</v-btn>
 
@@ -159,11 +160,12 @@
 
                                 <v-btn color="primary" small class="white--text">重置方案</v-btn>
                             </div>
+                            -->
                         </div>
 
                         
                         <div class="row-flex btn-group">
-                            <v-btn small color="success" class="white--text" @click="save">保存</v-btn>
+                            <v-btn small color="success" class="white--text" @click="saveForm">保存</v-btn>
                             <v-btn small color="blue-grey" class="white--text">取消</v-btn>
                         </div>
                     </v-form>
@@ -219,13 +221,31 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <v-snackbar
+                v-model="snackbar"
+                right
+                top
+                :color="submitResult ? 'success' : 'error'"
+        >
+            {{ snackbarMsg}}
+            <v-btn
+                    flat
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
+
     </v-layout>
 </template>
 
 <script>
 import {
     loadBranchInfo,
-    loadStationCode
+    loadStationCode,
+    loadstationBusName,
+    saveStationCompute
 } from '../../../../api/compute_station'
 import {app, remote, shell} from 'electron'
 export default {
@@ -266,8 +286,7 @@ export default {
             linesValue: [],
 
             tableFormList: [
-                { select: '', select1: '' },
-                { select: '', select1: '' },
+                // { select: '', select1: '' }
             ],
             dialogTabActive: 0,
         }
@@ -275,11 +294,43 @@ export default {
     mounted() {
         this.loadProjBranchList()
         this.loadStationList()
+        this.loadStationBusList()
     },
     methods: {
-        save() {
-            console.log('这里保存输出', this.workForm)
-            console.log(this.todoChildList)
+        deleteItem(item) {
+            for(let x in this.tableFormList) {
+                if(this.tableFormList[x]['selectBus'] == item.selectBus) {
+                    this.tableFormList.splice(x, 1)
+                }
+            }
+        },
+        saveItem() {},
+        saveForm() {
+            console.log('表单内容', this.workForm)
+            console.log('select内容', this.todoChildList)
+            console.log('动态列表', this.tableFormList)
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            saveStationCompute(this.workForm, this.todoChildList, this.tableFormList, currentProject.id).then(result => {
+                console.log('计算结果保存', result)
+                if(result.code === 200) {
+                    //调用拓扑重构
+                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/topo/${result.data.id}`).catch(function(error) {
+                        console.log(error)
+                    }).then(function(response) {
+                        console.log(response)
+                    })
+                    this.$router.push({path: '/projectMgr/task/station/list'})
+                } else {
+                    this.snackbar = true
+                    this.snackbarMsg = '操作失败：' + result.data
+                }
+            })
         },
         loadProjBranchList() {
             let currentProject = remote.getGlobal('sharedObject').openedProject
@@ -327,6 +378,22 @@ export default {
                 }
             })
         },
+        loadStationBusList() {
+            //nodeList
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            loadstationBusName(currentProject.id).then(result => {
+                if(result.code === 200 && result.data && result.data.length>0) {
+                    this.molineList = result.data
+                }
+            })
+        },
+
         handleMultipleAdd() {
             if (this.parentValue.length === 0) return;
             let checkedIndexArr = this.parentValue.map(v => {
@@ -355,7 +422,7 @@ export default {
         // 新增行
         handleAddNew() {
             this.tableFormList.push({
-                select: '', select1: ''
+                selectNode: '', selectBus: ''
             })
         },
         // 删除行

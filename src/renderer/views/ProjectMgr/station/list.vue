@@ -110,9 +110,6 @@
                                 </td>
                                 <td>{{ props.item.title }}</td>
                                 <td>{{ props.item.fix_type }}</td>
-                                <td>{{ props.item.fix_devices }}</td>
-                                <td>{{ props.item.method }}</td>
-                                <td>{{ props.item.pragram_name }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
                                 <td>
                                     <span v-if="props.item.computing==0">创建</span>
@@ -129,6 +126,11 @@
                                     </v-btn>
                                     <v-btn v-if="props.item.computing==1" fab small color="error" @click="refreshItem(props.item)">
                                         刷新
+                                    </v-btn>
+                                </td>
+                                <td class="text-xs-right">
+                                    <v-btn v-if="props.item.computing==2" fab small color="success">
+                                        计算<br/>数据
                                     </v-btn>
                                 </td>
                             </tr>
@@ -284,12 +286,10 @@
                 headers: [
                     {text: '作业名称', value: 'title', align: 'left', sortable: true},
                     {text: '检修类型', value: 'fix_type', align: 'left', sortable: false},
-                    {text: '检修设备', value: 'fix_devices', align: 'left', sortable: false},
-                    {text: '重构方法', value: 'method', align: 'left', sortable: false},
-                    {text: '方案名称', value: 'pragram_name', align: 'left', sortable: true},
                     {text: '创建时间', value: 'a_time', align: 'left', sortable: true},
                     {text: '状态', value: 'computing', align: 'left', sortable: true},
-                    {text: '操作', value: 'id', align: 'right', sortable: false}
+                    {text: '操作', value: 'id', align: 'right', sortable: false},
+                    {text: '计算数据', value: 'id', align: 'right', sortable: false}
                 ],
                 noDataMessage: '',
                 search: {

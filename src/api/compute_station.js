@@ -400,6 +400,13 @@ export function loadStationCode(proj_id) {
         try {
             let sql = `select max(first_node) as first_node, max(last_node) as last_node from p_component_branch_info where proj_id=${proj_id}`
             db.query(sql, function(err, values, fields) {
+                if(err) {
+                    reject({
+                        code: 500,
+                        data: '变电站节点编号加载失败'
+                    })
+                    return;
+                }
                 resolve({
                     code: 200,
                     data: _.cloneDeep(values)
@@ -414,3 +421,79 @@ export function loadStationCode(proj_id) {
     })
 }
 
+export function loadstationBusName(proj_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select * from c1_name_show_level_area where proj_id=${proj_id} and nsla_k='bus' order by nsla_index asc`
+            db.query(sql, function(err, values, fields) {
+                console.log('计算结果', values)
+                if(err) {
+                    reject({
+                        code: 500,
+                        data: '变电站站外母线加载失败'
+                    })
+                    return;
+                }
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+export function saveStationCompute(general_form, topo_list, node_list, proj_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            let title = general_form.name
+            let fix_type = general_form.checkItem
+            let a_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+            let flag = 0
+            let topoListStr = ''
+            for(let x in topo_list) {
+                if(topoListStr === '') {
+                    topoListStr = topo_list[x].value
+                } else {
+                    topoListStr = topoListStr + ';' + topo_list[x].value
+                }
+            }
+            let nodeListStr = ''
+            for(let x in node_list) {
+                if(nodeListStr === '') {
+                    nodeListStr = node_list[x].selectNode + ',' + node_list[x].selectBus
+                } else {
+                    nodeListStr = nodeListStr + ';' + node_list[x].selectNode + ',' + node_list[x].selectBus
+                }
+            }
+
+            let sql = `insert into task_station_topo(title, fix_type, a_time, flag, proj_id, topo_list, node_list) 
+                    values('${title}', '${fix_type}', '${a_time}', 0, ${proj_id}, '${topoListStr}', '${nodeListStr}')`
+            
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    resolve({
+                        code: 500,
+                        data: '保存失败'
+                    })
+                    return;
+                }
+                console.log('保存拓扑结果', values)
+                resolve({
+                    code: 200,
+                    data: values
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
