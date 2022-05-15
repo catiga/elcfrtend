@@ -248,7 +248,7 @@
                     <v-form ref="form" lazy-validation class="pd-8">
                         <v-select
                             v-model="workForm.select"
-                            :items="selectItems"
+                            :items="selectHeads"
                             item-text="name"
                             item-value="index"
                             label="方案名称"
@@ -258,11 +258,9 @@
                         <v-card>
                             <v-card-title><h4>站外节点对接</h4></v-card-title>
                             <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
-                                <!--
-                                <v-tab v-for="n in 2" :key="n">
-                                    Item {{ n }}
+                                <v-tab v-for="n in itemList" :key="n.index">
+                                    悬空节点 {{ n.name }}
                                 </v-tab>
-                                -->
                                 <v-tab-item v-for="n in 2" :key="n">
                                     <v-list dense>
                                         <v-list-tile v-for="(item, index) in contentList" :key="item.index" :index="index">
@@ -324,9 +322,11 @@
         data() {
             return {
                 resultDialog: false,
+                selectHeads: [],
                 selectItems: [],
                 selectContents: [],
                 workForm: {},
+                itemList: [],
                 contentList: [],
                 // 表格相关
                 loading: true,
@@ -439,8 +439,9 @@
             handlePreview(item) {
                 console.log('item===', item)
                 loadComputeResult(item.id).then(result => {
-                    console.log(result)
-                    this.selectItems = result.data.head
+                    console.log('result===', result)
+                    this.selectHeads = result.data.head
+                    this.selectItems = result.data.item
                     this.selectContents = result.data.body
                     this.resultDialog = true
                 }).catch(err => {
@@ -449,10 +450,15 @@
             },
             switchMethod(item) {
                 this.contentList = []
+                this.itemList = []
                 for(let x in this.selectContents) {
-                    console.log('x===', x, this.selectContents[x])
                     if(this.selectContents[x]['index']===item) {
                         this.contentList.push(this.selectContents[x])
+                    }
+                }
+                for(let x in this.selectItems) {
+                    if(this.selectItems[x]['index']===item) {
+                        this.itemList.push(this.selectItems[x])
                     }
                 }
             },

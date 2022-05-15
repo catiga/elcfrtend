@@ -515,35 +515,35 @@ export function loadComputeResult(task_id) {
                 let caseOut = values[0]['case_output']
                 console.log('caseOut===', caseOut)
                 caseOut = caseOut.split('|')
-                const methodItems = []
-                const methodContents = []
+                const methodHead = []
+                const methodItem = []
+                const methodContent = []
                 for(let x in caseOut) {
                     let item = caseOut[x]
                     let arrItem = item.split(';')
-                    console.log('x===', x, item, (x==0))
                     if(x == 0) {
                         //方案名称
                         let contentHead = arrItem[0].split(',')
                         let contentBody = arrItem[1].split(',')
                         for(let y in contentHead) {
-                            methodItems.push({index: y, name: contentHead[y]})
+                            methodHead.push({index: y, name: contentHead[y]})
                         }
                         for(let y in contentBody) {
-                            methodContents.push({index: y, name: contentBody[y]})
+                            methodItem.push({index: y, name: contentBody[y]})
                         }
                     } else {
                         //全部都是方案内容
                         for(let y in arrItem) {
                             let contentBody = arrItem[y].split(',')
                             for(let z in contentBody) {
-                                methodContents.push({index: z, name: contentBody[z]})
+                                methodContent.push({index: z, name: contentBody[z]})
                             }
                         }
                     }
                 }
                 resolve({
                     code: 200,
-                    data: {head: methodItems, body: methodContents}
+                    data: {head: methodHead, item: methodItem, body: methodContent}
                 })
             })
         } catch (err) {
