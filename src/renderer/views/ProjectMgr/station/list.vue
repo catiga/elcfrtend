@@ -511,7 +511,8 @@
 
                 let whereAttrs = {
                     dateStart: this.search.dateStart,
-                    dateEnd: this.search.dateEnd
+                    dateEnd: this.search.dateEnd,
+                    proj_id: currentProject.id
                 }
                 const filterFun = (o => {
                     let check1, check2 = false

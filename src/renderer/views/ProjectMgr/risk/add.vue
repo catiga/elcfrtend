@@ -16,6 +16,7 @@
                             required
                         ></v-text-field>
 
+                        <!--
                         <v-dialog
                             v-model="addDialog"
                             persistent
@@ -48,27 +49,33 @@
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
+                        -->
                     </div>
-                    <!-- 计算信息选择 -->
+
+                    <!-- 计算信息选择 
                     <div class="label-title">计算信息选择</div>
                     <v-radio-group label="重构方法选择" v-model="workForm.radio" row>
                         <v-radio label="一阶" value="0" ></v-radio>
                         <v-radio label="二接" value="1" ></v-radio>
                     </v-radio-group>
-                    <!-- 备注 -->
+                    -->
+                    <!-- 备注 
                     <v-textarea
                         label="备注"
                         outline
                         v-model="workForm.remark"
                     ></v-textarea>
+                    -->
+
                     <!-- 系统运行方式选择 -->
                     <div class="label-title">系统运行方式选择</div>
                     <v-select
                         v-model="workForm.select"
                         :items="selectItems"
-                        item-text="label"
-                        item-value="id"
+                        item-text="name"
+                        item-value="index"
                         label="拓扑重构作业方案"
+                        @change="confirmSelTopo"
                     ></v-select>
                     <v-card-actions>
                         <v-spacer></v-spacer>
@@ -109,19 +116,44 @@
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
-                        <v-btn color="success">开始计算</v-btn>
+                        <v-btn color="success" @click="saveCompute">保存计算</v-btn>
                         <v-btn>取消</v-btn>
                     </v-card-actions>
                 </v-form>
             </v-card>
         </v-flex>
+
+         <v-snackbar
+                v-model="snackbar"
+                right
+                top
+                :color="submitResult ? 'success' : 'error'"
+        >
+            {{ snackbarMsg}}
+            <v-btn
+                    flat
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
+
     </v-layout>
 </template>
 
 <script>
+import {
+    loadTopoMethod,
+    saveRiskTask
+} from '../../../../api/compute_risk'
+import {app, remote, shell} from 'electron'
 export default {
     data() {
         return {
+            // 操作提示
+            snackbar: false,
+            snackbarMsg: '',
+
             addDialog: false,
             resultDialog: false,
             workForm: {
@@ -137,11 +169,80 @@ export default {
                 name: '',
                 active: 1
             },
-            selectItems: [
-                {label: '方案一', id: 1},
-                {label: '方案二', id: 2},
-                {label: '方案三', id: 3},
-            ],
+            selectItems: [],
+            topo: {}
+        }
+    },
+    watch: {
+        submitResult: {
+            handler(val) {
+                if (val) {
+                    this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作成功'
+                } else {
+                    this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作失败'
+                }
+            }
+        },
+        snackbar: {
+            handler(val) {
+                if (!val) {
+                    // 重置结果显示相关
+                    this.submitResult = false
+                    this.snackbarMsg = ''
+                }
+            }
+        }
+    },
+    mounted() {
+        this.initialize()
+    },
+    methods: {
+        initialize() {
+            //判断工程
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            loadTopoMethod(currentProject.id).then(result => {
+                this.selectItems = result.data.head
+                this.topo = result.data
+            }).catch(err => {
+
+            })
+        },
+        saveCompute() {
+            console.log(this.workForm, this.topo)
+             //判断工程
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            this.loading = true
+            saveRiskTask(this.workForm, this.topo, currentProject.id).then(result => {
+                if(result.code === 200) {
+                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/risk/${result.data.id}`).catch(function(error) {
+                        console.log(error)
+                    }).then(function(response) {
+                        console.log(response)
+                    })
+                    this.$router.push({path: '/projectMgr/task/risk/list'})
+                }
+            }).catch(err => {
+                this.snackbar = true
+                this.snackbarMsg = err.message
+                this.loading = false
+                return
+            })
+        },
+
+        confirmSelTopo(item) {
+            this.workForm.select = item
         }
     }
 }

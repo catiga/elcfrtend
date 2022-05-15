@@ -41,10 +41,16 @@ const reportRouter = {
       meta: { title: "风险评估", noCache: true },
     },
     {
+      path: "task/risk/add",
+      component: require("@/views/ProjectMgr/risk/add").default,
+      name: "task_risk_list",
+      meta: { title: "风险评估", noCache: true },
+    },
+    {
       path: "task/weak/list",
       component: require("@/views/ProjectMgr/weak/list").default,
       name: "task_weak_list",
-      meta: { title: "风险评估", noCache: true },
+      meta: { title: "薄弱环节分析", noCache: true },
     },
     {
       path: "task/overhaul/list",

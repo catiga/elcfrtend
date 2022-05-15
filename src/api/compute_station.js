@@ -82,7 +82,7 @@ export function getModelExport(filterFun) {
 export function getModelPagination(pagination, whereAttrs, filterFun) {
     return new Promise((resolve, reject) => {
         try {
-            let sql = `select * from ${Table} where flag!=-1`;
+            let sql = `select * from ${Table} where proj_id=${whereAttrs.proj_id} and flag!=-1`;
             if(whereAttrs) {
                 if(whereAttrs.dateStart) {
                     sql = sql + ` and a_time>='${whereAttrs.dateStart}'`
