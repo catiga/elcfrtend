@@ -336,13 +336,6 @@ export function saveProjectParams(project, attrs) {
                         }
                     })
                 })
-                // for (let k of attrs.keys()) {
-                //    console.log('k==', k)
-
-                    // let sql = `select * from project_params where proj_id=${project.id} and flag!=-1`
-                    // db.query(sql, function(err, values, fields) {    
-                    // })
-                // }
             }
         } catch (err) {
             return reject({
@@ -487,6 +480,70 @@ export function saveStationCompute(general_form, topo_list, node_list, proj_id) 
                 resolve({
                     code: 200,
                     data: values
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+export function loadComputeResult(task_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select * from ctopo_compute_result where task_id=${task_id}`
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    reject({
+                        code: 500,
+                        data: '计算结果加载失败'
+                    })
+                    return;
+                }
+                if(!values || values.length === 0) {
+                    reject({
+                        code: 500,
+                        data: '计算尚未完成'
+                    })
+                    return;
+                }
+                //开始构造数据
+                console.log('计算结果', values[0])
+                let caseOut = values[0]['case_output']
+                console.log('caseOut===', caseOut)
+                caseOut = caseOut.split('|')
+                const methodItems = []
+                const methodContents = []
+                for(let x in caseOut) {
+                    let item = caseOut[x]
+                    let arrItem = item.split(';')
+                    console.log('x===', x, item, (x==0))
+                    if(x == 0) {
+                        //方案名称
+                        let contentHead = arrItem[0].split(',')
+                        let contentBody = arrItem[1].split(',')
+                        for(let y in contentHead) {
+                            methodItems.push({index: y, name: contentHead[y]})
+                        }
+                        for(let y in contentBody) {
+                            methodContents.push({index: y, name: contentBody[y]})
+                        }
+                    } else {
+                        //全部都是方案内容
+                        for(let y in arrItem) {
+                            let contentBody = arrItem[y].split(',')
+                            for(let z in contentBody) {
+                                methodContents.push({index: z, name: contentBody[z]})
+                            }
+                        }
+                    }
+                }
+                resolve({
+                    code: 200,
+                    data: {head: methodItems, body: methodContents}
                 })
             })
         } catch (err) {

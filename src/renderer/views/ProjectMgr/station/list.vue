@@ -129,7 +129,7 @@
                                     </v-btn>
                                 </td>
                                 <td class="text-xs-right">
-                                    <v-btn v-if="props.item.computing==2" fab small color="success">
+                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="handlePreview(props.item)">
                                         计算<br/>数据
                                     </v-btn>
                                 </td>
@@ -233,6 +233,57 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+
+
+        <!-- 弹窗 -->
+        <v-dialog
+            v-model="resultDialog"
+            persistent
+            max-width="400"
+        >
+            <v-card>
+                <v-card-title class="text-h3">重构方案结果预览</v-card-title>
+                <v-card-text>
+                    <v-form ref="form" lazy-validation class="pd-8">
+                        <v-select
+                            v-model="workForm.select"
+                            :items="selectItems"
+                            item-text="name"
+                            item-value="index"
+                            label="方案名称"
+                            @change="switchMethod"
+                            required
+                        ></v-select>
+                        <v-card>
+                            <v-card-title><h4>站外节点对接</h4></v-card-title>
+                            <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
+                                <!--
+                                <v-tab v-for="n in 2" :key="n">
+                                    Item {{ n }}
+                                </v-tab>
+                                -->
+                                <v-tab-item v-for="n in 2" :key="n">
+                                    <v-list dense>
+                                        <v-list-tile v-for="(item, index) in contentList" :key="item.index" :index="index">
+                                            <v-list-tile-content>{{ item.name }}</v-list-tile-content>
+                                        </v-list-tile>
+                                    </v-list>
+                                </v-tab-item>
+                            </v-tabs>
+                            
+                        </v-card>
+                    </v-form>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="resultDialog = false" color="success">关闭</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+
+
         <v-snackbar
                 v-model="snackbar"
                 right
@@ -256,7 +307,8 @@
         postModel,
         putModelById,
         deleteModelById,
-        deleteModelByIds
+        deleteModelByIds,
+        loadComputeResult
     } from '../../../../api/compute_station'
     import {app, remote, shell} from 'electron'
     import moment from 'moment'
@@ -271,13 +323,11 @@
         },
         data() {
             return {
-                fileList: [{
-                    name: 'food.jpeg',
-                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                }, {
-                    name: 'food2.jpeg',
-                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                }],
+                resultDialog: false,
+                selectItems: [],
+                selectContents: [],
+                workForm: {},
+                contentList: [],
                 // 表格相关
                 loading: true,
                 showNoData: false,
@@ -386,6 +436,26 @@
             create() {
                 this.$router.push('/projectMgr/task/station/add')
             },
+            handlePreview(item) {
+                console.log('item===', item)
+                loadComputeResult(item.id).then(result => {
+                    console.log(result)
+                    this.selectItems = result.data.head
+                    this.selectContents = result.data.body
+                    this.resultDialog = true
+                }).catch(err => {
+
+                })
+            },
+            switchMethod(item) {
+                this.contentList = []
+                for(let x in this.selectContents) {
+                    console.log('x===', x, this.selectContents[x])
+                    if(this.selectContents[x]['index']===item) {
+                        this.contentList.push(this.selectContents[x])
+                    }
+                }
+            },
             openItem(item) {
                 if (item.is_import === 0) {
                     this.snackbar = true
@@ -394,19 +464,6 @@
                 }
                 remote.getGlobal('sharedObject').openedProject = item
             },
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
-            },
-            handlePreview(file) {
-                console.log(file);
-            },
-            handleExceed(files, fileList) {
-
-            },
-            beforeRemove(file, fileList) {
-
-            },
-
             toggleAll() {
                 if (this.selected.length) this.selected = []
                 else this.selected = this.desserts.slice()
