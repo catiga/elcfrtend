@@ -168,3 +168,37 @@ export function saveRiskTask(form, topo, proj_id) {
         }
     })
 }
+
+export function loadComputeResult(task_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            let sql = `select * from crisk_compute_result where task_id=${task_id}`
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    reject({
+                        code: 500,
+                        data: '计算结果加载失败'
+                    })
+                    return;
+                }
+                if(!values || values.length === 0) {
+                    reject({
+                        code: 500,
+                        data: '计算尚未完成'
+                    })
+                    return;
+                }
+                
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}

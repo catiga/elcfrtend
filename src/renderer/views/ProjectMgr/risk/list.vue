@@ -109,9 +109,7 @@
                                     ></v-checkbox>
                                 </td>
                                 <td>{{ props.item.title }}</td>
-                                <td>{{ props.item.method }}</td>
-                                <td>{{ props.item.allow_err }}</td>
-                                <td>{{ props.item.iterate_limit }}</td>
+                                <td>{{ props.item.topo_method }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
                                 <td>
                                     <span v-if="props.item.computing==0">创建</span>
@@ -130,6 +128,11 @@
                                         刷新
                                     </v-btn>
                                 </td>
+                                <td class="text-xs-right">
+                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="handlePreview(props.item)">
+                                        计算<br/>数据
+                                    </v-btn>
+                                </td>
                             </tr>
                         </template>
                         <template v-slot:no-data>
@@ -144,65 +147,43 @@
         <v-dialog v-model="dialogEdit" max-width="600px">
             <v-card>
                 <v-card-title>
-                    <span class="headline">{{ formTitle }}</span>
+                    <span class="headline">风险评估结果</span>
                 </v-card-title>
                 <v-card-text>
-                    <v-form
-                        wrap
-                        ref="form"
-                        v-model="valid"
-                        lazy-validation
-                    >
+                    <v-form wrap ref="form" v-model="valid" lazy-validation>
                         <v-container grid-list-md>
                             <!-- <v-layout wrap> -->
                                 <v-flex xs12>
-                                    <v-text-field label="作业名称*"
-                                        :rules="[rules.required]"
-                                        v-model="editedItem.title"></v-text-field>
+                                    <v-text-field label="PLC"
+                                        v-model="editedItem.mfs"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
-                                    <v-select
-                                        :items="method_items"
-                                        item-text="label"
-                                        item-value="code"
-                                        label="方法*"
-                                        v-model="editedItem.method"
-                                        :rules="[rules.required]"
-                                    ></v-select>
+                                    <v-text-field label="EFLC"
+                                        v-model="editedItem.eo"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
-                                    <v-select
-                                        :items="err_items"
-                                        item-text="label"
-                                        item-value="code"
-                                        label="允许误差*"
-                                        v-model="editedItem.allow_err"
-                                        :rules="[rules.required]"
-                                    ></v-select>
+                                    <v-text-field label="EENS"
+                                        v-model="editedItem.mhvs"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
-                                    <v-text-field label="迭代次数上限*"
-                                        :rules="[rules.required]"
-                                        v-model="editedItem.iterate_limit"></v-text-field>
+                                    <v-text-field label="潮流安全裕度"
+                                        v-model="editedItem.mlvs"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
-                                    <v-textarea
-                                        label="备注"
-                                        v-model="editedItem.info"
-                                    ></v-textarea>
+                                    <v-text-field label="电压上限安全裕度"
+                                        v-model="editedItem.ehvv"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-text-field label="电压下限安全裕度"
+                                        v-model="editedItem.elvv"></v-text-field>
                                 </v-flex>
                             <!-- </v-layout> -->
                         </v-container>
-                        <small>*代表必填信息</small>
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click="saveEdit">保存并计算</v-btn>
-                    <!--
-                    <v-btn color="blue darken-1" flat @click="saveEdit">输出结果</v-btn>
-                    -->
-                    <v-btn color="blue darken-1" flat @click="closeDialogEdit">取消</v-btn>
+                    <v-btn color="blue darken-1" flat @click="dialogEdit = false">关闭</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -230,6 +211,45 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <!-- 弹窗 -->
+        <v-dialog v-model="dialogEdit" max-width="600px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-form
+                        wrap
+                        ref="form"
+                        v-model="valid"
+                        lazy-validation
+                    >
+                        <v-container grid-list-md>
+                            <!-- <v-layout wrap> -->
+                            <v-flex xs12>
+                                <v-text-field label="作业名称*"
+                                    :rules="[rules.required]"
+                                    v-model="editedItem.title"></v-text-field>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-textarea
+                                    label="备注"
+                                    v-model="editedItem.info"
+                                ></v-textarea>
+                            </v-flex>
+                            <!-- </v-layout> -->
+                        </v-container>
+                        <small>*代表必填信息</small>
+                    </v-form>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat>关闭</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <v-snackbar
                 v-model="snackbar"
                 right
@@ -253,7 +273,8 @@
         postModel,
         putModelById,
         deleteModelById,
-        deleteModelByIds
+        deleteModelByIds,
+        loadComputeResult
     } from '../../../../api/compute_risk'
     import {app, remote, shell} from 'electron'
     import moment from 'moment'
@@ -278,7 +299,8 @@
                     {text: '拓扑作业方案', value: 'info', align: 'left', sortable: false},
                     {text: '创建时间', value: 'a_time', align: 'left', sortable: true},
                     {text: '状态', value: 'computing', align: 'left', sortable: true},
-                    {text: '操作', value: 'id', align: 'right', sortable: false}
+                    {text: '操作', value: 'id', align: 'right', sortable: false},
+                    {text: '计算数据', value: 'id', align: 'right', sortable: false}
                 ],
                 noDataMessage: '',
                 search: {
@@ -372,6 +394,15 @@
             this.initialize()
         },
         methods: {
+            handlePreview(item) {
+                loadComputeResult(item.id).then(result => {
+                    this.editedItem = result.data[0]
+                    console.log(this.editedItem)
+                    this.dialogEdit = true
+                }).catch(err => {
+
+                })
+            },
             create() {
                 this.$router.push('/projectMgr/task/risk/add')
             },
