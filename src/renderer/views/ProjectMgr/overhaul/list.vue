@@ -110,9 +110,7 @@
                                     ></v-checkbox>
                                 </td>
                                 <td>{{ props.item.title }}</td>
-                                <td>{{ props.item.method }}</td>
-                                <td>{{ props.item.allow_err }}</td>
-                                <td>{{ props.item.iterate_limit }}</td>
+                                <td>{{ props.item.topo_method }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
                                 <td>
                                     <span v-if="props.item.computing==0">创建</span>
@@ -129,6 +127,11 @@
                                     </v-btn>
                                     <v-btn v-if="props.item.computing==1" fab small color="error" @click="refreshItem(props.item)">
                                         刷新
+                                    </v-btn>
+                                </td>
+                                <td class="text-xs-right">
+                                    <v-btn v-if="props.item.computing==2" fab small color="success" @click="handlePreview(props.item)">
+                                        计算<br/>数据
                                     </v-btn>
                                 </td>
                             </tr>
@@ -305,7 +308,7 @@
         putModelById,
         deleteModelById,
         deleteModelByIds
-    } from '../../../../api/compute_tide'
+    } from '../../../../api/compute_overhaul'
     import {app, remote, shell} from 'electron'
     import moment from 'moment'
 
@@ -319,13 +322,6 @@
         },
         data() {
             return {
-                fileList: [{
-                    name: 'food.jpeg',
-                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                }, {
-                    name: 'food2.jpeg',
-                    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                }],
                 // 表格相关
                 loading: true,
                 showNoData: false,
@@ -333,12 +329,11 @@
                 desserts: [],
                 headers: [
                     {text: '作业名称', value: 'title', align: 'left', sortable: true},
-                    {text: '方法', value: 'info', align: 'left', sortable: false},
-                    {text: '允许误差', value: 'info', align: 'left', sortable: false},
-                    {text: '迭代次数上限', value: 'info', align: 'left', sortable: false},
+                    {text: '拓扑作业方案', value: 'info', align: 'left', sortable: false},
                     {text: '创建时间', value: 'a_time', align: 'left', sortable: true},
                     {text: '状态', value: 'computing', align: 'left', sortable: true},
-                    {text: '操作', value: 'id', align: 'right', sortable: false}
+                    {text: '操作', value: 'id', align: 'right', sortable: false},
+                    {text: '计算数据', value: 'id', align: 'right', sortable: false}
                 ],
                 noDataMessage: '',
                 search: {
@@ -450,18 +445,6 @@
                 }
                 remote.getGlobal('sharedObject').openedProject = item
             },
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
-            },
-            handlePreview(file) {
-                console.log(file);
-            },
-            handleExceed(files, fileList) {
-
-            },
-            beforeRemove(file, fileList) {
-
-            },
 
             toggleAll() {
                 if (this.selected.length) this.selected = []
@@ -504,7 +487,8 @@
 
                 let whereAttrs = {
                     dateStart: this.search.dateStart,
-                    dateEnd: this.search.dateEnd
+                    dateEnd: this.search.dateEnd,
+                    proj_id: currentProject.id
                 }
                 const filterFun = (o => {
                     let check1, check2 = false
