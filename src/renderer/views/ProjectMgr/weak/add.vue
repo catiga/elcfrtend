@@ -16,6 +16,7 @@
                             label="作业名称"
                         ></v-text-field>
 
+                        <!--
                         <v-dialog
                             v-model="dialog"
                             persistent
@@ -50,6 +51,7 @@
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
+                        -->
                     </div>
                     <v-spacer></v-spacer>
                     <div class="label-title">系统运行方式选择</div>
@@ -62,7 +64,7 @@
                         required
                     ></v-select>
                     <div class="row-flex center">
-                        <v-btn color="primary">保存计算</v-btn>
+                        <v-btn color="primary" @click="saveCompute">保存计算</v-btn>
                         <v-btn @click="handleCancle">取消</v-btn>
                     </div>
                 </v-form>
@@ -77,8 +79,9 @@
 <script>
 
 import {
-    loadTopoMethod
-} from '../../../../api/compute_risk'
+    loadTopoMethod,
+    saveWeakTask
+} from '../../../../api/compute_weak'
 import { remote } from 'electron'
 export default {
     data() {
@@ -107,31 +110,28 @@ export default {
                 { text: '元件位置', sortable: false, value: 'fat' },
                 { text: '元件失效后系统主要风险指标', sortable: false, value: 'carbs' },
             ],
-            desserts: [
-                {
-                    name: 'AC1201',
-                    calories: '红石坡1',
-                    fat: '木兰1',
-                    carbs: '区内1',
-                },
-                {
-                    name: 'AC1202',
-                    calories: '红石坡',
-                    fat: '木兰',
-                    carbs: '区内',
-                },
-            ],
+            desserts: [],
             settingName: '',   // 
+            topo: {}
         }
     },
     mounted() {
-        
+        this.initialData()
     },
     methods: {
         // 获取风险下来框列表
         initialData() {
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
             loadTopoMethod(currentProject.id).then(result => {
+                console.log(result)
                 this.selectItems = result.data.head
+                this.topo = result.data
             }).catch(err => {
 
             })
@@ -152,7 +152,35 @@ export default {
         },
         handleCancle() {
             this.$router.go(-1)
-        }
+        },
+
+        saveCompute() {
+            console.log(this.workForm, this.topo)
+             //判断工程
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            this.loading = true
+            saveWeakTask(this.workForm, this.topo, currentProject.id).then(result => {
+                if(result.code === 200) {
+                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/weak/${result.data.id}`).catch(function(error) {
+                        console.log(error)
+                    }).then(function(response) {
+                        console.log(response)
+                    })
+                    this.$router.push({path: '/projectMgr/task/weak/list'})
+                }
+            }).catch(err => {
+                this.snackbar = true
+                this.snackbarMsg = err.message
+                this.loading = false
+                return
+            })
+        },
     }
 }
 </script>
