@@ -57,7 +57,6 @@
                                 @input="menuTimeEnd = false"></v-date-picker>
                     </v-menu>
                     <v-spacer></v-spacer>
-                    <v-btn color="success" dark class="mb-2" @click="dialogJianxiu = true">测试按钮</v-btn>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
                     <v-btn color="primary" dark class="mb-2" @click="create">新建</v-btn>
                     <v-btn color="error" dark class="mb-2" @click="dialogDeleteBatch = true">批量删除</v-btn>
@@ -676,6 +675,9 @@
             },
             handleChangeTab() {
 
+            },
+            handlePreview(row) {
+                this.dialogJianxiu = true
             }
         }
     }
