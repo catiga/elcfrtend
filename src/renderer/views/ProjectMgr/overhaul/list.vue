@@ -246,46 +246,53 @@
             </v-btn>
         </v-snackbar>
 
-
-        <!-- 检修过渡方案建议 -->
-        <v-dialog v-model="dialogJianxiu" max-width="600px">
+        <!-- 弹窗 -->
+        <v-dialog
+            v-model="dialogJianxiu"
+            persistent
+            max-width="400"
+        >
             <v-card>
-                <v-card-title>
-                    <span class="headline">检修过渡方案建议</span>
-                </v-card-title>
+                <v-card-title class="text-h3">检修过渡方案建议</v-card-title>
                 <v-card-text>
-                    <v-form
-                        ref="form"
-                        class="work-form"
-                    >
-                        <!-- 作业名称 -->
-                        <v-text-field
-                            v-model="dialogJianxiuForm.name"
+                    <v-form ref="form" lazy-validation class="pd-8">
+                        <v-select
+                            v-model="dialogJianxiuForm.select"
+                            :items="selectHeads"
+                            item-text="name"
+                            item-value="index"
                             label="方案名称"
+                            @change="switchMethod"
                             required
-                        ></v-text-field>
-                        <!-- 站外进线重构方案 -->
-                        <v-spacer></v-spacer>
-                        <div class="label-title">方案描述</div>
+                        ></v-select>
                         <v-text-field
                             v-model="dialogJianxiuForm.name"
                             label="悬空节点"
                             required
                         ></v-text-field>
-                        <v-flex xs12 sm6 d-flex>
-                            <v-select
-                            v-model="dialogJianxiuForm.select"
-                            :items="items"
-                            label="站外节点对接"
-                            ></v-select>
-                        </v-flex>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="success" @click="dialogJianxiu = false">拓扑结构</v-btn>
-                            <v-btn color="blue-grey" @click="dialogJianxiu = false">取消</v-btn>
-                        </v-card-actions>
+                        <v-card>
+                            <v-card-title><h4>站外节点对接</h4></v-card-title>
+                            <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
+                                <v-tab v-for="n in itemList" :key="n.index">
+                                    悬空节点 {{ n.name }}
+                                </v-tab>
+                                <v-tab-item v-for="n in 2" :key="n">
+                                    <v-list dense>
+                                        <v-list-tile v-for="(item, index) in contentList" :key="item.index" :index="index">
+                                            <v-list-tile-content>{{ item.name }}</v-list-tile-content>
+                                        </v-list-tile>
+                                    </v-list>
+                                </v-tab-item>
+                            </v-tabs>
+                            
+                        </v-card>
                     </v-form>
                 </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="dialogJianxiu = false" color="success">确定</v-btn>
+                    <v-btn text @click="dialogJianxiu = false">关闭</v-btn>
+                </v-card-actions>
             </v-card>
         </v-dialog>
     </v-layout>
@@ -389,7 +396,7 @@
                 dialogJianxiuForm: {
                     name: ''
                 },
-                items: ['方案一', '方案二'],
+                contentList: [],
             }
         },
         computed: { 
@@ -683,6 +690,9 @@
                     }
                 }
             },
+            handleChangeTab() {
+
+            }
         }
     }
 </script>
