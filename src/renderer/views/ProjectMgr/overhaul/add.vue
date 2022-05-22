@@ -2,7 +2,7 @@
     <v-layout row>
         <v-flex xs12 d-flex>
             <v-card>
-                <v-card-title class="text-h3">检修过渡方案建议</v-card-title>
+                <v-card-title class="text-h3">检修过渡方案智能决策作业定义</v-card-title>
                 <v-card-text>
                     <!-- 表单 -->
                     <v-form
@@ -12,28 +12,34 @@
                         <!-- 作业名称 -->
                         <v-text-field
                             v-model="workForm.name"
-                            label="方案名称"
+                            label="作业名称"
                             required
                         ></v-text-field>
                         <!-- 站外进线重构方案 -->
                         <v-spacer></v-spacer>
-                        <div class="label-title">方案描述</div>
-                        <v-text-field
-                            v-model="workForm.name"
-                            label="悬空节点"
-                            required
-                        ></v-text-field>
-                        <v-flex xs12 sm6 d-flex>
-                            <v-select
-                            v-model="workForm.select"
-                            :items="items"
-                            label="站外节点对接"
-                            ></v-select>
-                        </v-flex>
+                        <!-- 左右多选下拉框 -->
+                        <div class="row-flex" style="margin: 20px 0 0 0;">
+                            <select id="sel_all_area" multiple="multiple" class="multiple-select" v-model="parentValue">
+                                <option v-for="(item, index) in projBranchList" :key="index" :value="item.id + '-' + index ">{{item.value}}</option>
+                            </select>
+                            <div class="multiple-center">
+                                <v-btn small color="success" class="white--text" @click="handleMultipleAdd">
+                                    添加<v-icon right dark>double_arrow</v-icon>
+                                </v-btn>
+                                <v-btn small color="blue-grey" class="white--text" @click="handleMultipleDelete">
+                                    删除<v-icon right dark>delete_forever</v-icon>
+                                </v-btn>
+                            </div>
+                            <select id="sel_all_area" multiple="multiple" class="multiple-select" v-model="childValue">
+                                <option v-for="(item, index) in todoChildList" :key="index" :value="item.id + '-' + index + '|' + item.parentIndex">{{item.value}}</option>
+                            </select>
+                        </div>
+
+
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="success">拓扑结构</v-btn>
-                            <v-btn color="blue-grey">取消</v-btn>
+                            <v-btn color="success">开始计算</v-btn>
+                            <v-btn color="blue-grey" @click="$router.go(-1)">取消</v-btn>
                         </v-card-actions>
                     </v-form>
                 </v-card-text>
@@ -43,6 +49,10 @@
 </template>
 
 <script>
+import {
+    loadBranchInfo
+} from '../../../../api/compute_station'
+import { remote } from 'electron'
 export default {
     data() {
         return {
@@ -61,8 +71,12 @@ export default {
             todoChildList: [],
             parentValue: [],
             childValue: [],
-            items: ['方案一', '方案二']
+
+            projBranchList: [],
         }
+    },
+    mounted() {
+        this.loadProjBranchList()
     },
     methods: {
         handleMultipleAdd() {
@@ -71,8 +85,9 @@ export default {
                 return v.split('-')[1]
             })
             let checkedItem = ''
+            console.log('checkedIndexArr----->', checkedIndexArr)
             checkedIndexArr.forEach((v) => {
-                checkedItem = this.allParentList.splice(v, 1)
+                checkedItem = this.projBranchList.splice(v, 1)
                 checkedItem[0].parentIndex = v
                 this.todoChildList.push(checkedItem[0])
             })
@@ -86,10 +101,29 @@ export default {
             let checkedItem = ''
             checkedIndexArr.forEach((v) => {
                 checkedItem = this.todoChildList.splice(v.split('|')[0], 1)
-                this.allParentList.splice(v.split('|')[1], 0, checkedItem[0])
+                this.projBranchList.splice(v.split('|')[1], 0, checkedItem[0])
             })
             this.childValue = []
-        }
+        },
+        loadProjBranchList() {
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            loadBranchInfo(currentProject.id).then(result => {
+                if(result.code === 200) {
+                    let tmpData = []
+                    for(let x in result.data) {
+                        let tmp = result.data[x]
+                        tmpData.push({id:tmp.id, value:tmp.name})
+                    }
+                    this.projBranchList = tmpData
+                }
+            })
+        },
     }
 }
 </script>
