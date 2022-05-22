@@ -382,7 +382,7 @@
         },
         methods: {
             create() {
-                this.$router.push('/projectMgr/task/station/add')
+                this.$router.push('/projectMgr/task/overhaul/add')
             },
             openItem(item) {
                 if (item.is_import === 0) {

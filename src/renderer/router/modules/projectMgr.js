@@ -64,6 +64,12 @@ const reportRouter = {
       name: "task_overhaul_list",
       meta: { title: "检修方案智能决策", noCache: true },
     },
+    {
+      path: "task/overhaul/add",
+      component: require("@/views/ProjectMgr/overhaul/add").default,
+      name: "task_overhaul_add",
+      meta: { title: "检修过渡方案建议", noCache: true },
+    },
   ],
 };
 
