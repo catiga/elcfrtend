@@ -306,7 +306,8 @@
         postModel,
         putModelById,
         deleteModelById,
-        deleteModelByIds
+        deleteModelByIds,
+        loadComputeResult
     } from '../../../../api/compute_overhaul'
     import {app, remote, shell} from 'electron'
     import moment from 'moment'

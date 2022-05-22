@@ -117,35 +117,53 @@ export function loadTopoMethod(proj_id) {
     })
 }
 
-export function saveWeakTask(form, topo, proj_id) {
+/**
+ * 
+ * @param {*} form 选择的表单
+ * @param {*} topo 全部方案
+ * @param {*} proj_id 
+ * @returns 
+ */
+export function saveOverhaulTask(form, topo, proj_id) {
     return new Promise((resolve, reject) => {
         try {
+            console.log('开始保存1', topo, form)
             const title = form.name
             const a_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
             const topo_id = topo.topo.id
             const computing = 0
 
             let topo_method = []
+            let topo_method_head = []
+            let topo_method_item = []
+            let topo_method_body = []
             for(let x in topo['head']) {
-                if(topo['head'][x].index == form.select) {
-                    topo_method.push({head: topo['head'][x]})
-                    break
+                for(let y in form.select) {
+                    if(topo['head'][x].index == form.select[y]['index']) {
+                        topo_method_head.push(topo['head'][x])
+                    }
                 }
             }
             for(let x in topo['item']) {
-                if(topo['item'][x].index == form.select) {
-                    topo_method.push({item: topo['item'][x]})
+                for(let y in form.select) {
+                    if(topo['item'][x].index == form.select[y]['index']) {
+                        topo_method_item.push(topo['item'][x])
+                    }
                 }
             }
             for(let x in topo['body']) {
-                if(topo['body'][x].index == form.select) {
-                    topo_method.push({body: topo['body'][x]})
+                for(let y in form.select) {
+                    if(topo['body'][x].index == form.select[y]['index']) {
+                        topo_method_body.push(topo['body'][x])
+                    }
                 }
             }
+            topo_method.push({'head':topo_method_head, 'item':topo_method_item, 'body':topo_method_body})
             let sql = `insert into ${Table}(title, proj_id, topo_id, a_time, flag, computing, topo_method) 
                 values('${title}', ${proj_id}, ${topo_id}, '${a_time}', 0, ${computing}, '${JSON.stringify(topo_method)}')`
 
             db.query(sql, function(err, values, fields) {
+                console.log(err)
                 if(err) {
                     console.log(err)
                     reject({
@@ -163,6 +181,7 @@ export function saveWeakTask(form, topo, proj_id) {
                 })
             })
         } catch (err) {
+            console.log(err)
             return reject({
                 code: 400,
                 message: err.message
@@ -174,7 +193,7 @@ export function saveWeakTask(form, topo, proj_id) {
 export function loadComputeResult(task_id) {
     return new Promise((resolve, reject) => {
         try {
-            let sql = `select * from crisk_compute_result where task_id=${task_id}`
+            let sql = `select * from coh_compute_result where task_id=${task_id}`
             db.query(sql, function(err, values, fields) {
                 if(err) {
                     reject({

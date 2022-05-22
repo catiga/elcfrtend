@@ -20,7 +20,7 @@
                         <!-- 左右多选下拉框 -->
                         <div class="row-flex" style="margin: 20px 0 0 0;">
                             <select id="sel_all_area" multiple="multiple" class="multiple-select" v-model="parentValue">
-                                <option v-for="(item, index) in projBranchList" :key="index" :value="item.id + '-' + index ">{{item.value}}</option>
+                                <option v-for="(item, index) in projTopoList" :key="index" :value="item.index + '-' + index ">{{item.name}}</option>
                             </select>
                             <div class="multiple-center">
                                 <v-btn small color="success" class="white--text" @click="handleMultipleAdd">
@@ -31,14 +31,14 @@
                                 </v-btn>
                             </div>
                             <select id="sel_all_area" multiple="multiple" class="multiple-select" v-model="childValue">
-                                <option v-for="(item, index) in todoChildList" :key="index" :value="item.id + '-' + index + '|' + item.parentIndex">{{item.value}}</option>
+                                <option v-for="(item, index) in todoChildList" :key="index" :value="item.index + '-' + index + '|' + item.parentIndex">{{item.name}}</option>
                             </select>
                         </div>
 
 
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="success">开始计算</v-btn>
+                            <v-btn color="success" @click="saveCompute">保存并计算</v-btn>
                             <v-btn color="blue-grey" @click="$router.go(-1)">取消</v-btn>
                         </v-card-actions>
                     </v-form>
@@ -50,8 +50,9 @@
 
 <script>
 import {
-    loadBranchInfo
-} from '../../../../api/compute_station'
+    saveOverhaulTask,
+    loadTopoMethod
+} from '../../../../api/compute_overhaul'
 import { remote } from 'electron'
 export default {
     data() {
@@ -71,12 +72,12 @@ export default {
             todoChildList: [],
             parentValue: [],
             childValue: [],
-
-            projBranchList: [],
+            topo: {},
+            projTopoList: [],
         }
     },
     mounted() {
-        this.loadProjBranchList()
+        this.loadProjTopoList()
     },
     methods: {
         handleMultipleAdd() {
@@ -85,9 +86,8 @@ export default {
                 return v.split('-')[1]
             })
             let checkedItem = ''
-            console.log('checkedIndexArr----->', checkedIndexArr)
             checkedIndexArr.forEach((v) => {
-                checkedItem = this.projBranchList.splice(v, 1)
+                checkedItem = this.projTopoList.splice(v, 1)
                 checkedItem[0].parentIndex = v
                 this.todoChildList.push(checkedItem[0])
             })
@@ -101,11 +101,11 @@ export default {
             let checkedItem = ''
             checkedIndexArr.forEach((v) => {
                 checkedItem = this.todoChildList.splice(v.split('|')[0], 1)
-                this.projBranchList.splice(v.split('|')[1], 0, checkedItem[0])
+                this.projTopoList.splice(v.split('|')[1], 0, checkedItem[0])
             })
             this.childValue = []
         },
-        loadProjBranchList() {
+        loadProjTopoList() {
             let currentProject = remote.getGlobal('sharedObject').openedProject
             if (!currentProject) {
                 this.snackbar = true
@@ -113,15 +113,42 @@ export default {
                 this.loading = false
                 return
             }
-            loadBranchInfo(currentProject.id).then(result => {
+            loadTopoMethod(currentProject.id).then(result => {
+                console.log('result===', result)
                 if(result.code === 200) {
-                    let tmpData = []
-                    for(let x in result.data) {
-                        let tmp = result.data[x]
-                        tmpData.push({id:tmp.id, value:tmp.name})
-                    }
-                    this.projBranchList = tmpData
+                    this.projTopoList = [...result.data.head]
+                    this.topo = result.data
                 }
+            })
+        },
+        saveCompute() {
+             //判断工程
+            let currentProject = remote.getGlobal('sharedObject').openedProject
+            if (!currentProject) {
+                this.snackbar = true
+                this.snackbarMsg = '请先选择打开工程'
+                this.loading = false
+                return
+            }
+            this.loading = true
+            this.workForm.select = this.todoChildList
+
+            console.log('this.workForm', this.workForm)
+            console.log('this.topo', this.topo)
+            saveOverhaulTask(this.workForm, this.topo, currentProject.id).then(result => {
+                if(result.code === 200) {
+                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/overhaul/${result.data.id}`).catch(function(error) {
+                        console.log(error)
+                    }).then(function(response) {
+                        console.log(response)
+                    })
+                    this.$router.push({path: '/projectMgr/task/overhaul/list'})
+                }
+            }).catch(err => {
+                this.snackbar = true
+                this.snackbarMsg = err.message
+                this.loading = false
+                return
             })
         },
     }
