@@ -57,6 +57,7 @@
                                 @input="menuTimeEnd = false"></v-date-picker>
                     </v-menu>
                     <v-spacer></v-spacer>
+                    <v-btn color="success" dark class="mb-2" @click="dialogResult = true">测试按钮</v-btn>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
                     <v-btn color="primary" dark class="mb-2" @click="create">新建</v-btn>
                     <v-btn color="error" dark class="mb-2" @click="dialogDeleteBatch = true">批量删除</v-btn>
@@ -244,6 +245,77 @@
                 Close
             </v-btn>
         </v-snackbar>
+
+        <!-- 薄弱环节分析结果 -->
+        <v-dialog
+            v-model="dialogResult"
+            persistent
+            max-width="800"
+        >
+            <v-card>
+                <v-card-title class="text-h3">薄弱环节分析结果</v-card-title>
+                <v-card-text>
+                    <v-text-field
+                        v-model="dialogResultForm.name"
+                        label="作业名称"
+                        style="width: 400px"
+                    ></v-text-field>
+                    <v-spacer></v-spacer>
+                    <v-tabs
+                        color="cyan"
+                        dark
+                        slider-color="yellow"
+                    >
+                        <v-tab ripple>薄弱线路</v-tab>
+                        <v-tab ripple>薄弱母线节点</v-tab>
+                        <v-tab-item>
+                            <v-card flat>
+                                <v-card-text>
+                                    <v-data-table
+                                        :headers="boruoHeaders"
+                                        :items="boruoDesserts"
+                                        class="elevation-1"
+                                        hide-actions
+                                    >
+                                        <template v-slot:items="props">
+                                        <td class="text-xs-right">{{ props.item.calories }}</td>
+                                        <td class="text-xs-right">{{ props.item.fat }}</td>
+                                        <td class="text-xs-right">{{ props.item.carbs }}</td>
+                                        <td class="text-xs-right">{{ props.item.protein }}</td>
+                                        <td class="text-xs-right">{{ props.item.iron }}</td>
+                                        </template>
+                                    </v-data-table>
+                                </v-card-text>
+                            </v-card>
+                        </v-tab-item>
+                        <v-tab-item>
+                            <v-card flat>
+                                <v-card-text>
+                                    <v-data-table
+                                        :headers="boruoMoHeaders"
+                                        :items="boruoMoDesserts"
+                                        class="elevation-1"
+                                        hide-actions
+                                    >
+                                        <template v-slot:items="props">
+                                        <td class="text-xs-right">{{ props.item.calories }}</td>
+                                        <td class="text-xs-right">{{ props.item.fat }}</td>
+                                        <td class="text-xs-right">{{ props.item.carbs }}</td>
+                                        <td class="text-xs-right">{{ props.item.protein }}</td>
+                                        </template>
+                                    </v-data-table>
+                                </v-card-text>
+                            </v-card>
+                        </v-tab-item>
+                    </v-tabs>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="dialogResult = false" color="success">确认</v-btn>
+                    <v-btn text @click="dialogResult = false">取消</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-layout>
 </template>
 
@@ -338,7 +410,56 @@
                 userDataPath: '',
                 exportPath: '',
                 method_items: [{label:'牛拉法', code:'method_cow'}, {label:'误差法', code:'method_err'}],
-                err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}]
+                err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}],
+
+                // 薄弱环节分析结果
+                dialogResult: false,
+                dialogResultForm: {
+                    name: ''
+                },
+                boruoHeaders: [
+                    { text: '首端节点', value: 'calories', sortable: false, align: 'right'},
+                    { text: '尾端节点', value: 'fat', sortable: false, align: 'right'},
+                    { text: '潮流负载率', value: 'carbs', sortable: false, align: 'right'},
+                    { text: '诱因元件1', value: 'protein', sortable: false, align: 'right'},
+                    { text: '诱因元件2', value: 'iron', sortable: false, align: 'right'},
+                ],
+                boruoDesserts: [
+                    {
+                        calories: 159,
+                        fat: 6.0,
+                        carbs: 24,
+                        protein: 4.0,
+                        iron: '1%'
+                    },
+                    {
+                        calories: 159,
+                        fat: 6.0,
+                        carbs: 24,
+                        protein: 4.0,
+                        iron: '1%'
+                    },
+                ],
+                boruoMoHeaders: [
+                    { text: '母线节点', value: 'calories', sortable: false, align: 'right'},
+                    { text: '母线电压', value: 'fat', sortable: false, align: 'right'},
+                    { text: '诱因元件1', value: 'carbs', sortable: false, align: 'right'},
+                    { text: '诱因元件2', value: 'protein', sortable: false, align: 'right'},
+                ],
+                boruoMoDesserts: [
+                    {
+                        calories: 159,
+                        fat: 6.0,
+                        carbs: 24,
+                        protein: 4.0,
+                    },
+                    {
+                        calories: 159,
+                        fat: 6.0,
+                        carbs: 24,
+                        protein: 4.0,
+                    },
+                ]
             }
         },
         computed: { 
@@ -382,7 +503,7 @@
         },
         methods: {
             create() {
-                this.$router.push('/projectMgr/task/station/add')
+                this.$router.push('/projectMgr/task/weak/add')
             },
             openItem(item) {
                 if (item.is_import === 0) {

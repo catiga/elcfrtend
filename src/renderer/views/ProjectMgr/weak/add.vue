@@ -56,53 +56,14 @@
                     <v-select
                         v-model="workForm.select"
                         :items="selectItems"
-                        item-text="label"
-                        item-value="id"
+                        item-text="name"
+                        item-value="index"
                         label="风险评估方案"
                         required
                     ></v-select>
                     <div class="row-flex center">
-                        <v-dialog
-                            v-model="dialogSet"
-                            persistent
-                            max-width="800"
-                        >
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn v-bind="attrs" v-on="on" color="primary">开始分析</v-btn>
-                            </template>
-                            <v-card>
-                                <v-card-title class="text-h3">网络等值设置</v-card-title>
-                                <v-card-text>
-                                    <v-text-field
-                                        v-model="settingName"
-                                        label="作业名称"
-                                        style="width: 400px"
-                                    ></v-text-field>
-                                    <v-spacer></v-spacer>
-                                    <v-data-table
-                                        :headers="headers"
-                                        :items="desserts"
-                                        hide-actions
-                                        class="elevation-1"
-                                    >
-                                        <template slot="items" slot-scope="props">
-                                            <td>{{ props.item.name }}</td>
-                                            <td>{{ props.item.calories }}</td>
-                                            <td>{{ props.item.fat }}</td>
-                                            <td>{{ props.item.carbs }}</td>
-                                        </template>
-                                    </v-data-table>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn text @click="dialogSet = false" color="success">输出报表</v-btn>
-                                    <v-btn text @click="dialogSet = false" color="success">确认</v-btn>
-                                    <v-btn text @click="dialogSet = false">取消</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                        
-                        <v-btn color="primary">取消</v-btn>
+                        <v-btn color="primary">保存计算</v-btn>
+                        <v-btn @click="handleCancle">取消</v-btn>
                     </div>
                 </v-form>
              </v-card>
@@ -114,6 +75,11 @@
 </template>
 
 <script>
+
+import {
+    loadTopoMethod
+} from '../../../../api/compute_risk'
+import { remote } from 'electron'
 export default {
     data() {
         return {
@@ -129,11 +95,7 @@ export default {
             addForm: {  // 添加表单数据
                 name: ''
             },
-            selectItems: [ // 下拉框数据
-                {label: '方案一', id: 1},
-                {label: '方案二', id: 2},
-                {label: '方案三', id: 3},
-            ],
+            selectItems: [], // 下拉框数据
             headers: [
                 {
                     text: '元件名称',
@@ -166,6 +128,14 @@ export default {
         
     },
     methods: {
+        // 获取风险下来框列表
+        initialData() {
+            loadTopoMethod(currentProject.id).then(result => {
+                this.selectItems = result.data.head
+            }).catch(err => {
+
+            })
+        },
         // 网络等值设置 - 添加
         handleAddTableData() {
             let item = {
@@ -179,6 +149,9 @@ export default {
         },
         handleDeleteTableData() {
             this.desserts.splice(this.desserts.length-1, 1)
+        },
+        handleCancle() {
+            this.$router.go(-1)
         }
     }
 }

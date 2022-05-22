@@ -53,6 +53,12 @@ const reportRouter = {
       meta: { title: "薄弱环节分析", noCache: true },
     },
     {
+      path: "task/weak/add",
+      component: require("@/views/ProjectMgr/weak/add").default,
+      name: "task_weak_list",
+      meta: { title: "薄弱环节分析添加", noCache: true },
+    },
+    {
       path: "task/overhaul/list",
       component: require("@/views/ProjectMgr/overhaul/list").default,
       name: "task_overhaul_list",
