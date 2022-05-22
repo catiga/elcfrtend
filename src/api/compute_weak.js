@@ -174,7 +174,7 @@ export function saveWeakTask(form, topo, proj_id) {
 export function loadComputeResult(task_id) {
     return new Promise((resolve, reject) => {
         try {
-            let sql = `select * from crisk_compute_result where task_id=${task_id}`
+            let sql = `select * from cweak_compute_result where task_id=${task_id}`
             db.query(sql, function(err, values, fields) {
                 if(err) {
                     reject({
@@ -190,10 +190,24 @@ export function loadComputeResult(task_id) {
                     })
                     return;
                 }
-                
+                //处理数据
+                let weakLoad = []
+                let weakVoltage = []
+                let arr_weak_load = values[0]['weak_load'].split(";")
+                for(let x=0; x<arr_weak_load.length; x++) {
+                    weakLoad.push(arr_weak_load[x].split(","))
+                }
+
+                let arr_weak_voltage = values[0]['weak_voltage'].split(";")
+                for(let x=0; x<arr_weak_voltage.length; x++) {
+                    weakVoltage.push(arr_weak_voltage[x].split(","))
+                }
                 resolve({
                     code: 200,
-                    data: _.cloneDeep(values)
+                    data: {
+                        weakLoad: weakLoad,
+                        weakVoltage: weakVoltage
+                    }
                 })
             })
         } catch (err) {

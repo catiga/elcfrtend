@@ -281,11 +281,11 @@
                                         hide-actions
                                     >
                                         <template v-slot:items="props">
-                                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                                        <td class="text-xs-right">{{ props.item.fat }}</td>
-                                        <td class="text-xs-right">{{ props.item.carbs }}</td>
-                                        <td class="text-xs-right">{{ props.item.protein }}</td>
-                                        <td class="text-xs-right">{{ props.item.iron }}</td>
+                                        <td class="text-xs-right">{{ props.item[0] }}</td>
+                                        <td class="text-xs-right">{{ props.item[1] }}</td>
+                                        <td class="text-xs-right">{{ props.item[2] }}</td>
+                                        <td class="text-xs-right">{{ props.item[3] }}</td>
+                                        <td class="text-xs-right">{{ props.item[4] }}</td>
                                         </template>
                                     </v-data-table>
                                 </v-card-text>
@@ -301,10 +301,10 @@
                                         hide-actions
                                     >
                                         <template v-slot:items="props">
-                                        <td class="text-xs-right">{{ props.item.calories }}</td>
-                                        <td class="text-xs-right">{{ props.item.fat }}</td>
-                                        <td class="text-xs-right">{{ props.item.carbs }}</td>
-                                        <td class="text-xs-right">{{ props.item.protein }}</td>
+                                        <td class="text-xs-right">{{ props.item[0] }}</td>
+                                        <td class="text-xs-right">{{ props.item[1] }}</td>
+                                        <td class="text-xs-right">{{ props.item[2] }}</td>
+                                        <td class="text-xs-right">{{ props.item[3] }}</td>
                                         </template>
                                     </v-data-table>
                                 </v-card-text>
@@ -328,7 +328,8 @@
         postModel,
         putModelById,
         deleteModelById,
-        deleteModelByIds
+        deleteModelByIds,
+        loadComputeResult
     } from '../../../../api/compute_weak'
     import {app, remote, shell} from 'electron'
     import moment from 'moment'
@@ -419,42 +420,14 @@
                     { text: '诱因元件1', value: 'protein', sortable: false, align: 'right'},
                     { text: '诱因元件2', value: 'iron', sortable: false, align: 'right'},
                 ],
-                boruoDesserts: [
-                    {
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
-                        iron: '1%'
-                    },
-                    {
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
-                        iron: '1%'
-                    },
-                ],
+                boruoDesserts: [],
                 boruoMoHeaders: [
                     { text: '母线节点', value: 'calories', sortable: false, align: 'right'},
                     { text: '母线电压', value: 'fat', sortable: false, align: 'right'},
                     { text: '诱因元件1', value: 'carbs', sortable: false, align: 'right'},
                     { text: '诱因元件2', value: 'protein', sortable: false, align: 'right'},
                 ],
-                boruoMoDesserts: [
-                    {
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
-                    },
-                    {
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
-                    },
-                ]
+                boruoMoDesserts: []
             }
         },
         computed: { 
@@ -497,6 +470,17 @@
             this.initialize()
         },
         methods: {
+            handlePreview(item) {
+                console.log('item===', item)
+                loadComputeResult(item.id).then(result => {
+                    console.log('result===', result)
+                    this.boruoDesserts = result.data.weakLoad
+                    this.boruoMoDesserts = result.data.weakVoltage
+                    this.dialogResult = true
+                }).catch(err => {
+
+                })
+            },
             create() {
                 this.$router.push('/projectMgr/task/weak/add')
             },
