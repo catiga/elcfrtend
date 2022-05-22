@@ -97,7 +97,9 @@
             <v-container fluid fill-height grid-list-md>
                 <router-view></router-view>
             </v-container>
+            <!--
             <Add></Add>
+            -->
         </v-content>
         <v-footer app fixed inset>
             <span>&copy; 2022</span>

@@ -483,6 +483,9 @@
                     return
                 }
                 remote.getGlobal('sharedObject').openedProject = item
+                this.snackbar = true
+                this.snackbarMsg = '操作成功'
+                this.submitResult = true
             },
             finishItem(item) {
                 if (item.is_import === 0) {
