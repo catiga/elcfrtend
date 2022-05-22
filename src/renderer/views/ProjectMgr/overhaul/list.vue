@@ -57,6 +57,7 @@
                                 @input="menuTimeEnd = false"></v-date-picker>
                     </v-menu>
                     <v-spacer></v-spacer>
+                    <v-btn color="success" dark class="mb-2" @click="dialogJianxiu = true">测试按钮</v-btn>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
                     <v-btn color="primary" dark class="mb-2" @click="create">新建</v-btn>
                     <v-btn color="error" dark class="mb-2" @click="dialogDeleteBatch = true">批量删除</v-btn>
@@ -244,6 +245,49 @@
                 Close
             </v-btn>
         </v-snackbar>
+
+
+        <!-- 检修过渡方案建议 -->
+        <v-dialog v-model="dialogJianxiu" max-width="600px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">检修过渡方案建议</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-form
+                        ref="form"
+                        class="work-form"
+                    >
+                        <!-- 作业名称 -->
+                        <v-text-field
+                            v-model="dialogJianxiuForm.name"
+                            label="方案名称"
+                            required
+                        ></v-text-field>
+                        <!-- 站外进线重构方案 -->
+                        <v-spacer></v-spacer>
+                        <div class="label-title">方案描述</div>
+                        <v-text-field
+                            v-model="dialogJianxiuForm.name"
+                            label="悬空节点"
+                            required
+                        ></v-text-field>
+                        <v-flex xs12 sm6 d-flex>
+                            <v-select
+                            v-model="dialogJianxiuForm.select"
+                            :items="items"
+                            label="站外节点对接"
+                            ></v-select>
+                        </v-flex>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="success" @click="dialogJianxiu = false">拓扑结构</v-btn>
+                            <v-btn color="blue-grey" @click="dialogJianxiu = false">取消</v-btn>
+                        </v-card-actions>
+                    </v-form>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </v-layout>
 </template>
 
@@ -338,7 +382,14 @@
                 userDataPath: '',
                 exportPath: '',
                 method_items: [{label:'牛拉法', code:'method_cow'}, {label:'误差法', code:'method_err'}],
-                err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}]
+                err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}],
+                
+                // 检修过渡方案建议
+                dialogJianxiu: false,
+                dialogJianxiuForm: {
+                    name: ''
+                },
+                items: ['方案一', '方案二'],
             }
         },
         computed: { 
@@ -382,7 +433,7 @@
         },
         methods: {
             create() {
-                this.$router.push('/projectMgr/task/overhaul/add')
+                this.$router.push('/projectMgr/task/station/add')
             },
             openItem(item) {
                 if (item.is_import === 0) {
@@ -657,4 +708,7 @@
         height: auto !important;    
     }
 // }
+.flex.sm6 {
+    max-width: 100% !important;
+}
 </style>
