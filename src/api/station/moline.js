@@ -21,7 +21,7 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
             return
         }
         try {
-            let sql = `select * from ${Table} where flag!=-1 and proj_id=${currentOpenedProject.id}`;
+            let sql = `select * from ${Table} where flag!=-1 and proj_id=${currentOpenedProject.id}`
             if(whereAttrs) {
                 if(whereAttrs.ps_name) {
                     sql = sql + ` and ps_name like '%${whereAttrs.ps_name}%'`
