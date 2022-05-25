@@ -97,7 +97,7 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
                     sql = sql + ` order by ${pagination.sortBy} ${pagination.descending?'desc':'asc'}`
                 }
                 sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-
+                console.log('sql===', sql)
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200,

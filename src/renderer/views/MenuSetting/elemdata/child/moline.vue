@@ -2,6 +2,7 @@
     <v-layout row>
         <v-flex xs12 d-flex>
             <v-card>
+                <!--
                 <v-card-title>
                     <v-menu
                             single-line
@@ -17,31 +18,8 @@
                         <template v-slot:activator="{ on }">
                             <v-text-field
                                     style="width: 50px;margin-left: 15px;"
-                                    v-model="search.ps_name"
-                                    label="厂站名称"
-                                    single-line
-                                    hide-details
-                                    v-on="on"
-                                    clearable
-                            ></v-text-field>
-                        </template>
-                    </v-menu>
-                    <v-menu
-                            single-line
-                            v-model="menuTimeStart"
-                            :close-on-content-click="false"
-                            :nudge-right="40"
-                            lazy
-                            transition="scale-transition"
-                            offset-y
-                            full-width
-                            min-width="290px"
-                    >
-                        <template v-slot:activator="{ on }">
-                            <v-text-field
-                                    style="width: 50px;margin-left: 15px;"
-                                    v-model="search.bus_name"
-                                    label="母线名称"
+                                    v-model="search.nsla_v"
+                                    label="节点名称"
                                     single-line
                                     hide-details
                                     v-on="on"
@@ -52,27 +30,27 @@
                     <v-spacer></v-spacer>
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
                     <v-btn color="info" dark class="mb-2" @click="handleCreate">新建</v-btn>
-                    <!--
-                    <v-btn :loading="importing" :disabled="importing" color="error" @click="saveTable">保存</v-btn>
-                    -->
                 </v-card-title>
+                -->
                 <v-card-text class="pt-0 title font-weight-bold">
                     <v-data-table
                         :headers="headers"
                         :items="desserts"
                         class="elevation-1"
+                        :pagination.sync="pagination"
+                        :loading="loading"
                     >
                         <template v-slot:items="props">
-                        <td>{{ props.item.ps_name }}</td>
-                        <td class="text-xs-right">{{ props.item.bus_name }}</td>
-                        <td class="text-xs-right">{{ props.item.zone_no }}</td>
-                        <td class="text-xs-right">{{ props.item.base_kv }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td>{{ props.item.nsla_v }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_2 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_5 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_6 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_7 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_8 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_9 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_10 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_12 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla.bla_13 }}</td>
                         <td class="justify-center layout px-0">
                             <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
                             <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
@@ -86,7 +64,7 @@
         <v-dialog v-model="dialogDelete" max-width="290">
             <v-card>
                 <v-card-title class="headline">提示：</v-card-title>
-                <v-card-text>确定删除工程吗?
+                <v-card-text>确定删除数据吗?
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
@@ -186,7 +164,11 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/station/moline'
+    import { 
+        getModelPagination, 
+        saveStatData,
+        getBusLevelAreaByPage
+    } from '../../../../../api/station/moline'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -224,8 +206,7 @@
 
                 noDataMessage: '',
                 search: {
-                    ps_name: '',
-                    bus_name: ''
+                    nsla_v: ''
                 },
                 pagination: {
                     sortBy: 'a_time'
@@ -267,8 +248,6 @@
                 rules: {
                     required: value => !!value || '必填项不可为空.',
                 },
-                assetsList: [],
-                categoryList: [],
                 typeList: [{text: 'Income', value: 'i'}, {text: 'Expenditure', value: 'e'}],
                 // 操作提示
                 snackbar: false,
@@ -335,6 +314,14 @@
             },
 
             initialize() {
+                //判断工程
+                let currentProject = remote.getGlobal('sharedObject').openedProject
+                if (!currentProject) {
+                    this.snackbar = true
+                    this.snackbarMsg = '请先选择打开工程'
+                    this.loading = false
+                    return
+                }
                 this.showNoData = false
                 this.loading = true
 
@@ -343,8 +330,8 @@
                 const {sortBy, descending, page, rowsPerPage} = this.pagination
 
                 let whereAttrs = {
-                    ps_name: this.search.ps_name,
-                    bus_name: this.search.bus_name
+                    nsla_v: this.search.nsla_v,
+                    proj_id: currentProject.id
                 }
                 const filterFun = (o => {
                     let check1, check2 = false
@@ -370,33 +357,29 @@
                 })
 
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
+                    console.log('result===', result)
                     if (result.code === 200) {
                         let items = result.data.list
                         const total = result.data.total
 
                         // 表关联
-                        if (items) {
-                            items.forEach(item => {
-                                this.categoryList.some(itemCategory => {
-                                    if (item.categoryId === itemCategory.value) {
-                                        item.categoryName = itemCategory.text
-                                        return true
-                                    }
-                                })
-
-                                this.assetsList.some(itemAssets => {
-                                    if (item.assetsId === itemAssets.value) {
-                                        item.assetsName = itemAssets.text
-                                        return true
-                                    }
-                                })
-                            })
-                        }
-
+                        
                         // setTimeout(() => {
                         this.loading = false
                         this.desserts = items
                         this.totalDesserts = total
+
+                        //取bus level数据
+                        getBusLevelAreaByPage(this.pagination, currentProject.id).then(result1 => {
+                            if(result1.code === 200) {
+                                let bus_level_data = result1.data.list
+                                for(let x in items) {
+                                    items[x]['bla'] = bus_level_data[x]
+                                }
+                                console.log(items)
+                                this.desserts = items
+                            }
+                        })
                         // }, 1000)
                     } else {
                         this.loading = false

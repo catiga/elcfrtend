@@ -21,30 +21,49 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
             return
         }
         try {
-            let sql = `select * from ${Table} where flag!=-1 and proj_id=${currentOpenedProject.id}`
+            const nsla_k = 'bus'
+            let sql = `select a.nsla_v from c1_name_show_level_area a where a.nsla_k='${nsla_k}' and a.proj_id=${currentOpenedProject.id}`
             if(whereAttrs) {
-                if(whereAttrs.ps_name) {
-                    sql = sql + ` and ps_name like '%${whereAttrs.ps_name}%'`
-                }
-                if(whereAttrs.bus_name) {
-                    sql = sql + ` and bus_name like '%${whereAttrs.bus_name}%'`
+                if(whereAttrs.nsla_v) {
+                    sql = sql + ` and nsla_v like '%${whereAttrs.nsla_v}%'`
                 }
             }
+            
             db.query(sql, function(err, values, fields) {
                 let total = values.length;
-                if(pagination.sortBy) {
-                    sql = sql + ` order by ${pagination.sortBy} ${pagination.descending?'desc':'asc'}`
-                }
+                sql = sql + ` order by a.nsla_index asc`
                 sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-
+                console.log('ppppp===', sql)
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200,
                         data: _.cloneDeep({total: total, list: values})
                     })
                 })
-            });
+            })
         } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+export function getBusLevelAreaByPage(pagination, proj_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            console.log('pagination', pagination)
+            let sql = `select bla_2, bla_5, bla_6, bla_10, bla_8, bla_9, bla_12, bla_13, bla_7 from c1_bus_level_area where proj_id=${proj_id} order by id asc`
+            sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+            console.log('sql===', sql)
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: _.cloneDeep({list: values})
+                })
+            })
+        } catch(err) {
             return reject({
                 code: 400,
                 message: err.message
