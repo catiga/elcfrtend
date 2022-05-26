@@ -20,7 +20,7 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
             })
             return
         }
-        // currentOpenedProject.id = 1;
+        currentOpenedProject.id = 1;
         try {
             let sql = `select a.gen,a.nsla_id,a.nsla_index,b.gla_2,b.gla_3,b.gla_4,b.gla_5,b.gla_9,b.gla_10,b.gla_8,b.gla_id from 
             (select nsla.nsla_v gen,nsla.nsla_index,nsla.id nsla_id from c1_name_show_level_area nsla where nsla.nsla_k = 'gen' and nsla.proj_id = ${currentOpenedProject.id}) a 
@@ -56,16 +56,53 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
 }
 
 export function saveStatData(obj) {
-    let sql = `update ${Table} set id_name='${obj.id_name}' where id=${obj.id}`
+    console.log(obj);
+    let sql = `update c1_name_show_level_area set nsla_v = ${obj.gen} where id = ${obj.nsla_id}`
+    let sql2 = `update c1_generator_level_area set gla_2 = ${obj.gla_2},gla_3 = ${obj.gla_3},gla_5 = ${obj.gla_5},gla_9 = ${obj.gla_9},gla_10 = ${obj.gla_10},gla_8 = ${obj.gla_8} where id = ${obj.gla_id}`
+    return new Promise((resolve, reject) => { 
+        try {
+            db.query(sql, function(err, values, fields) {
+                
+            });
+
+            db.query(sql2, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: '操作成功'
+                })
+            });
+            
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+export function delData(obj) {
+    console.log(obj);
+    let sql = `delete from c1_name_show_level_area where id = ${obj.nsla_id}`
+    let sql2 = `delete from c1_generator_level_area where id = ${obj.gla_id}`
     return new Promise((resolve, reject) => { 
         try {
             db.query(sql, function(err, values, fields) {
                 resolve({
                     code: 200,
-                    data: obj
+                    data: '操作成功'
                 })
             });
+
+            db.query(sql2, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: '操作成功'
+                })
+            });
+            
         } catch (err) {
+            console.log(err)
             return reject({
                 code: 400,
                 message: err.message

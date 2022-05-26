@@ -41,10 +41,10 @@
                         class="elevation-1"
                     >
                         <template v-slot:items="props">
-                            <td class="text-xs-center">{{ props.item.c_load }}</td>
-                            <td class="text-xs-center">{{ props.item.lla_2 }}</td>
-                            <td class="text-xs-center">{{ props.item.lla_3 }}</td>
-                            <td class="justify-center layout px-0">
+                            <td class="text-xs-left">{{ props.item.c_load }}</td>
+                            <td class="text-xs-left">{{ props.item.lla_2 }}</td>
+                            <td class="text-xs-left">{{ props.item.lla_3 }}</td>
+                            <td class="justify-left layout px-0">
                                 <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
                                 <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
                             </td>
@@ -99,17 +99,17 @@
                                 <v-flex xs12>
                                     <v-text-field label="节点名称*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.c_load"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="有功MW*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.lla_2"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="无功MVAR*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.lla_3"></v-text-field>
                                 </v-flex>
                             <!-- </v-layout> -->
                         </v-container>
@@ -127,7 +127,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/station/load'
+    import { getModelPagination, saveStatData, delData } from '../../../../../api/station/load'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -370,7 +370,7 @@
             },
 
             saveDelete() {
-                deleteModelById(this.editedItem.id).then(result => {
+                delData(this.delItem).then(result => {
                     if (result.code === 200) {
                         this.submitResult = true
                     } else {
@@ -381,6 +381,7 @@
                     this.snackbar = true
                     // 每次操作成功后，重新获取数据
                     this.initialize()
+                    this.delItem = {}
                 }).catch(err => {
                     this.closeDialogDelete()
                     this.submitResult = false
@@ -388,6 +389,7 @@
                     this.snackbar = true
                     // 每次操作成功后，重新获取数据
                     this.initialize()
+                    this.delItem = {}
                 })
             },
 
@@ -445,11 +447,14 @@
 
             // 编辑
             handleEditItem(item) {
-
+                this.dialogEdit = true
+                console.log(item);
+                this.addForm = item;
             },
             // 删除
             handleDeleteItem(item) {
                 this.dialogDelete = true
+                this.delItem = item;
             },
             // 新建弹窗
             handleCreate() {
@@ -458,6 +463,32 @@
             // 添加表单
             handleSaveForm() {
                 this.dialogEdit = false
+                if (this.$refs.form.validate()) {
+                    // 格式化
+                    // this.editedItem.amountOfMoney = parseFloat(this.editedItem.amountOfMoney)
+                    saveStatData(this.addForm).then(result => {
+                        if (result.code === 200) {
+                            this.submitResult = true
+                        } else {
+                            this.submitResult = false
+                        }
+                        this.dialogEdit = false
+                        // 显示结果
+                        this.snackbar = true
+                        // 每次操作成功后，重新获取数据
+                        this.initialize()
+                        this.addForm = {};
+                    }).catch(err => {
+                        this.closeDialogEdit()
+                        this.submitResult = false
+                        // 显示结果
+                        this.snackbar = true
+                        this.snackbarMsg = err.message
+                        // 每次操作成功后，重新获取数据
+                        this.initialize()
+                    })
+                    
+                }
             },
             // 取消表单
             handleCancelFomr() {

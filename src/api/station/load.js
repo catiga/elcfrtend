@@ -55,15 +55,22 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
 }
 
 export function saveStatData(obj) {
-    let sql = `update ${Table} set id_name='${obj.id_name}', pl=${obj.pl}, ql=${obj.ql} where id=${obj.id}`
+    console.log(obj);
+    let sql = `update c1_name_show_level_area set nsla_v = ${obj.c_load} where id = ${obj.nsla_id}`
+    let sql2 = `update c1_load_level_area set lla_2 = ${obj.lla_2},lla_3 = ${obj.lla_3} where id = ${obj.lla_id}`
     return new Promise((resolve, reject) => { 
         try {
             db.query(sql, function(err, values, fields) {
+                
+            });
+
+            db.query(sql2, function(err, values, fields) {
                 resolve({
                     code: 200,
-                    data: obj
+                    data: '操作成功'
                 })
             });
+            
         } catch (err) {
             return reject({
                 code: 400,
@@ -73,3 +80,32 @@ export function saveStatData(obj) {
     })
 }
 
+export function delData(obj) {
+    console.log(obj);
+    let sql = `delete from c1_name_show_level_area where id = ${obj.nsla_id}`
+    let sql2 = `delete from c1_load_level_area where id = ${obj.lla_id}`
+    return new Promise((resolve, reject) => { 
+        try {
+            db.query(sql, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: '操作成功'
+                })
+            });
+
+            db.query(sql2, function(err, values, fields) {
+                resolve({
+                    code: 200,
+                    data: '操作成功'
+                })
+            });
+            
+        } catch (err) {
+            console.log(err)
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}

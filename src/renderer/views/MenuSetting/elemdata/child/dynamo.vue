@@ -105,37 +105,37 @@
                                 <v-flex xs12>
                                     <v-text-field label="发电机节点*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.gen"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="有功MW*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.gla_2"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="无功MVAR*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.gla_3"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="无功上限MVAR*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.gla_4"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="无功下限MVAR*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.gla_5"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="有功上限MW*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.gla_9"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="有功下限MW*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.gla_10"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-select
@@ -143,7 +143,7 @@
                                         item-text="lable"
                                         item-value="id"
                                         label="状态*"
-                                        v-model="addForm.info"
+                                        v-model="addForm.gla_8"
                                         :rules="[rules.required]"
                                     ></v-select>
                                 </v-flex>
@@ -163,7 +163,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/station/dynamo'
+    import { getModelPagination, saveStatData, delData } from '../../../../../api/station/dynamo'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -409,7 +409,7 @@
             },
 
             saveDelete() {
-                deleteModelById(this.editedItem.id).then(result => {
+                delData(this.delItem).then(result => {
                     if (result.code === 200) {
                         this.submitResult = true
                     } else {
@@ -420,6 +420,7 @@
                     this.snackbar = true
                     // 每次操作成功后，重新获取数据
                     this.initialize()
+                    this.delItem = {}
                 }).catch(err => {
                     this.closeDialogDelete()
                     this.submitResult = false
@@ -427,6 +428,7 @@
                     this.snackbar = true
                     // 每次操作成功后，重新获取数据
                     this.initialize()
+                    this.delItem = {}
                 })
             },
 
@@ -484,11 +486,14 @@
 
             // 编辑
             handleEditItem(item) {
-
+                this.dialogEdit = true
+                console.log(item);
+                this.addForm = item;
             },
             // 删除
             handleDeleteItem(item) {
                 this.dialogDelete = true
+                this.delItem = item;
             },
             // 新建弹窗
             handleCreate() {
@@ -496,7 +501,32 @@
             },
             // 添加表单
             handleSaveForm() {
-                this.dialogEdit = false
+                if (this.$refs.form.validate()) {
+                    // 格式化
+                    // this.editedItem.amountOfMoney = parseFloat(this.editedItem.amountOfMoney)
+                    saveStatData(this.addForm).then(result => {
+                        if (result.code === 200) {
+                            this.submitResult = true
+                        } else {
+                            this.submitResult = false
+                        }
+                        this.dialogEdit = false
+                        // 显示结果
+                        this.snackbar = true
+                        // 每次操作成功后，重新获取数据
+                        this.initialize()
+                        this.addForm = {};
+                    }).catch(err => {
+                        this.closeDialogEdit()
+                        this.submitResult = false
+                        // 显示结果
+                        this.snackbar = true
+                        this.snackbarMsg = err.message
+                        // 每次操作成功后，重新获取数据
+                        this.initialize()
+                    })
+                    
+                }
             },
             // 取消表单
             handleCancelFomr() {
