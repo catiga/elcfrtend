@@ -37,18 +37,19 @@
                     <v-data-table
                         :headers="headers"
                         :items="desserts"
+                        :pagination.sync="pagination"
                         class="elevation-1"
                     >
+
                         <template v-slot:items="props">
-                        <td>{{ props.item.ps_name }}</td>
-                        <td class="text-xs-right">{{ props.item.ps_name }}</td>
-                        <td class="text-xs-right">{{ props.item.bus_name }}</td>
-                        <td class="text-xs-right">{{ props.item.zone_no }}</td>
-                        <td class="text-xs-right">{{ props.item.base_kv }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-center">{{ props.item.gen }}</td>
+                        <td class="text-xs-center">{{ props.item.gla_2 }}</td>
+                        <td class="text-xs-center">{{ props.item.gla_3 }}</td>
+                        <td class="text-xs-center">{{ props.item.gla_4 }}</td>
+                        <td class="text-xs-center">{{ props.item.gla_5 }}</td>
+                        <td class="text-xs-center">{{ props.item.gla_9 }}</td>
+                        <td class="text-xs-center">{{ props.item.gla_10 }}</td>
+                        <td class="text-xs-center">{{ props.item.gla_8 }}</td>
                         <td class="justify-center layout px-0">
                             <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
                             <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
@@ -185,14 +186,14 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '发电机节点', value: 'ps_name', align: 'left', sortable: false},
-                    {text: '有功MW', value: 'bus_name', align: 'left', sortable: false},
-                    {text: '无功MVAR', value: 'zone_no', align: 'left', sortable: false},
-                    {text: '无功上限MVAR', value: 'base_kv', align: 'left', sortable: false},
-                    {text: '无功下限MVAR', value: 'id', align: 'left', sortable: false},
-                    {text: '有功上限MW', value: 'id', align: 'left', sortable: false},
-                    {text: '有功下限MW', value: 'id', align: 'left', sortable: false},
-                    {text: '状态', value: 'id', align: 'left', sortable: false},
+                    {text: '发电机节点', value: 'gen', align: 'left', sortable: false},
+                    {text: '有功MW', value: 'gla_2', align: 'left', sortable: false},
+                    {text: '无功MVAR', value: 'gla_3', align: 'left', sortable: false},
+                    {text: '无功上限MVAR', value: 'gla_4', align: 'left', sortable: false},
+                    {text: '无功下限MVAR', value: 'gla_5', align: 'left', sortable: false},
+                    {text: '有功上限MW', value: 'gla_9', align: 'left', sortable: false},
+                    {text: '有功下限MW', value: 'gla_10', align: 'left', sortable: false},
+                    {text: '状态', value: 'gla_8', align: 'left', sortable: false},
                     { text: '操作', sortable: false }
                 ],
                 noDataMessage: '',
@@ -200,8 +201,9 @@
                     id_name: ''
                 },
                 pagination: {
-                    sortBy: 'a_time'
+                    sortBy: 'nsla_index'
                 },
+                formTitle:'',
                 selected: [],
                 dialogDeleteBatch: false,
                 exporting: false,

@@ -34,17 +34,17 @@
                     <v-data-table
                         :headers="headers"
                         :items="desserts"
+                        :pagination.sync="pagination"
                         class="elevation-1"
                     >
                         <template v-slot:items="props">
-                        <td>{{ props.item.ps_name }}</td>
-                        <td class="text-xs-right">{{ props.item.ps_name }}</td>
-                        <td class="text-xs-right">{{ props.item.bus_name }}</td>
-                        <td class="text-xs-right">{{ props.item.zone_no }}</td>
-                        <td class="text-xs-right">{{ props.item.base_kv }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-left">{{ props.item.fbranch }}</td>
+                        <td class="text-xs-left">{{ props.item.tbranch }}</td>
+                        <td class="text-xs-left">{{ props.item.bla_3 }}</td>
+                        <td class="text-xs-left">{{ props.item.bla_4 }}</td>
+                        <td class="text-xs-left">{{ props.item.bla_5 }}</td>
+                        <td class="text-xs-left">{{ props.item.bla_6 }}</td>
+                        <td class="text-xs-left">{{ props.item.bla_11 }}</td>
                         <td class="justify-center layout px-0">
                             <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
                             <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
@@ -100,33 +100,33 @@
                                 <v-flex xs12>
                                     <v-text-field label="首端节点*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.fbranch"></v-text-field>
                                 </v-flex>
                                 
                                 <v-flex xs12>
                                     <v-text-field label="尾端节点*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.tbranch"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="电阻p.u.*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.bla_3"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="电抗p.u.*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.bla_4"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="电纳p.u.*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.bla_5"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-text-field label="额定容量MW*"
                                         :rules="[rules.required]"
-                                        v-model="addForm.title"></v-text-field>
+                                        v-model="addForm.bla_6"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
                                     <v-select
@@ -134,7 +134,7 @@
                                         item-text="lable"
                                         item-value="id"
                                         label="状态*"
-                                        v-model="addForm.info"
+                                        v-model="addForm.bla_11"
                                         :rules="[rules.required]"
                                     ></v-select>
                                 </v-flex>
@@ -154,7 +154,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/station/acline'
+    import { getModelPagination, saveStatData,delData } from '../../../../../api/station/acline'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -177,13 +177,13 @@
                 totalDesserts: 0,
                 desserts: [],
                 headers: [
-                    {text: '首端节点', value: 'ps_name', align: 'left', sortable: false},
-                    {text: '尾端节点', value: 'bus_name', align: 'left', sortable: false},
-                    {text: '电阻p.u.', value: 'zone_no', align: 'left', sortable: false},
-                    {text: '电抗p.u.', value: 'base_kv', align: 'left', sortable: false},
-                    {text: '电纳p.u', value: 'id', align: 'left', sortable: false},
-                    {text: '额定容量MW', value: 'id', align: 'left', sortable: false},
-                    {text: '状态', value: 'id', align: 'left', sortable: false},
+                    {text: '首端节点', value: 'fbranch', align: 'left', sortable: false},
+                    {text: '尾端节点', value: 'tbranch', align: 'left', sortable: false},
+                    {text: '电阻p.u.', value: 'bla_3', align: 'left', sortable: false},
+                    {text: '电抗p.u.', value: 'bla_4', align: 'left', sortable: false},
+                    {text: '电纳p.u', value: 'bla_5', align: 'left', sortable: false},
+                    {text: '额定容量MW', value: 'bla_6', align: 'left', sortable: false},
+                    {text: '状态', value: 'bla_11', align: 'left', sortable: false},
                     { text: '操作', sortable: false }
                 ],
                 noDataMessage: '',
@@ -191,7 +191,7 @@
                     ps_name: ''
                 },
                 pagination: {
-                    sortBy: 'a_time'
+                    sortBy: 'nsla_index'
                 },
                 selected: [],
                 dialogDeleteBatch: false,
@@ -289,12 +289,12 @@
         },
         methods: {
             changeSort(column) {
-                if (this.pagination.sortBy === column) {
-                    this.pagination.descending = !this.pagination.descending
-                } else {
-                    this.pagination.sortBy = column
-                    this.pagination.descending = false
-                }
+                // if (this.pagination.sortBy === column) {
+                //     this.pagination.descending = !this.pagination.descending
+                // } else {
+                //     this.pagination.sortBy = column
+                //     this.pagination.descending = false
+                // }
             },
 
             initialize() {
@@ -401,7 +401,7 @@
             },
 
             saveDelete() {
-                deleteModelById(this.editedItem.id).then(result => {
+                delData(this.delItem).then(result => {
                     if (result.code === 200) {
                         this.submitResult = true
                     } else {
@@ -412,6 +412,7 @@
                     this.snackbar = true
                     // 每次操作成功后，重新获取数据
                     this.initialize()
+                    this.delItem = {}
                 }).catch(err => {
                     this.closeDialogDelete()
                     this.submitResult = false
@@ -419,6 +420,7 @@
                     this.snackbar = true
                     // 每次操作成功后，重新获取数据
                     this.initialize()
+                    this.delItem = {}
                 })
             },
 
@@ -476,11 +478,14 @@
 
             // 编辑
             handleEditItem(item) {
-
+                this.dialogEdit = true
+                console.log(item);
+                this.addForm = item;
             },
             // 删除
             handleDeleteItem(item) {
                 this.dialogDelete = true
+                this.delItem = item;
             },
             // 新建弹窗
             handleCreate() {
@@ -488,7 +493,34 @@
             },
             // 添加表单
             handleSaveForm() {
-                this.dialogEdit = false
+
+                if (this.$refs.form.validate()) {
+                    // 格式化
+                    // this.editedItem.amountOfMoney = parseFloat(this.editedItem.amountOfMoney)
+                    saveStatData(this.addForm).then(result => {
+                        if (result.code === 200) {
+                            this.submitResult = true
+                        } else {
+                            this.submitResult = false
+                        }
+                        this.dialogEdit = false
+                        // 显示结果
+                        this.snackbar = true
+                        // 每次操作成功后，重新获取数据
+                        this.initialize()
+                        this.addForm = {};
+                    }).catch(err => {
+                        this.closeDialogEdit()
+                        this.submitResult = false
+                        // 显示结果
+                        this.snackbar = true
+                        this.snackbarMsg = err.message
+                        // 每次操作成功后，重新获取数据
+                        this.initialize()
+                    })
+                    
+                }
+
             },
             // 取消表单
             handleCancelFomr() {
