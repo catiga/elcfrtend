@@ -51,15 +51,17 @@
                 {
                     icon: 'equalizer',
                     value: '0',
-                    text: '执行中任务',
+                    text: '计算中任务',
                     color: 'orange'
                 }
             ]
         }),
         mounted() {
             countForStat().then(result => {
+                console.log('result===', result)
                 if (result.code === 200) {
-                    this.stats[0].value = result.data[0].t_num
+                    this.stats[0].value = result.data.t_num
+                    this.stats[2].value = result.data.rp_num
                 }
             }).catch(err => {
 

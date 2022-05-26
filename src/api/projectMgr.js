@@ -363,9 +363,19 @@ export function countForStat(whereAttrs) {
                 sql = sql + ` and is_import=${whereAttrs.is_import}`
             }
             db.query(sql, function(err, values, fields) {
-                resolve({
-                    code: 200,
-                    data: _.cloneDeep(values)
+                if(err) {
+                    reject({
+                        code: 500, 
+                        message: err
+                    })
+                    return
+                }
+                sql = `select count(id) rp_num from p_repaire_task`
+                db.query(sql, function(err1, values1, fields1) {
+                    resolve({
+                        code: 200,
+                        data: _.cloneDeep({t_num: values[0]['t_num'], rp_num:values1[0]['rp_num']})
+                    })
                 })
             })
         } catch (err) {

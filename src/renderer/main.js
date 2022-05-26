@@ -38,7 +38,7 @@ if (window && window.process && window.process.type === 'renderer') {
   ipcRenderer.on('change-view', (event, data) => {
     console.log('这里收到消息了', data)
     if (data.route) {
-      router.push(data.route)
+      router.push({path: data.route})
     }
   })
 }
