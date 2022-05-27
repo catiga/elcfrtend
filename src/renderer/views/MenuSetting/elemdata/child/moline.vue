@@ -42,15 +42,15 @@
                     >
                         <template v-slot:items="props">
                         <td>{{ props.item.nsla_v }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_2 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_5 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_6 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_7 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_8 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_9 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_10 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_12 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla.bla_13 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_2 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_5 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_6 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_7 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_8 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_9 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_10 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_12 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_13 }}</td>
                         <td class="justify-center layout px-0">
                             <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
                             <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
@@ -361,16 +361,15 @@
                 })
                 
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
-                    console.log('result===', result)
                     if (result.code === 200) {
                         let items = result.data.list
                         const total = result.data.total
 
+                        
                         // 表关联
                         
                         // setTimeout(() => {
                         this.loading = false
-                        this.desserts = items
                         this.totalDesserts = total
 
                         //取bus level数据
@@ -380,7 +379,7 @@
                                 for(let x in items) {
                                     items[x]['bla'] = bus_level_data[x]
                                 }
-                                console.log(items)
+                                console.log('----------->',items)
                                 this.desserts = items
                             }
                         })
@@ -524,7 +523,6 @@
 
 <style scoped lang="scss">
 .elevation-1 {
-    background: blue;
     ::v-deep table.v-table thead th{
         padding: 0 6px !important;
     }
