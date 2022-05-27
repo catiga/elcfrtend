@@ -35,6 +35,7 @@
                         :headers="headers"
                         :items="desserts"
                         :pagination.sync="pagination"
+                        :total-items="totalDesserts"
                         class="elevation-1"
                     >
                         <template v-slot:items="props">

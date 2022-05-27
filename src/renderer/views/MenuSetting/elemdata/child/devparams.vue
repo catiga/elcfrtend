@@ -37,6 +37,7 @@
                     <v-data-table
                         :headers="headers"
                         :items="desserts"
+                        :total-items="totalDesserts"
                         class="elevation-1"
                     >
                         <template v-slot:items="props">

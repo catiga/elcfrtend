@@ -39,6 +39,7 @@
                         class="elevation-1"
                         :pagination.sync="pagination"
                         :loading="loading"
+                        :total-items="totalDesserts"
                     >
                         <template v-slot:items="props">
                         <td>{{ props.item.nsla_v }}</td>
