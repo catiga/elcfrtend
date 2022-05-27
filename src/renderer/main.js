@@ -36,8 +36,9 @@ if (window && window.process && window.process.type === 'renderer') {
   const { ipcRenderer } = require('electron')
 
   ipcRenderer.on('change-view', (event, data) => {
-    console.log('这里收到消息了', data)
+    console.log('收到跳转消息', data)
     if (data.route) {
+      console.log('执行router push', data.route)
       router.push({path: data.route})
     }
   })

@@ -13,15 +13,8 @@ let currentOpenedProject = remote.getGlobal('sharedObject').openedProject
 
 export function getModelPagination(pagination, whereAttrs, filterFun) {
     return new Promise((resolve, reject) => {
-        if (!currentOpenedProject) {
-            reject({
-                code: 404,
-                message: '请先打开工程'
-            })
-            return
-        }
         try {
-            let sql = `select * from ${Table} where flag!=-1 and proj_id=${currentOpenedProject.id}`;
+            let sql = `select * from ${Table} where flag!=-1 and proj_id=${whereAttrs.proj_id}`;
             if(whereAttrs) {
                 if(whereAttrs.l_name) {
                     sql = sql + ` and l_name like '%${whereAttrs.l_name}%'`

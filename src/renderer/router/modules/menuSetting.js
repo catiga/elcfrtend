@@ -73,7 +73,7 @@ const reportRouter = {
           component: require("@/views/MenuSetting/elemdata/child/devparams")
             .default,
           name: "station_devparams",
-          meta: { title: "负荷" },
+          meta: { title: "变电站设备参数" },
         },
       ],
     },

@@ -13,19 +13,11 @@ let currentOpenedProject = remote.getGlobal('sharedObject').openedProject
 
 export function getModelPagination(pagination, whereAttrs, filterFun) {
     return new Promise((resolve, reject) => {
-        if (!currentOpenedProject) {
-            reject({
-                code: 404,
-                message: '请先打开工程'
-            })
-            return
-        }
-        // currentOpenedProject.id = 1;
         try {
             let sql = `select a.fbranch,b.tbranch,c.bla_3,c.bla_4,c.bla_5,c.bla_6,c.bla_11,a.nsla_index,a.nsla_id1,b.nsla_id2,c.bla_id from 
-            (select nsla.nsla_v fbranch,nsla.nsla_index,nsla.id nsla_id1 from c1_name_show_level_area nsla where nsla.nsla_k = 'fbranch' and nsla.proj_id = ${currentOpenedProject.id}) a 
-            join (select nsla.nsla_v tbranch,nsla.nsla_index,nsla.id nsla_id2 from c1_name_show_level_area nsla where nsla.nsla_k = 'tbranch' and nsla.proj_id = ${currentOpenedProject.id}) b on a.nsla_index = b.nsla_index 
-            join (select bla.bla_3,bla.bla_4,bla.bla_5,bla.bla_6,bla.bla_11,@rowno:=@rowno+1 as nsla_index,bla.id bla_id from c1_branch_level_area bla, (select @rowno:=0) t where proj_id= ${currentOpenedProject.id} order by bla.id asc ) c on a.nsla_index = c.nsla_index`;
+            (select nsla.nsla_v fbranch,nsla.nsla_index,nsla.id nsla_id1 from c1_name_show_level_area nsla where nsla.nsla_k = 'fbranch' and nsla.proj_id = ${whereAttrs.proj_id}) a 
+            join (select nsla.nsla_v tbranch,nsla.nsla_index,nsla.id nsla_id2 from c1_name_show_level_area nsla where nsla.nsla_k = 'tbranch' and nsla.proj_id = ${whereAttrs.proj_id}) b on a.nsla_index = b.nsla_index 
+            join (select bla.bla_3,bla.bla_4,bla.bla_5,bla.bla_6,bla.bla_11,@rowno:=@rowno+1 as nsla_index,bla.id bla_id from c1_branch_level_area bla, (select @rowno:=0) t where proj_id= ${whereAttrs.proj_id} order by bla.id asc ) c on a.nsla_index = c.nsla_index`;
 
             if(whereAttrs) {
                 // if(whereAttrs.ps_name) {

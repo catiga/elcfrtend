@@ -301,7 +301,11 @@
             }
         },
         mounted() {
+            console.log("进入mounted")
             this.initialize()
+        },
+        created() {
+            console.log("进入created")
         },
         methods: {
             changeSort(column) {
@@ -355,7 +359,7 @@
                     // 模糊查询
                     return check1 && check2
                 })
-
+                console.log('这里也到了')
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
                     console.log('result===', result)
                     if (result.code === 200) {

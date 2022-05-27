@@ -13,22 +13,14 @@ let currentOpenedProject = remote.getGlobal('sharedObject').openedProject
 
 export function getModelPagination(pagination, whereAttrs, filterFun) {
     return new Promise((resolve, reject) => {
-        if (!currentOpenedProject) {
-            reject({
-                code: 404,
-                message: '请先打开工程'
-            })
-            return
-        }
         try {
             const nsla_k = 'bus'
-            let sql = `select a.nsla_v from c1_name_show_level_area a where a.nsla_k='${nsla_k}' and a.proj_id=${currentOpenedProject.id}`
+            let sql = `select a.nsla_v from c1_name_show_level_area a where a.nsla_k='${nsla_k}' and a.proj_id=${whereAttrs.proj_id}`
             if(whereAttrs) {
                 if(whereAttrs.nsla_v) {
                     sql = sql + ` and nsla_v like '%${whereAttrs.nsla_v}%'`
                 }
             }
-            
             db.query(sql, function(err, values, fields) {
                 let total = values.length;
                 sql = sql + ` order by a.nsla_index asc`

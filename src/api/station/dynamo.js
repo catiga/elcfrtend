@@ -13,18 +13,10 @@ let currentOpenedProject = remote.getGlobal('sharedObject').openedProject
 
 export function getModelPagination(pagination, whereAttrs, filterFun) {
     return new Promise((resolve, reject) => {
-        if (!currentOpenedProject) {
-            reject({
-                code: 404,
-                message: '请先打开工程'
-            })
-            return
-        }
-        currentOpenedProject.id = 1;
         try {
             let sql = `select a.gen,a.nsla_id,a.nsla_index,b.gla_2,b.gla_3,b.gla_4,b.gla_5,b.gla_9,b.gla_10,b.gla_8,b.gla_id from 
-            (select nsla.nsla_v gen,nsla.nsla_index,nsla.id nsla_id from c1_name_show_level_area nsla where nsla.nsla_k = 'gen' and nsla.proj_id = ${currentOpenedProject.id}) a 
-            join (select gla.id gla_id,gla.gla_2,gla.gla_3,gla.gla_4,gla.gla_5,gla.gla_9,gla.gla_10,gla.gla_8,@rowno:=@rowno+1 as nsla_index from c1_generator_level_area gla, (select @rowno:=0) t where proj_id = ${currentOpenedProject.id} order by gla.id asc ) b on a.nsla_index = b.nsla_index`;
+            (select nsla.nsla_v gen,nsla.nsla_index,nsla.id nsla_id from c1_name_show_level_area nsla where nsla.nsla_k = 'gen' and nsla.proj_id = ${whereAttrs.proj_id}) a 
+            join (select gla.id gla_id,gla.gla_2,gla.gla_3,gla.gla_4,gla.gla_5,gla.gla_9,gla.gla_10,gla.gla_8,@rowno:=@rowno+1 as nsla_index from c1_generator_level_area gla, (select @rowno:=0) t where proj_id = ${whereAttrs.proj_id} order by gla.id asc ) b on a.nsla_index = b.nsla_index`;
             if(whereAttrs) {
                 // if(whereAttrs.name_1) {
                 //     sql = sql + ` and id_name like '%${whereAttrs.id_name}%'`

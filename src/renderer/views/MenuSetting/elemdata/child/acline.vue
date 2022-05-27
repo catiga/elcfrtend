@@ -298,6 +298,14 @@
             },
 
             initialize() {
+                //判断工程
+                let currentProject = remote.getGlobal('sharedObject').openedProject
+                if (!currentProject) {
+                    this.snackbar = true
+                    this.snackbarMsg = '请先选择打开工程'
+                    this.loading = false
+                    return
+                }
                 this.showNoData = false
                 this.loading = true
 
@@ -306,7 +314,8 @@
                 const {sortBy, descending, page, rowsPerPage} = this.pagination
 
                 let whereAttrs = {
-                    ps_name: this.search.ps_name
+                    ps_name: this.search.ps_name,
+                    proj_id: currentProject.id
                 }
                 const filterFun = (o => {
                     let check1, check2 = false
