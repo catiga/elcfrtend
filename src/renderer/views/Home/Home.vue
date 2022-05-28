@@ -58,7 +58,13 @@
             dialogAdd: false
         }),
         mounted() {
-
+            this.$http.post(`http://127.0.0.1:8081/index`, {
+                headers: {}
+            }).catch(function(error) {
+                        console.log('输出报错', error)
+                    }).then(function(response) {
+                        console.log(response)
+                    })
         },
         methods:{
 

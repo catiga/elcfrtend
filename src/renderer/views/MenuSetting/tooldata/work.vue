@@ -215,8 +215,11 @@ export default {
                     this.snackbarMsg = '操作成功'
                     this.submitResult = true
 
-                    let taskObj = result.data
-                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/${taskObj.id}`).catch(function(error) {
+                    let taskObj = result.data[0]
+                    console.log('taskObj', taskObj)
+                    this.$http.post(`http://127.0.0.1:8081/api/task/compute/${taskObj.id}`,  {
+                        headers: {}
+                    }).catch(function(error) {
                         console.log(error)
                     }).then(function(response) {
                         console.log(response)

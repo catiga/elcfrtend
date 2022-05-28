@@ -226,7 +226,9 @@ export default {
             this.loading = true
             saveRiskTask(this.workForm, this.topo, currentProject.id).then(result => {
                 if(result.code === 200) {
-                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/risk/${result.data.id}`).catch(function(error) {
+                    this.$http.post(`http://127.0.0.1:8081/api/task/compute/risk/${result.data.id}`, {
+                        headers: {}
+                    }).catch(function(error) {
                         console.log(error)
                     }).then(function(response) {
                         console.log(response)

@@ -320,7 +320,9 @@ export default {
                 console.log('计算结果保存', result)
                 if(result.code === 200) {
                     //调用拓扑重构
-                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/topo/${result.data.id}`).catch(function(error) {
+                    this.$http.post(`http://127.0.0.1:8081/api/task/compute/topo/${result.data.insertId}`, {
+                        headers: {}
+                    }).catch(function(error) {
                         console.log(error)
                     }).then(function(response) {
                         console.log(response)

@@ -167,7 +167,9 @@ export default {
             this.loading = true
             saveWeakTask(this.workForm, this.topo, currentProject.id).then(result => {
                 if(result.code === 200) {
-                    this.$http.get(`http://127.0.0.1:8081/api/task/compute/weak/${result.data.id}`).catch(function(error) {
+                    this.$http.post(`http://127.0.0.1:8081/api/task/compute/weak/${result.data.id}`, {
+                        headers: {}
+                    }).catch(function(error) {
                         console.log(error)
                     }).then(function(response) {
                         console.log(response)

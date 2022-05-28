@@ -757,11 +757,13 @@
                         })
                     } else {
                         postModel(this.editedItem, currentProject.id).then(result => {
-                            console.log('result=======', result)
+                            console.log('result=======准备启动计算', result)
                             if (result.code === 200) {
                                 this.submitResult = true
 
-                                this.$http.get(`http://127.0.0.1:8081/api/tide/compute/pf/${result.data.id}`).catch(function(error) {
+                                this.$http.post(`http://127.0.0.1:8081/api/task/compute/pf/${result.data.id}`, {
+                                    headers: {}
+                                }).catch(function(error) {
                                     console.log(error)
                                 }).then(function(response) {
                                     console.log(response)
