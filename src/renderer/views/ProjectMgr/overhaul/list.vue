@@ -118,7 +118,7 @@
                                     <span v-if="props.item.computing==3">计算失败</span>
                                 </td>
                                 <td class="text-xs-right" width="170">
-                                    <v-btn v-if="props.item.computing!=2" fab small color="success" @click="editItem(props.item)">
+                                    <v-btn v-if="props.item.computing!=2" fab small color="success" @click="reCompute(props.item)">
                                         重算
                                     </v-btn>
                                     <v-btn v-if="props.item.computing!=1" fab small color="error" @click="deleteItem(props.item)">
@@ -233,6 +233,20 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <v-dialog v-model="dialogRecompute" max-width="290">
+            <v-card>
+                <v-card-title class="headline">提示：</v-card-title>
+                <v-card-text>确定重新执行计算任务吗?
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat @click="dialogRecompute = false">取消</v-btn>
+                    <v-btn color="blue darken-1" flat @click="confirmCompute">确定</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <v-snackbar
                 v-model="snackbar"
                 right
@@ -356,6 +370,7 @@
                 valid: true,
                 submitResult: false,
                 editedIndex: -1,
+                dialogRecompute: false,
 
                 editedItem: {
                     title: '',
@@ -679,7 +694,40 @@
             },
             handlePreview(row) {
                 this.dialogJianxiu = true
-            }
+            },
+
+            reCompute(item) {
+                this.editedIndex = this.desserts.indexOf(item)
+                this.editedItem = Object.assign({}, item)
+                this.dialogRecompute = true
+            },
+            confirmCompute() {
+                console.log(this.editedItem)
+                this.dialogRecompute = false
+                this.$http.post(`http://127.0.0.1:8081/api/task/compute/overhaul/${this.editedItem.id}`, {
+                    headers: {}
+                }).catch((error) => {
+                    this.snackbar = true
+                    this.snackbarMsg = '请检查计算服务启动状态'
+                    this.submitResult = false
+                }).then((response) => {
+                    if(response.status != 200) {
+                        this.snackbar = true
+                        this.snackbarMsg = '计算服务状态异常'
+                        this.submitResult = false
+                    } else {
+                        if(response.data.errno === 0) {
+                            this.snackbar = true
+                            this.snackbarMsg = '检修方案计算任务成功'
+                            this.submitResult = true
+                        } else {
+                            this.snackbar = true
+                            this.snackbarMsg = response.data.errmsg
+                            this.submitResult = false
+                        }
+                    }
+                })
+            },
         }
     }
 </script>
