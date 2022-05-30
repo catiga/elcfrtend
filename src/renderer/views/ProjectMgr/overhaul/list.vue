@@ -414,12 +414,13 @@
                 // 检修过渡方案建议
                 dialogJianxiu: false,
                 dialogJianxiuForm: {
-                    name: ''
+                    name: '',
+                    select: {}
                 },
                 contentList: [],
                 itemList: [],
                 headList: [],
-                selectedContents: []
+                selectedContents: [],
             }
         },
         computed: { 
@@ -706,14 +707,56 @@
 
             },
             handlePreview(row) {
-                this.dialogJianxiu = true
-                let topoMethods = JSON.parse(row.topo_method)
-                let topoHeads = topoMethods[0]['head']
-                let topoItems = topoMethods[0]['item']
-                let topoBody = topoMethods[0]['body']
-                this.headList = topoHeads
-                this.itemList = topoItems
-                this.contentList = topoBody
+                this.headList = []
+                this.itemList = []
+                this.contentList = []
+                loadComputeResult(row.id).then( result => {
+                    console.log('检修计算结果', result)
+                    if(!result || result.code != 200) {
+                        this.submitResult = false
+                        // 显示结果
+                        this.snackbar = true
+                        this.snackbarMsg = '检修结果获取失败'
+                        return
+                    }
+                    this.dialogJianxiu = true
+
+                    let bestMethod = result.data[0]['best_case']
+                    let topoMethods = JSON.parse(row.topo_method)
+                    let topoHeads = topoMethods[0]['head']
+                    let topoItems = topoMethods[0]['item']
+                    let topoBody = topoMethods[0]['body']
+
+                    let coIndex = -1
+                    for(let x in topoHeads) {
+                        if(topoHeads[x]['name'] == bestMethod) {
+                            //匹配到最佳方案
+                            this.headList.push(topoHeads[x])
+                            coIndex = topoHeads[x]['index']
+                            break
+                        }
+                    }
+                    
+                    for(let x in topoItems) {
+                        if(topoItems[x]['index'] == coIndex) {
+                            this.itemList.push(topoItems[x])
+                        }
+                    }
+                    for(let x in topoBody) {
+                        if(topoBody[x]['index'] == coIndex) {
+                            this.contentList.push(topoBody[x])
+                        }
+                    }
+
+                    this.dialogJianxiuForm.select = this.headList[0]
+                    this.dialogJianxiuForm.name = this.itemList[0]['name']
+                    this.selectedContents = this.contentList
+                }).catch(err => {
+                    this.submitResult = false
+                    // 显示结果
+                    this.snackbar = true
+                    this.snackbarMsg = '检修结果数据异常'
+                })
             },
             switchMethod(selectedItem) {
                 let coIndex = -1
