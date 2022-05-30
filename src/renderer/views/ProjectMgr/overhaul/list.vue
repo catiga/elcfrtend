@@ -109,7 +109,7 @@
                                     ></v-checkbox>
                                 </td>
                                 <td>{{ props.item.title }}</td>
-                                <td>{{ props.item.topo_method }}</td>
+                                <td>{{ props.item.topo_method | formatMethod }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
                                 <td>
                                     <span v-if="props.item.computing==0">创建</span>
@@ -274,7 +274,7 @@
                     <v-form ref="form" lazy-validation class="pd-8">
                         <v-select
                             v-model="dialogJianxiuForm.select"
-                            :items="selectHeads"
+                            :items="headList"
                             item-text="name"
                             item-value="index"
                             label="方案名称"
@@ -285,21 +285,15 @@
                             v-model="dialogJianxiuForm.name"
                             label="悬空节点"
                             required
+                            readonly
                         ></v-text-field>
                         <v-card>
                             <v-card-title><h4>站外节点对接</h4></v-card-title>
-                            <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
-                                <v-tab v-for="n in itemList" :key="n.index">
-                                    悬空节点 {{ n.name }}
-                                </v-tab>
-                                <v-tab-item v-for="n in 2" :key="n">
-                                    <v-list dense>
-                                        <v-list-tile v-for="(item, index) in contentList" :key="item.index" :index="index">
+                            <v-list dense>
+                                        <v-list-tile v-for="(item, index) in selectedContents" :key="item.index" :index="index">
                                             <v-list-tile-content>{{ item.name }}</v-list-tile-content>
                                         </v-list-tile>
                                     </v-list>
-                                </v-tab-item>
-                            </v-tabs>
                             
                         </v-card>
                     </v-form>
@@ -332,6 +326,22 @@
         filters: {
             formateTime: function(oldvalue) {
                 return moment(oldvalue).format('YYYY-MM-DD HH:mm')
+            },
+            formatMethod: function(oldValue) {
+                if(!oldValue) {
+                    return ''
+                }
+                let topoMethods = JSON.parse(oldValue)
+                let topoHeads = topoMethods[0]['head']
+                let retVal = ''
+                for(let x in topoHeads) {
+                    if(retVal === '') {
+                        retVal = topoHeads[x]['name']
+                    } else {
+                        retVal = retVal + ',' + topoHeads[x]['name']
+                    }
+                }
+                return retVal
             }
         },
         data() {
@@ -407,6 +417,9 @@
                     name: ''
                 },
                 contentList: [],
+                itemList: [],
+                headList: [],
+                selectedContents: []
             }
         },
         computed: { 
@@ -694,6 +707,32 @@
             },
             handlePreview(row) {
                 this.dialogJianxiu = true
+                let topoMethods = JSON.parse(row.topo_method)
+                let topoHeads = topoMethods[0]['head']
+                let topoItems = topoMethods[0]['item']
+                let topoBody = topoMethods[0]['body']
+                this.headList = topoHeads
+                this.itemList = topoItems
+                this.contentList = topoBody
+            },
+            switchMethod(selectedItem) {
+                let coIndex = -1
+                for(let x in this.itemList) {
+                    if(selectedItem === this.itemList[x]['index']) {
+                        coIndex = x
+                        break
+                    }
+                }
+                this.selectedContents = []
+                if(coIndex > -1) {
+                    this.dialogJianxiuForm.name = this.itemList[coIndex]['name']
+                    for(let x in this.contentList) {
+                        if(this.contentList[x]['index'] === this.itemList[coIndex]['index']) {
+                            this.selectedContents.push(this.contentList[x])
+                        }
+                    }
+                    console.log('selectedContents===', this.selectedContents)
+                }
             },
 
             reCompute(item) {

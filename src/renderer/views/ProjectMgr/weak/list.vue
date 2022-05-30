@@ -109,7 +109,7 @@
                                     ></v-checkbox>
                                 </td>
                                 <td>{{ props.item.title }}</td>
-                                <td>{{ props.item.topo_method }}</td>
+                                <td>{{ JSON.parse(props.item.topo_method)[0]['head']['name'] }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
                                 <td>
                                     <span v-if="props.item.computing==0">创建</span>
