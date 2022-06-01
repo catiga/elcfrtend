@@ -293,8 +293,8 @@
                                     >
                                         <template v-slot:items="props">
                                         <td>{{ props.item.bn }}</td>
-                                        <td class="text-xs-right">{{ props.item.volF }}</td>
                                         <td class="text-xs-right">{{ props.item.volJ }}</td>
+                                        <td class="text-xs-right">{{ props.item.volF }}</td>
                                         </template>
                                     </v-data-table>
                                 </v-tab-item>

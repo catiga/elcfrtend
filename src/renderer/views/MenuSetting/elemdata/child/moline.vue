@@ -46,12 +46,12 @@
                         <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_2 }}</td>
                         <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_5 }}</td>
                         <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_6 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_7 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_10 }}</td>
                         <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_8 }}</td>
                         <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_9 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_10 }}</td>
                         <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_12 }}</td>
                         <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_13 }}</td>
+                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_7 }}</td>
                         <td class="justify-center layout px-0">
                             <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
                             <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>

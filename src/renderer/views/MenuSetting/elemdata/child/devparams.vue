@@ -38,18 +38,18 @@
                         :headers="headers"
                         :items="desserts"
                         :total-items="totalDesserts"
+                        :pagination.sync="pagination"
                         class="elevation-1"
                     >
                         <template v-slot:items="props">
-                        <td>{{ props.item.ps_name }}</td>
-                        <td class="text-xs-right">{{ props.item.ps_name }}</td>
-                        <td class="text-xs-right">{{ props.item.bus_name }}</td>
-                        <td class="text-xs-right">{{ props.item.zone_no }}</td>
-                        <td class="text-xs-right">{{ props.item.base_kv }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
-                        <td class="text-xs-right">{{ props.item.id }}</td>
+                        <td class="text-xs-right">{{ props.item.serial_number }}</td>
+                        <td class="text-xs-right">{{ props.item.name }}</td>
+                        <td class="text-xs-right">{{ props.item.first_node }}</td>
+                        <td class="text-xs-right">{{ props.item.last_node }}</td>
+                        <td class="text-xs-right">{{ props.item.type }}</td>
+                        <td class="text-xs-right">{{ props.item.run_state }}</td>
+                        <td class="text-xs-right">{{ props.item.cr.cr_1 }}</td>
+                        <td class="text-xs-right">{{ props.item.cr.cr_2 }}</td>
                         <td class="justify-center layout px-0">
                             <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
                             <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
@@ -173,11 +173,13 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData } from '../../../../../api/station/_2transformer'
-    import Excel from 'exceljs'
+    import { 
+        getModelPagination, 
+        getC1ReliabilityByPage, 
+        saveStatData 
+    } from '../../../../../api/station/devparams'
     
     import moment from 'moment'
-    import fs from 'fs-extra'
 
     const electron = require('electron');
     const remote = electron.remote;
@@ -334,7 +336,7 @@
                 const {sortBy, descending, page, rowsPerPage} = this.pagination
 
                 let whereAttrs = {
-                    l_name: this.search.l_name,
+                    name: this.search.l_name,
                     proj_id: currentProject.id
                 }
                 const filterFun = (o => {
@@ -366,29 +368,21 @@
                         let items = result.data.list
                         const total = result.data.total
 
-                        // 表关联
-                        if (items) {
-                            items.forEach(item => {
-                                this.categoryList.some(itemCategory => {
-                                    if (item.categoryId === itemCategory.value) {
-                                        item.categoryName = itemCategory.text
-                                        return true
-                                    }
-                                })
-
-                                this.assetsList.some(itemAssets => {
-                                    if (item.assetsId === itemAssets.value) {
-                                        item.assetsName = itemAssets.text
-                                        return true
-                                    }
-                                })
-                            })
-                        }
-
                         // setTimeout(() => {
                         this.loading = false
                         this.desserts = items
                         this.totalDesserts = total
+
+                        //取bus level数据
+                        getC1ReliabilityByPage(this.pagination, currentProject.id).then(result1 => {
+                            if(result1.code === 200) {
+                                let bus_level_data = result1.data.list
+                                for(let x in items) {
+                                    items[x]['cr'] = bus_level_data[x]
+                                }
+                                this.desserts = items
+                            }
+                        })
                         // }, 1000)
                     } else {
                         this.loading = false
