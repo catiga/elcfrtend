@@ -341,8 +341,6 @@
                     return check1 && check2
                 })
 
-                console.log('我是参数------->>>>>>>', this.pagination, whereAttrs, filterFun)
-
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
                     console.log('result', result)
                     if (result.code === 200) {

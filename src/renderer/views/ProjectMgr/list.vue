@@ -241,16 +241,16 @@
                                 -->
 
                                 <v-flex xs12>
-                                    <v-text-field label="名称*"
+                                    <v-text-field label="工程名称*"
                                         :rules="[rules.required]"
                                         v-model="editedItem.title"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
-                                    <v-text-field label="说明*"
+                                    <v-text-field label="工程说明*"
                                         :rules="[rules.required]"
                                         v-model="editedItem.info"></v-text-field>
                                 </v-flex>
-                                
+                                <!--
                                 <v-flex xs12>
                                     <el-upload
                                             class="upload-demo"
@@ -261,11 +261,12 @@
                                             multiple
                                             :on-exceed="handleExceed"
                                             :file-list="fileList">
-                                        <!--<el-button size="small" type="primary">点击上传</el-button>-->
+                                        <el-button size="small" type="primary">点击上传</el-button>
                                         <v-btn color="blue darken-1">Upload</v-btn>
                                         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                                     </el-upload>
                                 </v-flex>
+                                -->
                             </v-layout>
                         </v-container>
                         <small>*代表必填信息</small>
@@ -567,6 +568,7 @@
                     return check1 && check2
                 })
 
+                console.log('分页对象', this.pagination)
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
                     if (result.code === 200) {
                         let items = result.data.list

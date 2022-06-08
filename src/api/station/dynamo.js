@@ -27,9 +27,9 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
                 if(pagination.sortBy) {
                     sql = sql + ` order by ${pagination.sortBy} asc`
                 }
-                sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-
-                console.log(sql);
+                if(pagination.rowsPerPage>0) {
+                    sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+                }
 
                 db.query(sql, function(err, values, fields) {
                     resolve({

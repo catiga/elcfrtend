@@ -24,8 +24,9 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
             db.query(sql, function(err, values, fields) {
                 let total = values.length;
                 sql = sql + ` order by a.nsla_index asc`
-                sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-                console.log('ppppp===', sql)
+                if(pagination.rowsPerPage>0) {
+                    sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+                }
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200,
@@ -47,8 +48,10 @@ export function getBusLevelAreaByPage(pagination, proj_id) {
         try {
             console.log('pagination', pagination)
             let sql = `select bla_2, bla_5, bla_6, bla_10, bla_8, bla_9, bla_12, bla_13, bla_7 from c1_bus_level_area where proj_id=${proj_id} order by id asc`
-            sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-            console.log('sql===', sql)
+
+            if(pagination.rowsPerPage>0) {
+                sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+            }
             db.query(sql, function(err, values, fields) {
                 resolve({
                     code: 200,

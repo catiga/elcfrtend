@@ -40,6 +40,13 @@ const systemMenus = [{
     }
   }, 
   {
+    label: '检修作业定义',
+    click: function (item, focusedWindow) {
+      // focusedWindow.loadURL(`${url}/#/menuSetting/ms/tooldata/work`);
+      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/tooldata/work'});
+    }
+  },
+  {
     type: 'separator'
   }, 
   {
@@ -112,31 +119,44 @@ const systemMenus = [{
 ]
 },
 {
-  label: '工具',
+  label: '功能控制',
   submenu: [
   // {
   //   label: 'PSASP数据导入',
   //   click: function (item, focusedWindow) {
   //   }
   // }, 
+  // /projectMgr/task/loadflow/list
   {
-    type: 'separator'
-  }, 
-  {
-    label: '检修作业定义',
+    label: '潮流计算',
     click: function (item, focusedWindow) {
-      // focusedWindow.loadURL(`${url}/#/menuSetting/ms/tooldata/work`);
-      focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/tooldata/work'});
+      focusedWindow.webContents.send('change-view', {route: '/projectMgr/task/loadflow/list'});
     }
-  }, {
-    type: 'separator'
   },
-  //  {
-  //   label: '区域电网自动等值',
-  //   click: function (item, focusedWindow) {
-  //     focusedWindow.loadURL('http://localhost:9080/#/menuSetting/ms/tooldata/grid')
-  //   }
-  // }
+  {
+    label: '站外进线拓扑重构',
+    click: function (item, focusedWindow) {
+      focusedWindow.webContents.send('change-view', {route: '/projectMgr/task/station/list'});
+    }
+  },
+  {
+    label: '风险评估',
+    click: function (item, focusedWindow) {
+      focusedWindow.webContents.send('change-view', {route: '/projectMgr/task/risk/list'});
+    }
+  },
+  {
+    label: '薄弱环节分析',
+    click: function (item, focusedWindow) {
+      focusedWindow.webContents.send('change-view', {route: '/projectMgr/task/weak/list'});
+    }
+  },
+  {
+    label: '检修方案智能决策',
+    click: function (item, focusedWindow) {
+      focusedWindow.webContents.send('change-view', {route: '/projectMgr/task/overhaul/list'});
+    }
+  },
 ]
 },
 

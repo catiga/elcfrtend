@@ -23,8 +23,9 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
             db.query(sql, function(err, values, fields) {
                 let total = values.length;
                 sql = sql + ` order by a.id asc`
-                sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-                console.log('ppppp===', sql)
+                if(pagination.rowsPerPage > 0) {
+                    sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+                }
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200,
@@ -46,8 +47,10 @@ export function getC1ReliabilityByPage(pagination, proj_id) {
         try {
             console.log('pagination', pagination)
             let sql = `select cr_1, cr_2 from c1_component_relibility where proj_id=${proj_id} order by id asc`
-            sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
-            console.log('sql===', sql)
+            if(pagination.rowsPerPage > 0) {
+                sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+            }
+            
             db.query(sql, function(err, values, fields) {
                 resolve({
                     code: 200,

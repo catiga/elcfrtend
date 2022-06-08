@@ -22,7 +22,7 @@ const pageMenus = [
   {
     isSingle: true,
     icon: "list",
-    text: "输变电联合系统潮流计算",
+    text: "潮流计算",
     key: "comp_folder_loadflow",
     parent: "comp_folder",
     to: "/projectMgr/task/loadflow/list",
