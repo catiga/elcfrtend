@@ -39,16 +39,26 @@
                         class="elevation-1"
                     >
                         <template v-slot:items="props">
-                        <td class="text-xs-left">{{ props.item.fbranch }}</td>
-                        <td class="text-xs-left">{{ props.item.tbranch }}</td>
-                        <td class="text-xs-left">{{ props.item.bla_3 }}</td>
-                        <td class="text-xs-left">{{ props.item.bla_4 }}</td>
-                        <td class="text-xs-left">{{ props.item.bla_5 }}</td>
-                        <td class="text-xs-left">{{ props.item.bla_6 }}</td>
-                        <td class="text-xs-left">{{ props.item.bla_11 }}</td>
-                        <td class="justify-center layout px-0">
-                            <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
-                            <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
+                        <td class="text-xs-left">
+                            <v-text-field v-model="props.item.fbranch"/>
+                        </td>
+                        <td class="text-xs-left">
+                            <v-text-field v-model="props.item.tbranch"/>
+                        </td>
+                        <td class="text-xs-left">
+                            <v-text-field v-model="props.item.bla_3"/>
+                        </td>
+                        <td class="text-xs-left">
+                            <v-text-field v-model="props.item.bla_4"/>
+                        </td>
+                        <td class="text-xs-left">
+                            <v-text-field v-model="props.item.bla_5"/>
+                        </td>
+                        <td class="text-xs-left">
+                            <v-text-field v-model="props.item.bla_6"/>
+                        </td>
+                        <td class="text-xs-left">
+                            <v-text-field v-model="props.item.bla_11"/>
                         </td>
                         </template>
                     </v-data-table>
@@ -184,8 +194,7 @@
                     {text: '电抗p.u.', value: 'bla_4', align: 'left', sortable: false},
                     {text: '电纳p.u', value: 'bla_5', align: 'left', sortable: false},
                     {text: '额定容量MW', value: 'bla_6', align: 'left', sortable: false},
-                    {text: '状态', value: 'bla_11', align: 'left', sortable: false},
-                    { text: '操作', sortable: false }
+                    {text: '状态', value: 'bla_11', align: 'left', sortable: false}
                 ],
                 noDataMessage: '',
                 search: {

@@ -42,19 +42,35 @@
                         :total-items="totalDesserts"
                     >
                         <template v-slot:items="props">
-                        <td>{{ props.item.nsla_v }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_2 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_5 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_6 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_10 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_8 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_9 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_12 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_13 }}</td>
-                        <td class="text-xs-right">{{ props.item.bla && props.item.bla.bla_7 }}</td>
-                        <td class="justify-center layout px-0">
-                            <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
-                            <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
+                        <td>
+                            <v-text-field v-model="props.item.nsla_v" @blur="changeNslv(props.item)"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_2" @blur="changeBla(props.item.bla, 'bla_2')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_5" @blur="changeBla(props.item.bla, 'bla_5')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_6" @blur="changeBla(props.item.bla, 'bla_6')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_10" @blur="changeBla(props.item.bla, 'bla_10')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_8" @blur="changeBla(props.item.bla, 'bla_8')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_9" @blur="changeBla(props.item.bla, 'bla_9')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_12" @blur="changeBla(props.item.bla, 'bla_12')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_13" @blur="changeBla(props.item.bla, 'bla_13')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.bla.bla_7" @blur="changeBla(props.item.bla, 'bla_7')"/>
                         </td>
                         </template>
                     </v-data-table>
@@ -168,7 +184,9 @@
     import { 
         getModelPagination, 
         saveStatData,
-        getBusLevelAreaByPage
+        getBusLevelAreaByPage,
+        updateNslv,
+        updateBla
     } from '../../../../../api/station/moline'
     import Excel from 'exceljs'
     
@@ -201,8 +219,7 @@
                     {text: '电压相角de', value: 'id', align: 'left', sortable: false},
                     {text: '电压上限p.u.', value: 'id', align: 'left', sortable: false},
                     {text: '电压下限p.u.', value: 'id', align: 'left', sortable: false},
-                    {text: '分区', value: 'id', align: 'left', sortable: false},
-                    { text: '操作', sortable: false }
+                    {text: '分区', value: 'id', align: 'left', sortable: false}
                 ],
 
                 noDataMessage: '',
@@ -309,6 +326,22 @@
             console.log("进入created")
         },
         methods: {
+            changeBla(item, field) {
+                updateBla(item.id, field, item[field]).then(result=> {
+
+                }).catch(err => {
+                    this.snackbar = true
+                    this.snackbarMsg = '保存失败'
+                })
+            },
+            changeNslv(item) {
+                updateNslv(item.id, item.nsla_v).then(result => {
+
+                }).catch(err => {
+                    this.snackbar = true
+                    this.snackbarMsg = '保存失败'
+                })
+            },
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending
@@ -366,9 +399,6 @@
                         let items = result.data.list
                         const total = result.data.total
 
-                        
-                        // 表关联
-                        
                         // setTimeout(() => {
                         this.loading = false
                         this.totalDesserts = total

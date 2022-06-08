@@ -15,7 +15,7 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
     return new Promise((resolve, reject) => {
         try {
             const nsla_k = 'bus'
-            let sql = `select a.nsla_v from c1_name_show_level_area a where a.nsla_k='${nsla_k}' and a.proj_id=${whereAttrs.proj_id}`
+            let sql = `select a.id, a.nsla_v from c1_name_show_level_area a where a.nsla_k='${nsla_k}' and a.proj_id=${whereAttrs.proj_id}`
             if(whereAttrs) {
                 if(whereAttrs.nsla_v) {
                     sql = sql + ` and nsla_v like '%${whereAttrs.nsla_v}%'`
@@ -47,7 +47,7 @@ export function getBusLevelAreaByPage(pagination, proj_id) {
     return new Promise((resolve, reject) => {
         try {
             console.log('pagination', pagination)
-            let sql = `select bla_2, bla_5, bla_6, bla_10, bla_8, bla_9, bla_12, bla_13, bla_7 from c1_bus_level_area where proj_id=${proj_id} order by id asc`
+            let sql = `select id, bla_2, bla_5, bla_6, bla_10, bla_8, bla_9, bla_12, bla_13, bla_7 from c1_bus_level_area where proj_id=${proj_id} order by id asc`
 
             if(pagination.rowsPerPage>0) {
                 sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
@@ -86,3 +86,55 @@ export function saveStatData(obj) {
     })
 }
 
+export function updateNslv(id, nslv) {
+    return new Promise((resolve, reject) => {
+        let sql = `update c1_name_show_level_area set nsla_v='${nslv}' where id=${id}`
+        try {
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    return reject({
+                        code: 400,
+                        message: '保存失败'
+                    })
+                    return
+                }
+                resolve({
+                    code: 200,
+                    data: values
+                })
+            })
+        } catch(err) {
+            return reject({
+                code: 400, 
+                message: err.message
+            })
+        }
+    })
+}
+
+export function updateBla(id, field, value) {
+    return new Promise((resolve, reject) => {
+        let sql = `update c1_bus_level_area set ${field}=${value} where id=${id}`
+        console.log('更新sql', sql)
+        try {
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    return reject({
+                        code: 400,
+                        message: '保存失败'
+                    })
+                    return
+                }
+                resolve({
+                    code: 200,
+                    data: values
+                })
+            })
+        } catch(err) {
+            return reject({
+                code: 400, 
+                message: err.message
+            })
+        }
+    })
+}
