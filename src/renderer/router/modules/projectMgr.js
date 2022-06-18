@@ -70,6 +70,13 @@ const reportRouter = {
       name: "task_overhaul_add",
       meta: { title: "检修过渡方案建议", noCache: true },
     },
+
+    {
+      path: "canvas/topo",
+      component: require("@/views/ProjectMgr/canvas/topo").default,
+      name: "canvas_topo",
+      meta: { title: "检修拓扑", noCache: true },
+    },
   ],
 };
 

@@ -299,8 +299,8 @@
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
+                    <v-btn text @click="openCanvas" color="success">拓扑结构</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="dialogJianxiu = false" color="success">确定</v-btn>
                     <v-btn text @click="dialogJianxiu = false">关闭</v-btn>
                 </v-card-actions>
             </v-card>
@@ -421,6 +421,8 @@
                 itemList: [],
                 headList: [],
                 selectedContents: [],
+
+                currentOpenResultItem: {}
             }
         },
         computed: { 
@@ -720,6 +722,7 @@
                         return
                     }
                     this.dialogJianxiu = true
+                    this.currentOpenResultItem = row
 
                     let bestMethod = result.data[0]['best_case']
                     let topoMethods = JSON.parse(row.topo_method)
@@ -810,6 +813,16 @@
                     }
                 })
             },
+
+            openCanvas() {
+                console.log('this.currentOpenResultItem', this.currentOpenResultItem)
+                this.$router.push({
+                    path:'/projectMgr/canvas/topo?overhaul_id=' + this.currentOpenResultItem.id,  
+                    params:{
+                        id:this.currentOpenResultItem.id
+                    }
+                })
+            }
         }
     }
 </script>
