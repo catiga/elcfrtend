@@ -4,7 +4,7 @@
             <v-card>
                 <v-card-title class="text-h3">拓扑重构方案图</v-card-title>
                 <!-- <v-card-text> -->
-                    <canvas id="canvas" height="300" width="300"></canvas>
+                    <canvas id="canvas" style="border: 1px solid #ffffff;" width="1000" height="600"></canvas>
                 <!-- </v-card-text> -->
             </v-card>
         </v-flex>
@@ -61,7 +61,8 @@ export default {
     },
     methods: {
         init(){
-            window.requestAnimationFrame(this.draw);
+            this.draw()
+            // window.requestAnimationFrame();
         },
         draw() {
             console.log('这里执行了')
@@ -69,54 +70,76 @@ export default {
             ctx.globalCompositeOperation = 'destination-over';
             ctx.clearRect(0,0,300,300); // clear canvas
 
-            // 圆圈 01 + 文字
+            // 圆
+            this.drawCircle(ctx, 40, 40, 20, '圆圈01')
+            this.drawCircle(ctx, 240, 140, 20, '圆圈02')
+            this.drawCircle(ctx, 240, 240, 20, '圆圈03')
+            this.drawCircle(ctx, 40, 240, 20, '圆圈04')
+
+            // 线
+            this.drawLine(ctx, 40, 40, 240, 140)
+            this.drawLine(ctx, 40, 40, 240, 240, true)
+            this.drawLine(ctx, 240, 140, 40, 240, true)
+
+            
+        },
+        /**
+         * 绘制圆圈
+         * @param {ctx} 绘制上下文
+         * @param {x} 圆 x 坐标
+         * @param {y} 圆 y 坐标
+         * @param {r} 圆半径
+         * @param {text} 圆对应的文案
+         */
+        drawCircle(ctx, x, y, r, text) {
+            // 外圈
             ctx.beginPath();
-            ctx.lineWidth = 6
+            ctx.lineWidth = 2
             ctx.strokeStyle = 'white';
-            ctx.arc(40, 40, 20, 0, 2 * Math.PI);
+            ctx.arc(x, y, r, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.font = "12px serif"; // 字体大小
             ctx.fillStyle = '#ffffff';
-            ctx.fillText("我是圆圈01", 14, 80);
+            ctx.textAlign = "center";
+            ctx.fillText(text, x,  y + r + 20);
 
-            // 圆圈 02 + 文字
+            // 中间圆 (遮住圆心连线露出来的白线)
             ctx.beginPath();
-            ctx.lineWidth = 6
-            ctx.strokeStyle = 'white';
-            ctx.arc(240, 40, 20, 0, 2 * Math.PI);
+            ctx.lineWidth = Math.ceil(r/3)
+            ctx.strokeStyle = '#424242';
+            ctx.arc(x, y, r - 2 , 0, 2 * Math.PI);
             ctx.stroke();
-            ctx.font = "12px serif"; // 字体大小
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText("我是圆圈02", 214, 80);
 
-            // 圆圈 03 + 文字
+            // 内圈
             ctx.beginPath();
-            ctx.lineWidth = 6
+            ctx.lineWidth = 2
             ctx.strokeStyle = 'white';
-            ctx.arc(240, 240, 20, 0, 2 * Math.PI);
+            ctx.arc(x, y, r - Math.floor(r/3) , 0, 2 * Math.PI);
             ctx.stroke();
-            ctx.font = "12px serif"; // 字体大小
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText("我是圆圈03", 214, 280);
+            ctx.fillStyle = '#424242';
+            ctx.fill()
+        },
 
-            // 连接线 1-2
+        /**
+         * 绘制线
+         * @param {ctx} 绘制上下文
+         * @param {x1} 圆1 x1 坐标
+         * @param {y1} 圆1 y1 坐标
+         * @param {x2} 圆2 x2 坐标
+         * @param {y2} 圆2 y2 坐标
+         */
+        drawLine(ctx, x1, y1, x2, y2, danshed) {
             ctx.beginPath();
             ctx.lineWidth = 3
-            ctx.moveTo(60, 40);
-            ctx.lineTo(220, 40);
-            ctx.closePath();
+            if (!danshed) { 
+                ctx.setLineDash([0, 0]);
+            } else {// 如果是虚线
+                ctx.setLineDash([5, 5]);
+            }
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
             ctx.strokeStyle = "white";
             ctx.stroke();
-
-            // 连接线 1-3
-            ctx.beginPath();
-            ctx.lineWidth = 3
-            ctx.moveTo(60, 40);
-            ctx.lineTo(220, 230);
-            ctx.closePath();
-            ctx.strokeStyle = "white";
-            ctx.stroke();
-            window.requestAnimationFrame(this.draw);
         }
     }
 }
