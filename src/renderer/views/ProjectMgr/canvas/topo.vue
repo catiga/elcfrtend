@@ -4,7 +4,7 @@
             <v-card>
                 <v-card-title class="text-h3">拓扑重构方案图</v-card-title>
                 <!-- <v-card-text> -->
-                    <canvas id="canvas" style="border: 1px solid #ffffff;" width="1000" height="600"></canvas>
+                    <canvas id="canvas" style="border: 1px solid #ffffff;display:block;margin:0 auto;" width="1000" height="600"></canvas>
                 <!-- </v-card-text> -->
             </v-card>
         </v-flex>
