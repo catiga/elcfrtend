@@ -3,9 +3,9 @@
         <v-flex xs12 d-flex>
             <v-card>
                 <v-card-title class="text-h3">拓扑重构方案图</v-card-title>
-                <v-card-text>
-                    <canvas id="canvas" class="work-form" style="border: 25px solid rgba(0, 0, 0, 0);"></canvas>
-                </v-card-text>
+                <!-- <v-card-text> -->
+                    <canvas id="canvas" height="300" width="300"></canvas>
+                <!-- </v-card-text> -->
             </v-card>
         </v-flex>
     </v-layout>
@@ -61,12 +61,6 @@ export default {
     },
     methods: {
         init(){
-            console.log('这里初始化了')
-            this.sun.src = 'https://mdn.mozillademos.org/files/1456/Canvas_sun.png';
-            console.log('这里初始化了1')
-            this.moon.src = 'https://mdn.mozillademos.org/files/1443/Canvas_moon.png';
-            console.log('这里初始化了2')
-            this.earth.src = 'https://mdn.mozillademos.org/files/1429/Canvas_earth.png';
             window.requestAnimationFrame(this.draw);
         },
         draw() {
@@ -74,27 +68,54 @@ export default {
             var ctx = document.getElementById('canvas').getContext('2d');
             ctx.globalCompositeOperation = 'destination-over';
             ctx.clearRect(0,0,300,300); // clear canvas
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
-            ctx.strokeStyle = 'rgba(0,153,255,0.4)';
-            ctx.save();
-            ctx.translate(150,150);
-            // Earth
-            var time = new Date();
-            ctx.rotate( ((2*Math.PI)/60)*time.getSeconds() + ((2*Math.PI)/60000)*time.getMilliseconds() );
-            ctx.translate(105,0);
-            ctx.fillRect(0,-12,50,24); // Shadow
-            ctx.drawImage(this.earth,-12,-12);
-            // Moon
-            ctx.save();
-            ctx.rotate( ((2*Math.PI)/6)*time.getSeconds() + ((2*Math.PI)/6000)*time.getMilliseconds() );
-            ctx.translate(0,28.5);
-            ctx.drawImage(this.moon,-3.5,-3.5);
-            ctx.restore();
-            ctx.restore();
+
+            // 圆圈 01 + 文字
             ctx.beginPath();
-            ctx.arc(150,150,105,0,Math.PI*2,false); // Earth orbit
+            ctx.lineWidth = 6
+            ctx.strokeStyle = 'white';
+            ctx.arc(40, 40, 20, 0, 2 * Math.PI);
             ctx.stroke();
-            ctx.drawImage(this.sun,0,0,300,300);
+            ctx.font = "12px serif"; // 字体大小
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText("我是圆圈01", 14, 80);
+
+            // 圆圈 02 + 文字
+            ctx.beginPath();
+            ctx.lineWidth = 6
+            ctx.strokeStyle = 'white';
+            ctx.arc(240, 40, 20, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.font = "12px serif"; // 字体大小
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText("我是圆圈02", 214, 80);
+
+            // 圆圈 03 + 文字
+            ctx.beginPath();
+            ctx.lineWidth = 6
+            ctx.strokeStyle = 'white';
+            ctx.arc(240, 240, 20, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.font = "12px serif"; // 字体大小
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText("我是圆圈03", 214, 280);
+
+            // 连接线 1-2
+            ctx.beginPath();
+            ctx.lineWidth = 3
+            ctx.moveTo(60, 40);
+            ctx.lineTo(220, 40);
+            ctx.closePath();
+            ctx.strokeStyle = "white";
+            ctx.stroke();
+
+            // 连接线 1-3
+            ctx.beginPath();
+            ctx.lineWidth = 3
+            ctx.moveTo(60, 40);
+            ctx.lineTo(220, 230);
+            ctx.closePath();
+            ctx.strokeStyle = "white";
+            ctx.stroke();
             window.requestAnimationFrame(this.draw);
         }
     }

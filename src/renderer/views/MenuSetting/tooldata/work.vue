@@ -151,6 +151,7 @@ export default {
                 this.workForm.station_code = result.data[0]['station_code']
                 this.workForm.station_name = result.data[0]['station_name']
                 this.workForm.base_kv = result.data[0]['base_kv']
+                this.selKv(this.workForm.base_kv)
             }
         }).catch(err => {
             this.submitResult = false
@@ -187,7 +188,7 @@ export default {
                 return
             }
             loadVolItems(currentProject).then(result => {
-                console.log('result===', result)
+                // console.log('result===', result)
                 if(result.code === 200) {
                     this.vol_items = result.data
                 }
