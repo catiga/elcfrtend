@@ -8,6 +8,20 @@
                 <!-- </v-card-text> -->
             </v-card>
         </v-flex>
+        <v-snackbar
+                v-model="snackbar"
+                right
+                top
+                :color="submitResult ? 'success' : 'error'"
+        >
+            {{ snackbarMsg}}
+            <v-btn
+                    flat
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-layout>
 </template>
 
@@ -24,13 +38,48 @@ import {
     loadBusItems
 } from '../../../../api/work/manager'
 
+import {
+    getTopoDataByTask,
+    loadComputeResult
+} from '../../../../api/compute_overhaul'
+
 import { remote } from 'electron'
 export default {
     data() {
         return {
+            // 操作提示
+            snackbar: false,
+            snackbarMsg: '',
+            submitResult: false,
+
             sun:new Image(),
             moon:new Image(),
-            earth:new Image()
+            earth:new Image(),
+
+            overhaul_id: 0,
+
+            centerPoint: {},
+            aroundPoints: []
+        }
+    },
+    watch: {
+        submitResult: {
+            handler(val) {
+                if (val) {
+                    this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作成功'
+                } else {
+                    this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作失败'
+                }
+            }
+        },
+        snackbar: {
+            handler(val) {
+                if (!val) {
+                    // 重置结果显示相关
+                    this.submitResult = false
+                    this.snackbarMsg = ''
+                }
+            }
         }
     },
     mounted() {
@@ -41,8 +90,20 @@ export default {
             this.loading = false
             return
         }
+        this.overhaul_id = this.$route.query.overhaul_id
         loadProjectParams(currentProject).then(result => {
             console.log('获取到的检修决策中心节点数据', result)
+            if(result.code==200) {
+                this.centerPoint = {data:result.data[0], x:500, y:300}
+            }
+            if(this.centerPoint) {
+                this.init()
+            } else {
+                this.submitResult = false
+                // 显示结果
+                this.snackbar = true
+                this.snackbarMsg = '请先定义检修作业'
+            }
         }).catch(err => {
 
         })
@@ -57,29 +118,80 @@ export default {
 
         // ctx.fillStyle = 'green';
         // ctx.fillRect(10, 10, 150, 100);
-        this.init()
     },
     methods: {
         init(){
-            this.draw()
-            // window.requestAnimationFrame();
+            getTopoDataByTask(this.overhaul_id).then(result => {
+                if(result.code!=200) {
+                    this.submitResult = false
+                    // 显示结果
+                    this.snackbar = true
+                    this.snackbarMsg = result.message
+                } else {
+                    console.log('获取到的拓扑数据', result)
+                    // this.aroundPoints
+                    let node_list = result.data[0].node_list
+                    node_list = node_list ? node_list.split(";") : []
+                    for(let x in node_list) {
+                        this.aroundPoints.push(node_list[x].split(',')[1])
+                    }
+
+                    this.draw()
+                }
+            }).catch(err => {
+
+            })
+        },
+        computePos(i, len, height, interval) {
+            let div = len / 2
+            let centerX = this.centerPoint.x
+            let centerY = this.centerPoint.y
+            return [500 - (div - i) * interval, height]
         },
         draw() {
-            console.log('这里执行了')
             var ctx = document.getElementById('canvas').getContext('2d');
             ctx.globalCompositeOperation = 'destination-over';
             ctx.clearRect(0,0,300,300); // clear canvas
+            console.log('this.centerPoint', this.centerPoint)
+            //画检修场站中心圆点
+            this.drawCircle(ctx, this.centerPoint.x, this.centerPoint.y, 20, this.centerPoint.data.station_name)
 
+            // 这里把所有场站分成上下两行的数组，数组里面是名字，坐标的对象
+            let upArray = [], downArray = []
+            let odd = this.aroundPoints.length%2
+            let div = this.aroundPoints.length/2
+            let index = 0
+            for(let i=0; i<div; i++) {
+                let xy = this.computePos(i, div, 160, 150)
+                upArray.push({data:this.aroundPoints[i], x:xy[0], y:xy[1]})
+            }
+            for(let i=div; i<this.aroundPoints.length; i++) {
+                let xy = this.computePos(Math.abs(div - i), div, 440, 150)
+                downArray.push({data:this.aroundPoints[i], x:xy[0], y:xy[1]})
+            }
+            console.log('upArray', upArray)
+            console.log('downArray', downArray)
+
+            for(let x in upArray) {
+                this.drawCircle(ctx, upArray[x].x, upArray[x].y, 20, upArray[x].data)
+                this.drawLine(ctx, upArray[x].x, upArray[x].y, this.centerPoint.x, this.centerPoint.y)
+            }
+            for(let x in downArray) {
+                this.drawCircle(ctx, downArray[x].x, downArray[x].y, 20, downArray[x].data)
+                this.drawLine(ctx, downArray[x].x, downArray[x].y, this.centerPoint.x, this.centerPoint.y)
+            }
+
+            
             // 圆
-            this.drawCircle(ctx, 40, 40, 20, '圆圈01')
-            this.drawCircle(ctx, 240, 140, 20, '圆圈02')
-            this.drawCircle(ctx, 240, 240, 20, '圆圈03')
-            this.drawCircle(ctx, 40, 240, 20, '圆圈04')
+            // this.drawCircle(ctx, 40, 40, 20, '圆圈01')
+            // this.drawCircle(ctx, 240, 140, 20, '圆圈02')
+            // this.drawCircle(ctx, 240, 240, 20, '圆圈03')
+            // this.drawCircle(ctx, 40, 240, 20, '圆圈04')
 
             // 线
-            this.drawLine(ctx, 40, 40, 240, 140)
-            this.drawLine(ctx, 40, 40, 240, 240, true)
-            this.drawLine(ctx, 240, 140, 40, 240, true)
+            // this.drawLine(ctx, 40, 40, 240, 140)
+            // this.drawLine(ctx, 40, 40, 240, 240, true)
+            // this.drawLine(ctx, 240, 140, 40, 240, true)
 
             
         },
