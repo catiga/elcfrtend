@@ -108,16 +108,6 @@ export default {
 
         })
         console.log('检修方案id', this.$route.query.overhaul_id)
-
-        // const canvas = document.getElementById('canvas');
-        // const ctx = canvas.getContext('2d');
-
-        // ctx.beginPath();
-        // ctx.arc(100,75,50,0,2*Math.PI);
-        // ctx.stroke();
-
-        // ctx.fillStyle = 'green';
-        // ctx.fillRect(10, 10, 150, 100);
     },
     methods: {
         init(){
@@ -133,9 +123,21 @@ export default {
                     let node_list = result.data[0].node_list
                     node_list = node_list ? node_list.split(";") : []
                     for(let x in node_list) {
-                        this.aroundPoints.push(node_list[x].split(',')[1])
+                        let node_name = node_list[x].split(',')[1]
+                        //增加替重逻辑，同时增加数量
+                        let need_append = true
+                        for(let y in this.aroundPoints) {
+                            let eq_node_name = this.aroundPoints[y].node_name
+                            if(eq_node_name == node_name) {
+                                this.aroundPoints[y].num++
+                                need_append = false
+                                break
+                            }
+                        }
+                        if(need_append) {
+                            this.aroundPoints.push({node_name: node_name, num: 1})
+                        }
                     }
-
                     this.draw()
                 }
             }).catch(err => {
@@ -149,6 +151,7 @@ export default {
             return [500 - (div - i) * interval, height]
         },
         draw() {
+            console.log('this.aroundPoints', this.aroundPoints)
             var ctx = document.getElementById('canvas').getContext('2d');
             ctx.globalCompositeOperation = 'destination-over';
             ctx.clearRect(0,0,300,300); // clear canvas
@@ -159,7 +162,8 @@ export default {
             // 这里把所有场站分成上下两行的数组，数组里面是名字，坐标的对象
             let upArray = [], downArray = []
             let odd = this.aroundPoints.length%2
-            let div = this.aroundPoints.length/2
+            let div = parseInt(this.aroundPoints.length/2)
+            console.log('div===', div)
             let index = 0
             for(let i=0; i<div; i++) {
                 let xy = this.computePos(i, div, 160, 150)
@@ -173,12 +177,22 @@ export default {
             console.log('downArray', downArray)
 
             for(let x in upArray) {
-                this.drawCircle(ctx, upArray[x].x, upArray[x].y, 20, upArray[x].data)
-                this.drawLine(ctx, upArray[x].x, upArray[x].y, this.centerPoint.x, this.centerPoint.y)
+                let num = upArray[x].data.num
+                this.drawCircle(ctx, upArray[x].x, upArray[x].y, 20, upArray[x].data.node_name + ':' + num)
+                let totalWidth = (num - 1) * 8
+                for(let i=0; i<num; i++) {
+                    let offset = i*8 - totalWidth
+                    this.drawLine(ctx, upArray[x].x + offset, upArray[x].y, this.centerPoint.x + offset, this.centerPoint.y)        
+                }
             }
             for(let x in downArray) {
-                this.drawCircle(ctx, downArray[x].x, downArray[x].y, 20, downArray[x].data)
-                this.drawLine(ctx, downArray[x].x, downArray[x].y, this.centerPoint.x, this.centerPoint.y)
+                let num = downArray[x].data.num
+                this.drawCircle(ctx, downArray[x].x, downArray[x].y, 20, downArray[x].data.node_name + ':' + num)
+                let totalWidth = (num - 1) * 8
+                for(let i=0; i<num; i++) {
+                    let offset = i*8 - totalWidth
+                    this.drawLine(ctx, downArray[x].x + offset, downArray[x].y, this.centerPoint.x + offset, this.centerPoint.y)        
+                }
             }
 
             
@@ -242,7 +256,7 @@ export default {
          */
         drawLine(ctx, x1, y1, x2, y2, danshed) {
             ctx.beginPath();
-            ctx.lineWidth = 3
+            ctx.lineWidth = 1
             if (!danshed) { 
                 ctx.setLineDash([0, 0]);
             } else {// 如果是虚线
