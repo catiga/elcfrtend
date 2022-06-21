@@ -4,7 +4,7 @@
             <v-card>
                 <v-card-title class="text-h3">拓扑重构方案图</v-card-title>
                 <!-- <v-card-text> -->
-                    <canvas id="canvas" style="border: 1px solid #ffffff;display:block;margin:0 auto;" width="1000" height="600"></canvas>
+                    <canvas id="canvas" style="border: 1px solid #ffffff;display:block;margin:80px auto;" width="1200" height="700"></canvas>
                 <!-- </v-card-text> -->
             </v-card>
         </v-flex>
@@ -27,11 +27,6 @@
 
 <script>
 import {
-    saveOverhaulTask,
-    loadTopoMethod
-} from '../../../../api/compute_overhaul'
-
-import {
     loadProjectParams,
     saveProjectParams,
     loadVolItems,
@@ -40,7 +35,8 @@ import {
 
 import {
     getTopoDataByTask,
-    loadComputeResult
+    loadComputeResult,
+    getTopoResultByOverhaulId
 } from '../../../../api/compute_overhaul'
 
 import { remote } from 'electron'
@@ -95,7 +91,7 @@ export default {
         loadProjectParams(currentProject).then(result => {
             console.log('获取到的检修决策中心节点数据', result)
             if(result.code==200) {
-                this.centerPoint = {data:result.data[0], x:500, y:300}
+                this.centerPoint = {data:result.data[0], x:600, y:350}
             }
             if(this.centerPoint) {
                 this.init()
@@ -119,7 +115,6 @@ export default {
                     this.snackbar = true
                     this.snackbarMsg = result.message
                 } else {
-                    console.log('获取到的拓扑数据', result)
                     // this.aroundPoints
                     let node_list = result.data[0].node_list
                     node_list = node_list ? node_list.split(";") : []
@@ -136,10 +131,31 @@ export default {
                             }
                         }
                         if(need_append) {
-                            this.aroundPoints.push({node_name: node_name, num: 1})
+                            this.aroundPoints.push({node_name: node_name, num: 1, type:1})
                         }
                     }
-                    this.draw()
+                    getTopoResultByOverhaulId(this.overhaul_id).then(topodata => {
+                        if(topodata.code==200) {
+                            let interrup_nodes_counterbusname = topodata.data[0]['interrup_nodes_counterbusname']
+                            if(interrup_nodes_counterbusname) {
+                                interrup_nodes_counterbusname = interrup_nodes_counterbusname.split(',')
+                                for(let x in this.aroundPoints) {
+                                    let tmp = this.aroundPoints[x]
+                                    for(let y in interrup_nodes_counterbusname) {
+                                        if(tmp.node_name==interrup_nodes_counterbusname[y]) {
+                                            console.log('这里重新设置了节点')
+                                            tmp.type = 0
+                                        }
+                                    }
+                                }
+                                console.log(this.aroundPoints)
+                            }
+                        }
+                        this.draw()
+                    }).catch(err=> {
+                        //直接画
+                        this.draw()
+                    })
                 }
             }).catch(err => {
 
@@ -149,7 +165,7 @@ export default {
             let div = len / 2
             let centerX = this.centerPoint.x
             let centerY = this.centerPoint.y
-            return [500 - (div - i) * interval, height]
+            return [600 - (div - i) * interval, height]
         },
         draw() {
             var ctx = document.getElementById('canvas').getContext('2d');
@@ -164,11 +180,11 @@ export default {
             let div = parseInt(this.aroundPoints.length/2)
             let index = 0
             for(let i=0; i<div; i++) {
-                let xy = this.computePos(i, div, 160, 150)
+                let xy = this.computePos(i, div, 160, 200)
                 upArray.push({data:this.aroundPoints[i], x:xy[0], y:xy[1]})
             }
             for(let i=div; i<this.aroundPoints.length; i++) {
-                let xy = this.computePos(Math.abs(div - i), div, 440, 150)
+                let xy = this.computePos(Math.abs(div - i), div, 540, 200)
                 downArray.push({data:this.aroundPoints[i], x:xy[0], y:xy[1]})
             }
             this.pointsWithPos.push(...upArray)
@@ -179,7 +195,11 @@ export default {
                 let totalWidth = (num - 1) * 8
                 for(let i=0; i<num; i++) {
                     let offset = i*8 - totalWidth
-                    this.drawLine(ctx, upArray[x].x + offset, upArray[x].y, this.centerPoint.x + offset, this.centerPoint.y)        
+                    if(upArray[x].data.type==1) {
+                        this.drawLine(ctx, upArray[x].x + offset, upArray[x].y, this.centerPoint.x + offset, this.centerPoint.y)
+                    } else {
+                        this.drawLine(ctx, upArray[x].x + offset, upArray[x].y, this.centerPoint.x + offset, this.centerPoint.y, true)
+                    }
                 }
             }
             for(let x in downArray) {
@@ -188,7 +208,12 @@ export default {
                 let totalWidth = (num - 1) * 8
                 for(let i=0; i<num; i++) {
                     let offset = i*8 - totalWidth
-                    this.drawLine(ctx, downArray[x].x + offset, downArray[x].y, this.centerPoint.x + offset, this.centerPoint.y)        
+                    if(downArray[x].data.type==1) {
+                        this.drawLine(ctx, downArray[x].x + offset, downArray[x].y, this.centerPoint.x + offset, this.centerPoint.y)
+                    } else {
+                        this.drawLine(ctx, downArray[x].x + offset, downArray[x].y, this.centerPoint.x + offset, this.centerPoint.y, true)
+                    }
+                    
                 }
             }
             this.getBestOutput(this.overhaul_id).then(bestArray => {
@@ -211,6 +236,7 @@ export default {
         drawCircle(ctx, x, y, r, text) {
             // 外圈
             ctx.beginPath();
+            ctx.setLineDash([0, 0]);
             ctx.lineWidth = 2
             ctx.strokeStyle = 'white';
             ctx.arc(x, y, r, 0, 2 * Math.PI);

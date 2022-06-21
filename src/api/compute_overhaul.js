@@ -216,6 +216,33 @@ export function getTaskById(task_id) {
     })
 }
 
+export function getTopoResultByOverhaulId(task_id) {
+    return new Promise((resolve, reject) => {
+        let sql = `select * from ctopo_compute_result where id in (select topo_id from ${Table} where id=${task_id})`
+        console.log('sql', sql)
+        try {
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    reject({
+                        code: 500,
+                        message: '拓扑数据获取失败'
+                    })
+                    return;
+                }
+                resolve({
+                    code: 200, 
+                    data: _.cloneDeep(values)
+                })
+            })
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
 export function getTopoDataByTask(task_id) {
     return new Promise((resolve, reject) => {
         let sql = `select * from task_station_topo where id in (select task_id from ctopo_compute_result where id in (select topo_id from ${Table} where id=${task_id}))`
