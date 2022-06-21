@@ -77,6 +77,12 @@ const reportRouter = {
       name: "canvas_topo",
       meta: { title: "检修拓扑", noCache: true },
     },
+    {
+      path: "canvas/topoMul",
+      component: require("@/views/ProjectMgr/canvas/topoMul").default,
+      name: "canvas_topoMul",
+      meta: { title: "检修拓扑", noCache: true },
+    },
   ],
 };
 

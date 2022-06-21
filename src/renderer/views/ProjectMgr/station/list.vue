@@ -264,7 +264,7 @@
                             :items="selectHeads"
                             item-text="name"
                             item-value="index"
-                            label="方案名称"
+                            label="选择方案"
                             @change="switchMethod"
                             required
                         ></v-select>
@@ -287,8 +287,9 @@
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
+                    <v-btn text @click="openCanvas" color="success">拓扑结构</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="resultDialog = false" color="success">关闭</v-btn>
+                    <v-btn text @click="resultDialog = false">关闭</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -401,10 +402,11 @@
                 snackbar: false,
                 snackbarMsg: '',
                 // 导出路径
-                userDataPath: '',
-                exportPath: '',
                 method_items: [{label:'牛拉法', code:'method_cow'}, {label:'误差法', code:'method_err'}],
-                err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}]
+                err_items: [{label:'是', code:'yes'}, {label:'否', code:'no'}],
+
+                selectedTask: null,
+                selectedItem: null,
             }
         },
         computed: { 
@@ -451,7 +453,7 @@
                 this.$router.push('/projectMgr/task/station/add')
             },
             handlePreview(item) {
-                console.log('item===', item)
+                this.selectedTask = item
                 loadComputeResult(item.id).then(result => {
                     console.log('result===', result)
                     this.selectHeads = result.data.head
@@ -463,6 +465,7 @@
                 })
             },
             switchMethod(item) {
+                this.selectedItem = item
                 this.contentList = []
                 this.itemList = []
                 for(let x in this.selectContents) {
@@ -745,6 +748,23 @@
                     }
                 })
             },
+            openCanvas() {
+                if(!this.selectedItem) {
+                    this.submitResult = false
+                    // 显示结果
+                    this.snackbar = true
+                    this.snackbarMsg = '请先选择重构方案'
+                    return
+                }
+                this.$router.push({
+                    //path:'/projectMgr/canvas/topoMul',  
+                    name: 'canvas_topoMul',
+                    params:{
+                        task: this.selectedTask,
+                        caseOutput: this.selectHeads[this.selectedItem]
+                    }
+                })
+            }
         }
     }
 </script>
