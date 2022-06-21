@@ -59,7 +59,8 @@ export default {
             overhaul_id: 0,
 
             centerPoint: {},
-            aroundPoints: []
+            aroundPoints: [],
+            pointsWithPos: []
         }
     },
     watch: {
@@ -151,11 +152,9 @@ export default {
             return [500 - (div - i) * interval, height]
         },
         draw() {
-            console.log('this.aroundPoints', this.aroundPoints)
             var ctx = document.getElementById('canvas').getContext('2d');
             ctx.globalCompositeOperation = 'destination-over';
             ctx.clearRect(0,0,300,300); // clear canvas
-            console.log('this.centerPoint', this.centerPoint)
             //画检修场站中心圆点
             this.drawCircle(ctx, this.centerPoint.x, this.centerPoint.y, 20, this.centerPoint.data.station_name)
 
@@ -163,7 +162,6 @@ export default {
             let upArray = [], downArray = []
             let odd = this.aroundPoints.length%2
             let div = parseInt(this.aroundPoints.length/2)
-            console.log('div===', div)
             let index = 0
             for(let i=0; i<div; i++) {
                 let xy = this.computePos(i, div, 160, 150)
@@ -173,9 +171,8 @@ export default {
                 let xy = this.computePos(Math.abs(div - i), div, 440, 150)
                 downArray.push({data:this.aroundPoints[i], x:xy[0], y:xy[1]})
             }
-            console.log('upArray', upArray)
-            console.log('downArray', downArray)
-
+            this.pointsWithPos.push(...upArray)
+            this.pointsWithPos.push(...downArray)
             for(let x in upArray) {
                 let num = upArray[x].data.num
                 this.drawCircle(ctx, upArray[x].x, upArray[x].y, 20, upArray[x].data.node_name + ':' + num)
@@ -194,20 +191,14 @@ export default {
                     this.drawLine(ctx, downArray[x].x + offset, downArray[x].y, this.centerPoint.x + offset, this.centerPoint.y)        
                 }
             }
-
-            
-            // 圆
-            // this.drawCircle(ctx, 40, 40, 20, '圆圈01')
-            // this.drawCircle(ctx, 240, 140, 20, '圆圈02')
-            // this.drawCircle(ctx, 240, 240, 20, '圆圈03')
-            // this.drawCircle(ctx, 40, 240, 20, '圆圈04')
-
-            // 线
-            // this.drawLine(ctx, 40, 40, 240, 140)
-            // this.drawLine(ctx, 40, 40, 240, 240, true)
-            // this.drawLine(ctx, 240, 140, 40, 240, true)
-
-            
+            this.getBestOutput(this.overhaul_id).then(bestArray => {
+                for(let x in bestArray) {
+                    let p = bestArray[x]
+                    console.log('x.p0==', p.p0)
+                    console.log('x.p1==', p.p1)
+                    this.drawLine(ctx, p.p0.x, p.p0.y, p.p1.x, p.p1.y, false, "red")
+                }
+            })
         },
         /**
          * 绘制圆圈
@@ -254,7 +245,8 @@ export default {
          * @param {x2} 圆2 x2 坐标
          * @param {y2} 圆2 y2 坐标
          */
-        drawLine(ctx, x1, y1, x2, y2, danshed) {
+        drawLine(ctx, x1, y1, x2, y2, danshed = false, color="white") {
+            console.log('color===', color)
             ctx.beginPath();
             ctx.lineWidth = 1
             if (!danshed) { 
@@ -264,8 +256,36 @@ export default {
             }
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
-            ctx.strokeStyle = "white";
+            ctx.strokeStyle = color;
             ctx.stroke();
+        },
+        getBestOutput(overhaul_task_id) {
+            return new Promise((resolve, reject) => {
+                loadComputeResult(overhaul_task_id).then(result => {
+                    if(result.code==200) {
+                        let bestOutPut = result.data[0]['case_output_best']
+                        // 鄂府河220,鄂临空港220;鄂府河220,鄂临空港220 的形式
+                        bestOutPut = bestOutPut.split(';')
+                        //开始找坐标
+                        let bestArray = []
+                        for(let i=1; i<bestOutPut.length; i++) {
+                            let bestItems = bestOutPut[i].split(',')
+                            let p0, p1
+                            for(let x in this.pointsWithPos) {
+                                if(this.pointsWithPos[x].data.node_name==bestItems[0]) {
+                                    p0 = this.pointsWithPos[x]
+                                } else if(this.pointsWithPos[x].data.node_name==bestItems[1]) {
+                                    p1 = this.pointsWithPos[x]
+                                }
+                            }
+                            bestArray.push({p0:p0, p1:p1})
+                        }
+                        resolve(bestArray)
+                    }
+                }).catch(err => {
+
+                })
+            })
         }
     }
 }
