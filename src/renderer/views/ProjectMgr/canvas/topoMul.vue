@@ -156,8 +156,14 @@ export default {
         },
         computePos(i, len, height, interval) {
             let div = len / 2
+            let odd = i % 2
             let centerX = this.centerPoint.x
             let centerY = this.centerPoint.y
+            if(odd==0) {
+                height += 30
+            } else {
+                height -= 30
+            }
             return [600 - (div - i) * interval, height]
         },
         draw() {
