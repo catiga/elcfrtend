@@ -103,3 +103,56 @@ export function delData(obj) {
     })
 }
 
+export function updateNslv(id, nslv) {
+    return new Promise((resolve, reject) => {
+        let sql = `update c1_name_show_level_area set nsla_v='${nslv}' where id=${id}`
+        console.log('更新sql', sql)
+        try {
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    return reject({
+                        code: 400,
+                        message: '保存失败'
+                    })
+                    return
+                }
+                resolve({
+                    code: 200,
+                    data: values
+                })
+            })
+        } catch(err) {
+            return reject({
+                code: 400, 
+                message: err.message
+            })
+        }
+    })
+}
+
+export function updateGla(id, field, value) {
+    return new Promise((resolve, reject) => {
+        let sql = `update c1_generator_level_area set ${field}=${value} where id=${id}`
+        console.log('更新sql', sql)
+        try {
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    return reject({
+                        code: 400,
+                        message: '保存失败'
+                    })
+                    return
+                }
+                resolve({
+                    code: 200,
+                    data: values
+                })
+            })
+        } catch(err) {
+            return reject({
+                code: 400, 
+                message: err.message
+            })
+        }
+    })
+}

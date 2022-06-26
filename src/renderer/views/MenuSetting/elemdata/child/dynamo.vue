@@ -43,14 +43,30 @@
                     >
 
                         <template v-slot:items="props">
-                        <td class="text-xs-center">{{ props.item.gen }}</td>
-                        <td class="text-xs-center">{{ props.item.gla_2 }}</td>
-                        <td class="text-xs-center">{{ props.item.gla_3 }}</td>
-                        <td class="text-xs-center">{{ props.item.gla_4 }}</td>
-                        <td class="text-xs-center">{{ props.item.gla_5 }}</td>
-                        <td class="text-xs-center">{{ props.item.gla_9 }}</td>
-                        <td class="text-xs-center">{{ props.item.gla_10 }}</td>
-                        <td class="text-xs-center">{{ props.item.gla_8 }}</td>
+                        <td class="text-xs-center">
+                            <v-text-field v-model="props.item.gen" @blur="changeNslv(props.item)"/>
+                        </td>
+                        <td class="text-xs-center">
+                            <v-text-field v-model="props.item.gla_2" @blur="changeGla(props.item, 'gla_2')"/>
+                        </td>
+                        <td class="text-xs-center">
+                            <v-text-field v-model="props.item.gla_3" @blur="changeGla(props.item, 'gla_3')"/>
+                        </td>
+                        <td class="text-xs-center">
+                            <v-text-field v-model="props.item.gla_4" @blur="changeGla(props.item, 'gla_4')"/>
+                        </td>
+                        <td class="text-xs-center">
+                            <v-text-field v-model="props.item.gla_5" @blur="changeGla(props.item, 'gla_5')"/>
+                        </td>
+                        <td class="text-xs-center">
+                            <v-text-field v-model="props.item.gla_9" @blur="changeGla(props.item, 'gla_9')"/>
+                        </td>
+                        <td class="text-xs-center">
+                            <v-text-field v-model="props.item.gla_10" @blur="changeGla(props.item, 'gla_10')"/>
+                        </td>
+                        <td class="text-xs-center">
+                            <v-text-field v-model="props.item.gla_8" @blur="changeGla(props.item, 'gla_8')"/>
+                        </td>
                         <td class="justify-center layout px-0">
                             <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
                             <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
@@ -164,7 +180,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData, delData } from '../../../../../api/station/dynamo'
+    import { getModelPagination, saveStatData, delData, updateGla, updateNslv } from '../../../../../api/station/dynamo'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -297,6 +313,22 @@
             this.initialize()
         },
         methods: {
+            changeGla(item, field) {
+                updateGla(item.gla_id, field, item[field]).then(result => {
+
+                }).catch(err => {
+                    this.snackbar = true
+                    this.snackbarMsg = '保存失败'
+                })
+            },
+            changeNslv(item) {
+                updateNslv(item.nsla_id, item.gen).then(result => {
+
+                }).catch(err => {
+                    this.snackbar = true
+                    this.snackbarMsg = '保存失败'
+                })
+            },
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending

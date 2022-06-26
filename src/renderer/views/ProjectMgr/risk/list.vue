@@ -496,7 +496,7 @@
                 })
 
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
-                    console.log('result======', result)
+                    
                     if (result.code === 200) {
                         let items = result.data.list
                         const total = result.data.total

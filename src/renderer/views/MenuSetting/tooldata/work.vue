@@ -66,7 +66,7 @@
                     @change="selKv"
                     required
                 ></v-select>
-                <v-select
+                <v-autocomplete
                     v-model="workForm.station_name"
                     :items="bus_items"
                     item-text="bus_name"
@@ -75,7 +75,7 @@
                     label="检修厂站选择"
                     @change="selBus"
                     required
-                ></v-select>
+                ></v-autocomplete>
                 
                 <v-list-tile>
                     <v-list-tile-content>

@@ -19,7 +19,6 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
                     sql = sql + ` and a_time<='${whereAttrs.dateEnd}'`
                 }
             }
-            console.log(sql)
             db.query(sql, function(err, values, fields) {
                 console.log(err)
                 if(err) {
@@ -33,7 +32,9 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
                 if(pagination.sortBy) {
                     sql = sql + ` order by ${pagination.sortBy} ${pagination.descending?'desc':'asc'}`
                 }
-                sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+                if(pagination.rowsPerPage>0) {
+                    sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
+                }
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200,
