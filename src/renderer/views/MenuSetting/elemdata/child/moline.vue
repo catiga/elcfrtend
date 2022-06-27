@@ -46,7 +46,16 @@
                             <v-text-field v-model="props.item.nsla_v" @blur="changeNslv(props.item)"/>
                         </td>
                         <td class="text-xs-right">
-                            <v-text-field v-model="props.item.bla.bla_2" @blur="changeBla(props.item.bla, 'bla_2')"/>
+                            <!-- <v-text-field v-model="props.item.bla.bla_2" @blur="changeBla(props.item.bla, 'bla_2')"/> -->
+                            <v-select
+                                v-model="props.item.bla.bla_2"
+                                :items="attrList"
+                                item-text="value"
+                                item-value="code"
+                                label="属性"
+                                @change="changeBla(props.item.bla, 'bla_2')"
+                                required
+                            ></v-select>
                         </td>
                         <td class="text-xs-right">
                             <v-text-field v-model="props.item.bla.bla_5" @blur="changeBla(props.item.bla, 'bla_5')"/>
@@ -221,7 +230,12 @@
                     {text: '电压下限p.u.', value: 'id', align: 'left', sortable: false},
                     {text: '分区', value: 'id', align: 'left', sortable: false}
                 ],
-
+                attrList: [
+                    {code:1, value:'PQ'},
+                    {code:2, value:'PV'},
+                    {code:3, value:'Slack'},
+                    {code:4, value:'Island'},
+                ],
                 noDataMessage: '',
                 search: {
                     nsla_v: ''

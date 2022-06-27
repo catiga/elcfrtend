@@ -269,7 +269,7 @@
             max-width="400"
         >
             <v-card>
-                <v-card-title class="text-h3">检修过渡方案建议</v-card-title>
+                <v-card-title class="text-h3">检修过渡最佳方案建议</v-card-title>
                 <v-card-text>
                     <v-form ref="form" lazy-validation class="pd-8">
                         <v-select
@@ -277,8 +277,9 @@
                             :items="headList"
                             item-text="name"
                             item-value="index"
-                            label="方案名称"
+                            label="最佳方案"
                             @change="switchMethod"
+                            disabled
                             required
                         ></v-select>
                         <v-text-field
