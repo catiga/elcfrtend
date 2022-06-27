@@ -22,6 +22,7 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
                 //     sql = sql + ` and id_name like '%${whereAttrs.id_name}%'`
                 // }
             }
+            console.log(sql)
             db.query(sql, function(err, values, fields) {
                 let total = values.length;
                 if(pagination.sortBy) {
@@ -98,6 +99,60 @@ export function delData(obj) {
             console.log(err)
             return reject({
                 code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+export function updateNslv(id, nslv) {
+    return new Promise((resolve, reject) => {
+        let sql = `update c1_name_show_level_area set nsla_v='${nslv}' where id=${id}`
+        console.log('更新sql', sql)
+        try {
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    return reject({
+                        code: 400,
+                        message: '保存失败'
+                    })
+                    return
+                }
+                resolve({
+                    code: 200,
+                    data: values
+                })
+            })
+        } catch(err) {
+            return reject({
+                code: 400, 
+                message: err.message
+            })
+        }
+    })
+}
+
+export function updateLla(id, field, value) {
+    return new Promise((resolve, reject) => {
+        let sql = `update c1_load_level_area set ${field}=${value} where id=${id}`
+        console.log('更新sql', sql)
+        try {
+            db.query(sql, function(err, values, fields) {
+                if(err) {
+                    return reject({
+                        code: 400,
+                        message: '保存失败'
+                    })
+                    return
+                }
+                resolve({
+                    code: 200,
+                    data: values
+                })
+            })
+        } catch(err) {
+            return reject({
+                code: 400, 
                 message: err.message
             })
         }

@@ -42,12 +42,14 @@
                         class="elevation-1"
                     >
                         <template v-slot:items="props">
-                            <td class="text-xs-left">{{ props.item.c_load }}</td>
-                            <td class="text-xs-left">{{ props.item.lla_2 }}</td>
-                            <td class="text-xs-left">{{ props.item.lla_3 }}</td>
-                            <td class="justify-left layout px-0">
-                                <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
-                                <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
+                            <td class="text-xs-left">
+                                <v-text-field v-model="props.item.c_load" @blur="changeNslv(props.item)"/>
+                            </td>
+                            <td class="text-xs-left">
+                                <v-text-field v-model="props.item.lla_2" @blur="changeLla(props.item, 'lla_2')"/>
+                            </td>
+                            <td class="text-xs-left">
+                                <v-text-field v-model="props.item.lla_3" @blur="changeLla(props.item, 'lla_3')"/>
                             </td>
                         </template>
                     </v-data-table>
@@ -128,7 +130,7 @@
 </template>
 
 <script>
-    import { getModelPagination, saveStatData, delData } from '../../../../../api/station/load'
+    import { getModelPagination, saveStatData, delData, updateNslv, updateLla } from '../../../../../api/station/load'
     import Excel from 'exceljs'
     
     import moment from 'moment'
@@ -153,8 +155,7 @@
                 headers: [
                     {text: '节点名称', value: 'c_load', align: 'left', sortable: false},
                     {text: '有功MW', value: 'lla_2', align: 'left', sortable: false},
-                    {text: '无功MVAR', value: 'lla_3', align: 'left', sortable: false},
-                    { text: '操作', sortable: false }
+                    {text: '无功MVAR', value: 'lla_3', align: 'left', sortable: false}
                 ],
                 noDataMessage: '',
                 search: {
@@ -258,6 +259,22 @@
             this.initialize()
         },
         methods: {
+            changeLla(item, field) {
+                updateLla(item.lla_id, field, item[field]).then(result => {
+
+                }).catch(err => {
+                    this.snackbar = true
+                    this.snackbarMsg = '保存失败'
+                })
+            },
+            changeNslv(item) {
+                updateNslv(item.nsla_id, item.c_load).then(result => {
+
+                }).catch(err => {
+                    this.snackbar = true
+                    this.snackbarMsg = '保存失败'
+                })
+            },
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending

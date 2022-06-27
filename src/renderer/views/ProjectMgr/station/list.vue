@@ -109,7 +109,6 @@
                                     ></v-checkbox>
                                 </td>
                                 <td>{{ props.item.title }}</td>
-                                <td>{{ props.item.fix_type }}</td>
                                 <td width="130">{{ props.item.a_time | formateTime }}</td>
                                 <td>
                                     <span v-if="props.item.computing==0">创建</span>
@@ -272,7 +271,7 @@
                             <v-card-title><h4>站外节点对接</h4></v-card-title>
                             <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
                                 <v-tab v-for="n in itemList" :key="n.index">
-                                    悬空节点 {{ n.name }}
+                                    {{ n.name }}
                                 </v-tab>
                                 <v-tab-item v-for="n in 2" :key="n">
                                     <v-list dense>
@@ -349,7 +348,6 @@
                 desserts: [],
                 headers: [
                     {text: '作业名称', value: 'title', align: 'left', sortable: true},
-                    {text: '检修类型', value: 'fix_type', align: 'left', sortable: false},
                     {text: '创建时间', value: 'a_time', align: 'left', sortable: true},
                     {text: '状态', value: 'computing', align: 'left', sortable: true},
                     {text: '操作', value: 'id', align: 'right', sortable: false},

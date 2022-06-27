@@ -42,17 +42,29 @@
                         class="elevation-1"
                     >
                         <template v-slot:items="props">
-                        <td class="text-xs-right">{{ props.item.serial_number }}</td>
-                        <td class="text-xs-right">{{ props.item.name }}</td>
-                        <td class="text-xs-right">{{ props.item.first_node }}</td>
-                        <td class="text-xs-right">{{ props.item.last_node }}</td>
-                        <td class="text-xs-right">{{ props.item.type }}</td>
-                        <td class="text-xs-right">{{ props.item.run_state }}</td>
-                        <td class="text-xs-right">{{ props.item.cr.cr_1 }}</td>
-                        <td class="text-xs-right">{{ props.item.cr.cr_2 }}</td>
-                        <td class="justify-center layout px-0">
-                            <v-icon small class="mr-2" @click="handleEditItem(props.item)">edit</v-icon>
-                            <v-icon small @click="handleDeleteItem(props.item)">delete</v-icon>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.serial_number" @blur="changeComp(props.item, 'serial_number')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.name" @blur="changeComp(props.item, 'name')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.first_node" @blur="changeComp(props.item, 'first_node')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.last_node" @blur="changeComp(props.item, 'last_node')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.type" @blur="changeComp(props.item, 'type')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.run_state" @blur="changeComp(props.item, 'run_state')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.cr.cr_1" @blur="changeRel(props.item.cr, 'cr_1')"/>
+                        </td>
+                        <td class="text-xs-right">
+                            <v-text-field v-model="props.item.cr.cr_2" @blur="changeRel(props.item.cr, 'cr_2')"/>
                         </td>
                         </template>
                     </v-data-table>
@@ -176,7 +188,9 @@
     import { 
         getModelPagination, 
         getC1ReliabilityByPage, 
-        saveStatData 
+        saveStatData,
+        updateComp,
+        updateRel
     } from '../../../../../api/station/devparams'
     
     import moment from 'moment'
@@ -205,8 +219,7 @@
                     {text: '元件类型', value: 'id', align: 'left', sortable: false},
                     {text: '投运状态', value: 'id', align: 'left', sortable: false},
                     {text: '失效率(次/年) ', value: 'id', align: 'left', sortable: false},
-                    {text: '修复时间(h)', value: 'id', align: 'left', sortable: false},
-                    { text: '操作', sortable: false }
+                    {text: '修复时间(h)', value: 'id', align: 'left', sortable: false}
                 ],
                 noDataMessage: '',
                 search: {
@@ -310,6 +323,22 @@
             this.initialize()
         },
         methods: {
+            changeComp(item, field) {
+                updateComp(item.id, field, item[field]).then(result => {
+
+                }).catch(err => {
+                    this.snackbar = true
+                    this.snackbarMsg = '保存失败'
+                })
+            },
+            changeRel(item, field) {
+                updateRel(item.id, field, item[field]).then(result => {
+
+                }).catch(err => {
+                    this.snackbar = true
+                    this.snackbarMsg = '保存失败'
+                })
+            },
             changeSort(column) {
                 if (this.pagination.sortBy === column) {
                     this.pagination.descending = !this.pagination.descending

@@ -467,8 +467,8 @@ export function saveStationCompute(general_form, topo_list, node_list, proj_id) 
                 }
             }
 
-            let sql = `insert into task_station_topo(title, fix_type, a_time, flag, proj_id, topo_list, node_list) 
-                    values('${title}', '${fix_type}', '${a_time}', 0, ${proj_id}, '${topoListStr}', '${nodeListStr}')`
+            let sql = `insert into task_station_topo(title, a_time, flag, proj_id, topo_list, node_list) 
+                    values('${title}', '${a_time}', 0, ${proj_id}, '${topoListStr}', '${nodeListStr}')`
             
             db.query(sql, function(err, values, fields) {
                 if(err) {

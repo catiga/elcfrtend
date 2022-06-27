@@ -549,8 +549,8 @@
                 } else if(e === 2) {
                     this.headersDiadlog = [
                     {text: '节点名称', value: 'ps_name', align: 'left', sortable: false},
-                    {text: '有功功率', value: 'bus_name', align: 'left', sortable: false},
-                    {text: '无功功率', value: 'zone_no', align: 'left', sortable: false},
+                    {text: '有功出力', value: 'bus_name', align: 'left', sortable: false},
+                    {text: '无功出力', value: 'zone_no', align: 'left', sortable: false},
                     ]
                     this.dessertsDialog = this.dynamoData
                 }

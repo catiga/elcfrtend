@@ -56,6 +56,7 @@
                             </v-dialog>
                             -->
                         </div>
+                        <!--
                         <v-select
                             v-model="workForm.checkItem"
                             :items="checkItems"
@@ -64,7 +65,9 @@
                             label="检修类型"
                             required
                         ></v-select>
+                        -->
                         <!-- 左右多选下拉框 -->
+                        <div class="row-flex">检修设备选择</div>
                         <div class="row-flex" style="margin: 20px 0 0 0;">
                             <select id="sel_all_area" multiple="multiple" class="multiple-select" v-model="parentValue">
                                 <option v-for="(item, index) in projBranchList" :key="index" :value="item.id + '-' + index ">{{item.value}}</option>
