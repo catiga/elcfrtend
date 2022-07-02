@@ -274,11 +274,20 @@
                                     {{ n.name }}
                                 </v-tab>
                                 <v-tab-item v-for="n in 2" :key="n">
+                                    <v-card dense>
+                                        <v-card-title class="body-2 pl-2" text-align="center">
+                                            <span class="headerClass" v-for="(item, index) in contentList" :key="item.index" :index="index" style="margin: 0 20px 0 0;">
+                                                {{item.name}}
+                                            </span>
+                                        </v-card-title>
+                                    </v-card>
+                                    <!--
                                     <v-list dense>
                                         <v-list-tile v-for="(item, index) in contentList" :key="item.index" :index="index">
                                             <v-list-tile-content>{{ item.name }}</v-list-tile-content>
                                         </v-list-tile>
                                     </v-list>
+                                    -->
                                 </v-tab-item>
                             </v-tabs>
                             
@@ -786,6 +795,12 @@
     }
     .v-btn--floating .v-btn__content {
         height: auto !important;    
+    }
+    .headerClass{
+        white-space: nowrap ;
+        word-break: normal;
+        overflow: hidden ;
+        text-overflow: ellipsis;
     }
 // }
 </style>
