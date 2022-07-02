@@ -390,7 +390,7 @@
                     // 模糊查询
                     return check1 && check2
                 })
-
+                
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
                     console.log('result', result)
                     if (result.code === 200) {
@@ -398,9 +398,9 @@
                         const total = result.data.total
 
                         // setTimeout(() => {
-                        this.loading = false
-                        this.desserts = items
-                        this.totalDesserts = total
+                        // this.loading = false
+                        // this.desserts = items
+                        // this.totalDesserts = total
 
                         //取bus level数据
                         getC1ReliabilityByPage(this.pagination, currentProject.id).then(result1 => {
@@ -409,7 +409,10 @@
                                 for(let x in items) {
                                     items[x]['cr'] = bus_level_data[x]
                                 }
+                                //this.desserts = items
+                                this.loading = false
                                 this.desserts = items
+                                this.totalDesserts = total
                             }
                         })
                         // }, 1000)

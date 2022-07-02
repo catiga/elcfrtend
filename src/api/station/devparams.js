@@ -26,6 +26,7 @@ export function getModelPagination(pagination, whereAttrs, filterFun) {
                 if(pagination.rowsPerPage > 0) {
                     sql = sql + ` limit ${pagination.page - 1}, ${pagination.rowsPerPage}`
                 }
+                console.log('变电站设备', sql)
                 db.query(sql, function(err, values, fields) {
                     resolve({
                         code: 200,

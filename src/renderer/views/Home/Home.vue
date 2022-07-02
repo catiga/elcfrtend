@@ -10,6 +10,12 @@
                         </v-flex>
                         <v-flex d-flex
                                 xs12>
+                            <History></History>
+                        </v-flex>
+
+                        <!--
+                        <v-flex d-flex
+                                xs12>
                             <v-card>
                                 <v-card-title class="pb-0">
                                     <span class="title font-weight-light">当月统计</span>
@@ -19,24 +25,23 @@
                                 </v-card-text>
                             </v-card>
                         </v-flex>
-                        <v-flex d-flex
-                                xs12>
-                            <v-card>
-                                <v-card-title class="pb-0">
-                                    <span class="title font-weight-light">提醒</span>
-                                </v-card-title>
-                                <v-card-text>
-                                    <Todo></Todo>
-                                </v-card-text>
-                            </v-card>
-                        </v-flex>
+                        -->
                     </v-layout>
                 </v-flex>
             </v-layout>
         </v-flex>
+        
         <v-flex d-flex sm5>
-            <History></History>
+            <v-card>
+                <v-card-title class="pb-0">
+                    <span class="title font-weight-light">提醒</span>
+                </v-card-title>
+                <v-card-text>
+                    <Todo></Todo>
+                </v-card-text>
+            </v-card>
         </v-flex>
+        
     </v-layout>
 </template>
 

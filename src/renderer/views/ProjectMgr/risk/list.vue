@@ -154,15 +154,15 @@
                         <v-container grid-list-md>
                             <!-- <v-layout wrap> -->
                                 <v-flex xs12>
-                                    <v-text-field label="PLC"
+                                    <v-text-field label="负荷削减概率"
                                         v-model="editedItem.mfs"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
-                                    <v-text-field label="EFLC"
+                                    <v-text-field label="期望负荷削减频次（次/年）"
                                         v-model="editedItem.eo"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>
-                                    <v-text-field label="EENS"
+                                    <v-text-field label="	期望缺供电量（MWh/年）"
                                         v-model="editedItem.mhvs"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12>

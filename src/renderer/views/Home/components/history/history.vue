@@ -35,7 +35,7 @@
                             @click="loadMore"
                             :disabled="noMoreData"
                     >
-                        load more
+                        加载更多
                     </v-btn>
                 </v-card-text>
             </v-card>
@@ -104,12 +104,18 @@
             initialize() {
                 getModelPagination(this.pagination).then(result => {
                     if (result.code === 200) {
+                        if(!result.data.list || result.data.list.length==0) {
+                            this.snackbar = true
+                            this.snackbarMsg = '没有更多了'
+                            return
+                        }
                         let items = result.data.list
                         const total = result.data.total
 
                         // setTimeout(() => {
                         this.loading = false
-                        this.desserts = items
+                        // this.desserts = items
+                        this.desserts = this.desserts.concat(items)
                         this.totalDesserts = total
                         // }, 1000)
                     } else {
@@ -124,7 +130,7 @@
                 })
             },
             loadMore() {
-                this.pagination.page += 1
+                this.pagination.page += 10
                 this.initialize()
             },
             openItem(item) {
