@@ -269,28 +269,35 @@
                         ></v-select>
                         <v-card>
                             <v-card-title><h4>站外节点对接</h4></v-card-title>
+                            <v-card dense>
+                                <v-card-title class="body-2 pl-2" text-align="center" v-for="(item, index) in contentList" :key="item.index" :index="index">
+                                    <span class="headerClass" style="margin: 0 20px 0 20px;">
+                                        {{item[0].name}}
+                                    </span>
+                                    <span class="headerClass" style="margin: 0 20px 0 0;">
+                                        {{item[1].name}}
+                                    </span>
+                                </v-card-title>
+                            </v-card>
+                            <!--
                             <v-tabs fixed-tabs v-model="dialogTabActive" @change="handleChangeTab">
                                 <v-tab v-for="n in itemList" :key="n.index">
                                     {{ n.name }}
                                 </v-tab>
                                 <v-tab-item v-for="n in 2" :key="n">
                                     <v-card dense>
-                                        <v-card-title class="body-2 pl-2" text-align="center">
-                                            <span class="headerClass" v-for="(item, index) in contentList" :key="item.index" :index="index" style="margin: 0 20px 0 0;">
-                                                {{item.name}}
+                                        <v-card-title class="body-2 pl-2" text-align="center" v-for="(item, index) in contentList" :key="item.index" :index="index">
+                                            <span class="headerClass" style="margin: 0 20px 0 20px;">
+                                                {{item[0].name}}
+                                            </span>
+                                            <span class="headerClass" style="margin: 0 20px 0 0;">
+                                                {{item[1].name}}
                                             </span>
                                         </v-card-title>
                                     </v-card>
-                                    <!--
-                                    <v-list dense>
-                                        <v-list-tile v-for="(item, index) in contentList" :key="item.index" :index="index">
-                                            <v-list-tile-content>{{ item.name }}</v-list-tile-content>
-                                        </v-list-tile>
-                                    </v-list>
-                                    -->
                                 </v-tab-item>
                             </v-tabs>
-                            
+                            -->
                         </v-card>
                     </v-form>
                 </v-card-text>
@@ -485,6 +492,19 @@
                         this.itemList.push(this.selectItems[x])
                     }
                 }
+                //处理一下contentList，变成两个的数组
+                let newCont = []
+                for(let x in this.contentList) {
+                    if(x%2==0) {
+                        let x1 = this.contentList[x]
+                        let x2 = this.contentList[parseInt(x) + 1]
+                        newCont.push([x1, x2])
+                    }
+                }
+                this.contentList = newCont
+                console.log('itemList', this.itemList)
+                console.log('this.contentList', this.contentList)
+                console.log('newCont', newCont)
             },
             openItem(item) {
                 if (item.is_import === 0) {

@@ -202,7 +202,7 @@
         <v-dialog v-model="dialogDeleteBatch" max-width="290">
             <v-card>
                 <v-card-title class="headline">提示：</v-card-title>
-                <v-card-text>确定要批量删除选中工程吗?
+                <v-card-text>确定要批量删除选中任务吗?
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>

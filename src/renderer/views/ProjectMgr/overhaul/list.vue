@@ -224,7 +224,7 @@
         <v-dialog v-model="dialogDeleteBatch" max-width="290">
             <v-card>
                 <v-card-title class="headline">提示：</v-card-title>
-                <v-card-text>确定要批量删除选中工程吗?
+                <v-card-text>确定要批量删除选中计算任务吗?
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
@@ -242,7 +242,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" flat @click="dialogRecompute = false">取消</v-btn>
-                    <v-btn color="blue darken-1" flat @click="confirmCompute">确定</v-btn>
+                    <v-btn color="blue darken-1" flat @click="saveDelete">确定</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -290,12 +290,24 @@
                         ></v-text-field>
                         <v-card>
                             <v-card-title><h4>站外节点对接</h4></v-card-title>
+                            <v-card dense>
+                                <v-card-title class="body-2 pl-2" text-align="center" v-for="(item, index) in selectedContents" :key="item.index" :index="index">
+                                    <span class="headerClass" style="margin: 0 20px 0 20px;">
+                                        {{item[0].name}}
+                                    </span>
+                                    <span class="headerClass" style="margin: 0 20px 0 0;">
+                                        {{item[1].name}}
+                                    </span>
+                                </v-card-title>
+                            </v-card>
+
+                            <!--
                             <v-list dense>
-                                        <v-list-tile v-for="(item, index) in selectedContents" :key="item.index" :index="index">
-                                            <v-list-tile-content>{{ item.name }}</v-list-tile-content>
-                                        </v-list-tile>
-                                    </v-list>
-                            
+                                <v-list-tile v-for="(item, index) in selectedContents" :key="item.index" :index="index">
+                                    <v-list-tile-content>{{ item.name }}</v-list-tile-content>
+                                </v-list-tile>
+                            </v-list>
+                            -->
                         </v-card>
                     </v-form>
                 </v-card-text>
@@ -625,7 +637,7 @@
             saveDeleteBatch() {
                 const ids = this.selected.map(item => item.id)
                 if (!ids || ids.length === 0) {
-                    this.snackbarMsg = '请选择要删除的工程'
+                    this.snackbarMsg = '请选择要删除的计算任务'
                     this.snackbar = true
                     return
                 }
@@ -755,6 +767,16 @@
                     this.dialogJianxiuForm.select = this.headList[0]
                     this.dialogJianxiuForm.name = this.itemList[0]['name']
                     this.selectedContents = this.contentList
+
+                    let newCont = []
+                    for(let x in this.selectedContents) {
+                        if(x%2==0) {
+                            let x1 = this.selectedContents[x]
+                            let x2 = this.selectedContents[parseInt(x) + 1]
+                            newCont.push([x1, x2])
+                        }
+                    }
+                    this.selectedContents = newCont
                 }).catch(err => {
                     this.submitResult = false
                     // 显示结果
@@ -778,7 +800,15 @@
                             this.selectedContents.push(this.contentList[x])
                         }
                     }
-                    console.log('selectedContents===', this.selectedContents)
+                    let newCont = []
+                    for(let x in this.selectedContents) {
+                        if(x%2==0) {
+                            let x1 = this.selectedContents[x]
+                            let x2 = this.selectedContents[parseInt(x) + 1]
+                            newCont.push([x1, x2])
+                        }
+                    }
+                    this.selectedContents = newCont
                 }
             },
 

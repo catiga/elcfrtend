@@ -204,3 +204,56 @@ export function loadComputeResult(task_id) {
         }
     })
 }
+
+export function deleteModelById(id) {
+    return new Promise((resolve, reject) => {
+        try {
+            if (id) {
+                let sql = `update ${Table} set flag=-1 where id=${id}`
+                db.query(sql, function(err, values, fields) {
+                    resolve({
+                        code: 200
+                    })
+                });
+            } else {
+                resolve({
+                    code: 200
+                })
+            }
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
+
+export function deleteModelByIds(ids) {
+    return new Promise((resolve, reject) => {
+        try {
+            if (ids && ids.length>0) {
+                let sql = `update ${Table} set flag=-1 where id in (`
+                ids.forEach(id => {
+                    sql = sql + `${id},`
+                })
+                sql = sql.substring(0, sql.length - 1) + `)`
+                
+                db.query(sql, function(err, values, fields) {
+                    resolve({
+                        code: 200
+                    })
+                });
+            } else {
+                resolve({
+                    code: 200
+                })
+            }
+        } catch (err) {
+            return reject({
+                code: 400,
+                message: err.message
+            })
+        }
+    })
+}
