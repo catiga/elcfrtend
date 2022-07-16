@@ -1,7 +1,7 @@
 <template>
     <v-app dark>
         <v-navigation-drawer fixed app dark :mini-variant="mini">
-            <v-container fluid display-1 font-weight-black text-uppercase style="-webkit-user-select: none;-webkit-app-region: drag" v-show="!mini">
+            <v-container fluid display-1 font-weight-black text-uppercase style="-webkit-user-select: none;-webkit-app-region: drag; font-size:24px!important" v-show="!mini">
                 <v-layout>
                     <v-flex layout justify-center align-center>
                         <!--<v-icon>credit_card</v-icon>-->
@@ -124,7 +124,7 @@
         data: () => ({
             currentUser : remote.getGlobal('sharedObject').loginedUser,
             currentProject : remote.getGlobal('sharedObject').openedProject,
-            title: '智能决策系统',
+            title: '电网安全评估及过渡方案智能决策平台',
             drawer: null,
             items: remote.getGlobal('sharedObject').pageMenus,
             mini: false,

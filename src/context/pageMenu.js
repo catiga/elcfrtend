@@ -3,7 +3,7 @@ const pageMenus = [
   {
     isSingle: true,
     icon: "home",
-    text: "Dashboard",
+    text: "首页",
     to: "/home",
     key: "home_folder_home",
     parent: "home_folder",

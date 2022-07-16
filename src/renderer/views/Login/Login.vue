@@ -15,7 +15,8 @@
                             elevation="12"
                             max-width="calc(100% - 32px)"
                     >
-                        <h1 class="">智能电网决策系统</h1>
+                        <h2 class="">电网安全评估及过渡方案智能决策平台</h2>
+                        <!--
                         <v-flex>
                             <v-btn small flat icon>
                                 <v-icon>filter_1</v-icon>
@@ -27,6 +28,7 @@
                                 <v-icon>filter_3</v-icon>
                             </v-btn>
                         </v-flex>
+                        -->
                     </v-sheet>
 
                     <v-card-text class="px-4">
