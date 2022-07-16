@@ -282,12 +282,14 @@
                             disabled
                             required
                         ></v-select>
+                        <!--
                         <v-text-field
                             v-model="dialogJianxiuForm.name"
                             label="悬空节点"
                             required
                             readonly
                         ></v-text-field>
+                        -->
                         <v-card>
                             <v-card-title><h4>站外节点对接</h4></v-card-title>
                             <v-card dense>

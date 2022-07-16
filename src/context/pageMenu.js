@@ -97,10 +97,10 @@ const pageMenus = [
 
   { divider: true },
   { heading: "系统" },
-  { isSingle: true, icon: "settings", text: "设置", to: "/settings" },
+  //{ isSingle: true, icon: "settings", text: "设置", to: "/settings" },
   { isSingle: true, icon: "visibility_off", text: "密码", to: "/password" },
   //{ isSingle: true, icon: "lightbulb_outline", text: "Notes", to: "/notes" },
-  { isSingle: true, icon: "help", text: "帮助", to: "/help" },
+  //{ isSingle: true, icon: "help", text: "帮助", to: "/help" },
 ];
 
 var buildDynamicMenu = function (user, openedProject) {

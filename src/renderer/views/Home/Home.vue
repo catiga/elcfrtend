@@ -1,6 +1,6 @@
 <template>
     <v-layout row wrap>
-        <v-flex d-flex sm7>
+        <v-flex d-flex sm12>
             <v-layout row wrap>
                 <v-flex >
                     <v-layout row wrap>
@@ -30,7 +30,7 @@
                 </v-flex>
             </v-layout>
         </v-flex>
-        
+        <!--
         <v-flex d-flex sm5>
             <v-card>
                 <v-card-title class="pb-0">
@@ -41,7 +41,7 @@
                 </v-card-text>
             </v-card>
         </v-flex>
-        
+        -->
     </v-layout>
 </template>
 
