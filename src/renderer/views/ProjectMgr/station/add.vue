@@ -372,13 +372,15 @@ export default {
                     if(maxNodeValue) {
                         while(true) {
                             let tmpValue = maxNodeValue--
-                            if(tmpValue === 0) {
+                            console.log('tmpValue:', tmpValue)
+                            if(tmpValue <= 0) {
                                 break;
                             }
                             tmpData.push({id:tmpValue, label:tmpValue})
                             tmpData.push(maxNodeValue--)
                         }
                     }
+                    console.log('tmpData', tmpData)
                     this.nodeList = tmpData
                 }
             })

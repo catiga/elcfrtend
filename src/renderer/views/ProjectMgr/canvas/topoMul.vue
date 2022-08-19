@@ -215,11 +215,12 @@ export default {
             }
             this.getBestOutput().then(bestArray => {
                 console.log('找到了对应的方案红线数据对', bestArray)
+                var i = 0
                 for(let x in bestArray) {
                     let p = bestArray[x]
                     console.log('x.p0==', p.p0)
                     console.log('x.p1==', p.p1)
-                    this.drawLine(ctx, p.p0.x, p.p0.y, p.p1.x, p.p1.y, false, "red")
+                    this.drawLine(ctx, p.p0.x + (i++)*0.8, p.p0.y + (i++)*0.8, p.p1.x + (i++)*0.8, p.p1.y + (i++)*0.8, false, "red")
                 }
             })
         },
