@@ -2,7 +2,7 @@
     <v-layout>
         <div class="work-container">
             <!-- 标题 -->
-            <div class="title">检修作业定义</div>
+            <div class="title">作业定义</div>
             <!-- 表单 -->
             <v-form
                 ref="form"
@@ -76,6 +76,16 @@
                     @change="selBus"
                     required
                 ></v-autocomplete>
+
+                <v-select
+                    v-model="workForm.station_enum"
+                    :items="station_enum"
+                    item-text="text"
+                    item-value="val"
+                    :rules="[v => !!v || 'Item is required']"
+                    label="仅进行站内故障枚举"
+                    required
+                ></v-select>
                 
                 <v-list-tile>
                     <v-list-tile-content>
@@ -120,7 +130,8 @@ export default {
                 name: '',
                 base_kv: '',
                 station_code: '',
-                station_name: ''
+                station_name: '',
+                station_enum: ''
             },
             addForm: {},
 
@@ -131,6 +142,10 @@ export default {
 
             bus_items: [],
             vol_items: [],
+            station_enum: [
+                {val:1, text:"是"},
+                {val:0, text:"否"}
+            ],
 
             nameRules: [
                 name => !!name || '请输入作业名称',
@@ -188,7 +203,7 @@ export default {
                 return
             }
             loadVolItems(currentProject).then(result => {
-                // console.log('result===', result)
+                console.log('result===', result)
                 if(result.code === 200) {
                     this.vol_items = result.data
                 }

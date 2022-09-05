@@ -16,9 +16,6 @@ const systemMenus = [{
   submenu: [{
     label: '工程管理',
     click: async (item, focusedWindow) => {
-      //focusedWindow.loadURL(`${url}/#/projectMgr/p/list`);
-      //sendMenuEvent({route: '/about'})
-      console.log('准备发送消息')
       focusedWindow.webContents.send('change-view', {route: '/projectMgr/p/list'});
     } 
   }, {
@@ -40,7 +37,7 @@ const systemMenus = [{
     }
   }, 
   {
-    label: '检修作业定义',
+    label: '作业定义',
     click: function (item, focusedWindow) {
       // focusedWindow.loadURL(`${url}/#/menuSetting/ms/tooldata/work`);
       focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/tooldata/work'});
@@ -52,7 +49,6 @@ const systemMenus = [{
   {
     label: '母线节点',
     click: function (item, focusedWindow) {
-      console.log("~~~~~~~~~~~~~~我是 log", process.env.NODE_ENV, __dirname, url);
       //focusedWindow.loadURL(`${url}/#/menuSetting/ms/elemdata/station/moline`);
       focusedWindow.webContents.send('change-view', {route: '/menuSetting/ms/elemdata/station/moline'});
     }

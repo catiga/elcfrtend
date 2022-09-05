@@ -32,7 +32,7 @@ export function saveProjectParams(project, attrs) {
             let sql = `select * from ${Table} where proj_id=${project.id} and flag!=-1`
             db.query(sql, function(err, values, fields) {
                 if(values && values.length>0) {
-                    sql = `update ${Table} set name='${attrs.name}', station_code='${attrs.station_code}', station_name='${attrs.station_name}', base_kv=${attrs.base_kv} where proj_id=${project.id}`
+                    sql = `update ${Table} set name='${attrs.name}', station_code='${attrs.station_code}', station_name='${attrs.station_name}', base_kv=${attrs.base_kv}, in_station=${attrs.station_enum} where proj_id=${project.id}`
                     db.query(sql, function(e1, v1, f1) {
                         resolve({
                             code: 200,
@@ -69,7 +69,7 @@ export function loadVolItems(project) {
     const mother_line_table = 'p_moline_info'
     return new Promise((resolve, reject) => {
         try {
-            let sql = `select id, code, bus_name, base_kv from ${mother_line_table} where proj_id=${project.id} group by base_kv`
+            let sql = `select base_kv from ${mother_line_table} where proj_id=${project.id} group by base_kv`
             db.query(sql, function(err, values, fields) {
                 resolve({
                     code: 200,
@@ -89,7 +89,7 @@ export function loadBusItems(busItemCode) {
     const mother_line_table = 'p_moline_info'
     return new Promise((resolve, reject) => {
         try {
-            let sql = `select id, code, bus_name from ${mother_line_table} where base_kv=${busItemCode} group by code`
+            let sql = `select code, bus_name from ${mother_line_table} where base_kv=${busItemCode} group by code, bus_name`
             db.query(sql, function(err, values, fields) {
                 resolve({
                     code: 200,
