@@ -3,6 +3,7 @@
         <v-flex xs12 d-flex>
             <v-card>
                 <v-card-title>
+                    <!--
                     <v-menu
                         single-line
                         v-model="menuTimeStart"
@@ -26,8 +27,11 @@
                             ></v-text-field>
                         </template>
                     </v-menu>
+                    -->
                     <v-spacer></v-spacer>
+                    <!--
                     <v-btn color="success" dark class="mb-2" @click="initialize">搜索</v-btn>
+                    -->
                     <v-btn color="info" dark class="mb-2" @click="handleCreate">新建</v-btn>
                 </v-card-title>
                 <v-card-text class="pt-0 title font-weight-bold">

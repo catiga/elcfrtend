@@ -84,9 +84,11 @@
                             persistent
                             max-width="700"
                         >
+                            <!--
                             <template v-slot:activator="{ on, attrs }">
                                 <v-btn v-bind="attrs" v-on="on" color="success" style="margin: 0 6px 0 0;">结果输出</v-btn>
                             </template>
+                            -->
                             <v-card>
                                 <v-card-title class="text-h3">风险评估结果</v-card-title>
                                 <v-card-text>

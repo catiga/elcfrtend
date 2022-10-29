@@ -450,6 +450,9 @@
                 handler(val) {
                     if (val) {
                         this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作成功'
+                        if(this.snackbarMsg.indexOf("失败")>-1) {
+                            this.snackbarMsg = "操作成功"
+                        }
                     } else {
                         this.snackbarMsg = this.snackbarMsg ? this.snackbarMsg : '操作失败'
                     }
@@ -568,7 +571,6 @@
                     return check1 && check2
                 })
 
-                console.log('分页对象', this.pagination)
                 getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
                     if (result.code === 200) {
                         let items = result.data.list
@@ -996,7 +998,7 @@
                                     this.submitResult = true
                                     this.importing = false
                                     this.snackbar = true
-                                    this.snackbarMsg = 'Successfully imported'
+                                    this.snackbarMsg = '导入成功'
 
                                     // 刷新所有列表
                                     Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
@@ -1262,7 +1264,7 @@
                                     this.submitResult = true
                                     this.importing = false
                                     this.snackbar = true
-                                    this.snackbarMsg = 'Successfully imported'
+                                    this.snackbarMsg = '导入成功'
 
                                     // 刷新所有列表
                                     Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
@@ -1477,7 +1479,7 @@
                                     this.submitResult = true
                                     this.importing = false
                                     this.snackbar = true
-                                    this.snackbarMsg = 'Successfully imported'
+                                    this.snackbarMsg = '导入成功'
 
                                     // 刷新所有列表
                                     Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
@@ -1661,7 +1663,7 @@
                                     this.submitResult = true
                                     this.importing = false
                                     this.snackbar = true
-                                    this.snackbarMsg = 'Successfully imported'
+                                    this.snackbarMsg = '导入成功'
 
                                     // 刷新所有列表
                                     Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
@@ -1783,7 +1785,7 @@
                                     this.submitResult = true
                                     this.importing = false
                                     this.snackbar = true
-                                    this.snackbarMsg = 'Successfully imported'
+                                    this.snackbarMsg = '导入成功'
 
                                     // 刷新所有列表
                                     Promise.all([this._getCategoryAll(), this._getAssetsAll()]).then(result => {
