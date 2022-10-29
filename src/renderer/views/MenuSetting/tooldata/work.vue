@@ -61,7 +61,7 @@
                     :items="vol_items"
                     item-text="base_kv"
                     item-value="base_kv"
-                    :rules="[v => !!v || 'Item is required']"
+                    :rules="[v => !!v || '请选择电压等级']"
                     label="检修电压等级"
                     @change="selKv"
                     required
@@ -71,7 +71,7 @@
                     :items="bus_items"
                     item-text="bus_name"
                     item-value="bus_name"
-                    :rules="[v => !!v || 'Item is required']"
+                    :rules="[v => !!v || '请选择检修厂站']"
                     label="检修厂站选择"
                     @change="selBus"
                     required
@@ -82,7 +82,7 @@
                     :items="station_enum"
                     item-text="text"
                     item-value="val"
-                    :rules="[v => !!v || 'Item is required']"
+                    :rules="[v => !!v || '是否需要站内故障枚举']"
                     label="仅进行站内故障枚举"
                     required
                 ></v-select>
@@ -143,8 +143,8 @@ export default {
             bus_items: [],
             vol_items: [],
             station_enum: [
-                {val:1, text:"是"},
-                {val:0, text:"否"}
+                {val:"1", text:"是"},
+                {val:"0", text:"否"}
             ],
 
             nameRules: [
@@ -166,6 +166,8 @@ export default {
                 this.workForm.station_code = result.data[0]['station_code']
                 this.workForm.station_name = result.data[0]['station_name']
                 this.workForm.base_kv = result.data[0]['base_kv']
+                this.workForm.station_enum = "" + result.data[0]['in_station']
+                console.log("对表单的肤质：", this.workForm)
                 this.selKv(this.workForm.base_kv)
             }
         }).catch(err => {
