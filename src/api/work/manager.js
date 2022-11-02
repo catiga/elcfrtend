@@ -41,7 +41,7 @@ export function saveProjectParams(project, attrs) {
                     })
                 } else {
                     let a_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
-                    let sql = `insert into ${Table}(proj_id, name, station_code, station_name, base_kv) values(${project.id}, '${attrs.name}', '${attrs.station_code}', '${attrs.station_name}', ${attrs.base_kv})`
+                    let sql = `insert into ${Table}(proj_id, name, station_code, station_name, base_kv, in_station) values(${project.id}, '${attrs.name}', '${attrs.station_code}', '${attrs.station_name}', ${attrs.base_kv}, ${attrs.station_enum})`
                     db.query(sql, function(e1, v1, f1) {
                         //构造对象
                         let retData = {
