@@ -67,6 +67,9 @@ function createLoginWindow() {
         return
     }
 
+    console.log('starting matlab comm server..');
+    startOnBoot.startServer();
+
     /**
      * Initial window options
      */
@@ -142,7 +145,7 @@ function createMainWindow() {
     if (mainWindow) {
         return
     }
-
+    
     /**
      * Initial window options
      */
