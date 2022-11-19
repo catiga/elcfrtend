@@ -1,6 +1,7 @@
 // 引用winreg模块
 var WinReg = require('winreg')
 const exec = require('child_process').exec
+import path from 'path'
 var startOnBoot = {
 
     // 设置自动启动
@@ -29,12 +30,13 @@ var startOnBoot = {
 
     startServer: function() {
         let cmdStr = 'java -jar whproject.jar'
-        let cmdPath = './midware/'
+        let cmdPath = path.join(__dirname, '../../midware/')
+        console.log('命令行执行路径：', cmdPath)
         // 子进程名称
         let workerProcess = exec(cmdStr, { cwd: cmdPath })
         // 打印正常的后台可执行程序输出
         workerProcess.stdout.on('data', function (data) {
-            //console.log('stdout: ' + data)
+            console.log('stdout: ' + data)
         })
         // 打印错误的后台可执行程序输出
         workerProcess.stderr.on('data', function (data) {
