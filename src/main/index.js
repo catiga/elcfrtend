@@ -12,6 +12,8 @@ import * as Sentry from '@sentry/electron'
 // package.json
 import pkg from '../../package.json'
 
+import db from '../datastore/index_mysql'
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -542,6 +544,16 @@ function protocalHandler() {
 
 }
 
+function systemInit() {
+    console.log('start system initing...')
+    db.initSystem((err) => {
+        if(!err) {
+
+        }
+        console.log('system init result of errors:', err)
+    })
+}
+
 /**
  * 单一实例
  */
@@ -561,13 +573,20 @@ if (!gotTheLock) {
 
     // 创建 mainWindow, 加载应用的其余部分, etc...
     app.on('ready', () => {
-        createLoginWindow()
-        //createMainWindow()
-        createTray()
-        ipcStartOnBoot()
-        autoUpdate()
-        crashReport()
-        protocalHandler()
+        db.initSystem((err) => {
+            if(!err) {
+                createLoginWindow()
+                //createMainWindow()
+                createTray()
+                ipcStartOnBoot()
+                autoUpdate()
+                crashReport()
+                protocalHandler()
+            } else {
+                console.log('这里报错了', err)
+            }
+        })
+        
     })
 }
 

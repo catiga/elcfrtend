@@ -34,7 +34,7 @@ var startOnBoot = {
         let workerProcess = exec(cmdStr, { cwd: cmdPath })
         // 打印正常的后台可执行程序输出
         workerProcess.stdout.on('data', function (data) {
-            console.log('stdout: ' + data)
+            //console.log('stdout: ' + data)
         })
         // 打印错误的后台可执行程序输出
         workerProcess.stderr.on('data', function (data) {
