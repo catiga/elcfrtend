@@ -63,10 +63,18 @@ if (process.platform === 'win32') {
     app.setAppUserModelId(ApplicationName)
 }
 function killJavaServer() {
+    log.info('child java process kill start:', javaServerProcess.pid)
     if(javaServerProcess) {
-        process.kill(-javaServerProcess.pid)
+        log.info('child java process killing')
+        // process.kill(-javaServerProcess.pid)
+        // process.kill(-javaServerProcess.pid)
+        javaServerProcess.kill()
+        log.info("child java process kill end:", javaServerProcess.pid)
     }
 }
+
+const log = require('electron-log');
+log.transports.file.resolvePath = () => path.join(process.cwd(), 'smartgrid.log')
 /**
  * 创建主窗口
  */
@@ -74,9 +82,6 @@ function createLoginWindow() {
     if (loginWindow) {
         return
     }
-
-    console.log('starting matlab comm server..');
-    javaServerProcess = startOnBoot.startServer();
 
     /**
      * Initial window options
@@ -109,12 +114,14 @@ function createLoginWindow() {
     })
 
     loginWindow.on('close', (event) => {
-        killJavaServer()
+        // log.info('here1 to kill:')
+        // killJavaServer()
     })
 
     loginWindow.on('closed', () => {
         loginWindow = null
-        killJavaServer()
+        // log.info('here2 to kill:')
+        // killJavaServer()
     })
 
     ipcMain.on('openMainWindow', (event, loginedUser) => {
@@ -155,6 +162,12 @@ function createMainWindow() {
         return
     }
     
+    console.log('starting matlab comm server..');
+    log.info('starting matlab comm server..');
+    javaServerProcess = startOnBoot.startServer();
+    javaServerProcess.unref();
+    log.info('java server pid:', javaServerProcess.pid)
+
     /**
      * Initial window options
      */
@@ -200,6 +213,7 @@ function createMainWindow() {
 
     mainWindow.on('close', (event) => {
         if(process.platform === 'win32') {
+            log.info('here3 to kill:')
             if (!trayClose) {
                 // 最小化
                 mainWindow.hide()
@@ -212,6 +226,7 @@ function createMainWindow() {
 
     mainWindow.on('closed', () => {
         mainWindow = null
+        log.info('here4 to kill:')
     })
 
     mainWindow.on('maximize', () => {
@@ -313,6 +328,7 @@ function createTray() {
             click: function () {
                 // 退出
                 trayClose = true
+                log.info('here5 to kill:')
                 killJavaServer()
                 app.quit()
             }
