@@ -5,6 +5,9 @@ import path from 'path'
 
 const log = require('electron-log');
 
+log.transports.file.resolvePath = () => path.join(process.cwd(), 'smlog.log')
+
+
 // export const readFile = function(callback) {
 //     fs.readFile(path.join(__dirname, './wh_smartgrid.sql'), (err, data) => {
 //         if(err) callback(err)
