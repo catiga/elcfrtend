@@ -1,5 +1,7 @@
 // var r = require('../../midware/syssql')
-import r from '../../midware/syssql'
+// import r from '../../midware/syssql'
+
+import r from './syssql'
 
 const mysql = require('mysql');
 // const pool = mysql.createPool({
