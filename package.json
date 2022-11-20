@@ -44,8 +44,8 @@
     ],
     "extraResources": [
       {
-        "from": "./midware/**/*",
-        "to": ".midware/**/*"
+        "from": "./midware/",
+        "to": "midware"
       }
     ],
     "dmg": {

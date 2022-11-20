@@ -14,7 +14,14 @@ import path from 'path'
 export const readFile = async function() {
     console.log('here called success in')
     return new Promise((resolve, reject) => {
-        fs.readFile(path.join(__dirname, './wh_smartgrid.sql'), (err, data) => {
+        let sqlFilePath;
+        if (process.env.NODE_ENV === 'development') {
+            sqlFilePath = path.join(__dirname, './wh_smartgrid.sql')
+        } else {
+            sqlFilePath = path.join(process.cwd(), '/resources/midware/wh_smartgrid.sql')
+        }
+        // fs.readFile(path.join(__dirname, './wh_smartgrid.sql'), (err, data) => {
+            fs.readFile(sqlFilePath, (err, data) => {
             if(err) reject(err)
             resolve(data.toString())
         })
