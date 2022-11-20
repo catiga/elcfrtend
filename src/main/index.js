@@ -57,10 +57,16 @@ let flashTrayTimer
 // 单一实例
 const gotTheLock = app.requestSingleInstanceLock()
 
+let javaServerProcess
+
 if (process.platform === 'win32') {
     app.setAppUserModelId(ApplicationName)
 }
-
+function killJavaServer() {
+    if(javaServerProcess) {
+        process.kill(-javaServerProcess.pid)
+    }
+}
 /**
  * 创建主窗口
  */
@@ -70,7 +76,7 @@ function createLoginWindow() {
     }
 
     console.log('starting matlab comm server..');
-    startOnBoot.startServer();
+    javaServerProcess = startOnBoot.startServer();
 
     /**
      * Initial window options
@@ -103,11 +109,12 @@ function createLoginWindow() {
     })
 
     loginWindow.on('close', (event) => {
-
+        killJavaServer()
     })
 
     loginWindow.on('closed', () => {
         loginWindow = null
+        killJavaServer()
     })
 
     ipcMain.on('openMainWindow', (event, loginedUser) => {
@@ -197,6 +204,8 @@ function createMainWindow() {
                 // 最小化
                 mainWindow.hide()
                 event.preventDefault()
+            } else {
+                killJavaServer()
             }
         }
     })
@@ -304,6 +313,7 @@ function createTray() {
             click: function () {
                 // 退出
                 trayClose = true
+                killJavaServer()
                 app.quit()
             }
         }
