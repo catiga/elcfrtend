@@ -39,7 +39,14 @@
       "private": false
     },
     "files": [
-      "dist/electron/**/*"
+      "dist/electron/**/*",
+      "midware/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "./midware/**/*",
+        "to": ".midware/**/*"
+      }
     ],
     "dmg": {
       "contents": [
