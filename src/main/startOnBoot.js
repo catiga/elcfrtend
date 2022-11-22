@@ -41,7 +41,7 @@ var startOnBoot = {
             cmdPath = path.join(__dirname, '../../midware/')
         } else {
             //sqlFilePath = path.join(process.cwd(), '/resources/midware/wh_smartgrid.sql')
-            cmdPath = path.join(__dirname, '/resources/midware/')
+            cmdPath = path.join(process.cwd(), '/resources/midware/')
         }
 
         console.log('命令行执行路径：', cmdPath)
