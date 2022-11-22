@@ -43,7 +43,7 @@ var startOnBoot = {
             //sqlFilePath = path.join(process.cwd(), '/resources/midware/wh_smartgrid.sql')
             cmdPath = path.join(process.cwd(), '/resources/midware/')
         }
-
+        log.info('java server path:', cmtPath)
         console.log('命令行执行路径：', cmdPath)
         // 子进程名称
         let workerProcess = exec(cmdStr, { cwd: cmdPath })
