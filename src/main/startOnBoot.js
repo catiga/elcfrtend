@@ -35,7 +35,15 @@ var startOnBoot = {
 
     startServer: function() {
         let cmdStr = 'java -jar whproject.jar'
-        let cmdPath = path.join(__dirname, '../../midware/')
+
+        let cmdPath;
+        if (process.env.NODE_ENV === 'development') {
+            cmdPath = path.join(__dirname, '../../midware/')
+        } else {
+            //sqlFilePath = path.join(process.cwd(), '/resources/midware/wh_smartgrid.sql')
+            cmdPath = path.join(__dirname, '/resources/midware/')
+        }
+
         console.log('命令行执行路径：', cmdPath)
         // 子进程名称
         let workerProcess = exec(cmdStr, { cwd: cmdPath })
