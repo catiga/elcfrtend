@@ -37,13 +37,14 @@ var startOnBoot = {
         let cmdStr = 'java -jar whproject.jar'
 
         let cmdPath;
+        log.info('java process node_env:', process.env.NODE_ENV)
         if (process.env.NODE_ENV === 'development') {
             cmdPath = path.join(__dirname, '../../midware/')
         } else {
             //sqlFilePath = path.join(process.cwd(), '/resources/midware/wh_smartgrid.sql')
             cmdPath = path.join(process.cwd(), '/resources/midware/')
         }
-        log.info('java server path:', cmtPath)
+        log.info('java server path:', cmdPath)
         console.log('命令行执行路径：', cmdPath)
         // 子进程名称
         let workerProcess = exec(cmdStr, { cwd: cmdPath })
