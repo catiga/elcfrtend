@@ -661,7 +661,6 @@
                 this.dialogRecompute = true
             },
             confirmCompute() {
-                console.log(this.editedItem)
                 this.dialogRecompute = false
                 this.$http.post(`http://127.0.0.1:8081/api/task/compute/pf/${this.editedItem.id}`, {
                     headers: {}
@@ -670,6 +669,7 @@
                     this.snackbarMsg = '请检查计算服务启动状态'
                     this.submitResult = false
                 }).then((response) => {
+                    console.log('计算结果返回', response)
                     if(response.status != 200) {
                         this.snackbar = true
                         this.snackbarMsg = '计算服务状态异常'
@@ -805,10 +805,27 @@
 
                                 this.$http.post(`http://127.0.0.1:8081/api/task/compute/pf/${result.data.id}`, {
                                     headers: {}
-                                }).catch(function(error) {
-                                    console.log(error)
-                                }).then(function(response) {
-                                    console.log(response)
+                                }).catch((error) => {
+                                    this.snackbar = true
+                                    this.snackbarMsg = '请检查计算服务启动状态'
+                                    this.submitResult = false
+                                }).then((response) => {
+                                    console.log('计算结果返回', response)
+                                    if(response.status != 200) {
+                                        this.snackbar = true
+                                        this.snackbarMsg = '计算服务状态异常'
+                                        this.submitResult = false
+                                    } else {
+                                        if(response.data.errno === 0) {
+                                            this.snackbar = true
+                                            this.snackbarMsg = '潮流计算任务成功'
+                                            this.submitResult = true
+                                        } else {
+                                            this.snackbar = true
+                                            this.snackbarMsg = response.data.errmsg
+                                            this.submitResult = false
+                                        }
+                                    }
                                 })
                             } else {
                                 this.submitResult = false

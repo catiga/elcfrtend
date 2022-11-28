@@ -1,5 +1,5 @@
 {
-  "name": "SmartGrid",
+  "name": "PSMSD",
   "version": "1.0.0",
   "author": "catiga <catiga03@gmail.com>",
   "description": "智能电网决策系统",
@@ -24,7 +24,7 @@
     "win32": "node .electron-vue/build.js && electron-builder --win --ia32"
   },
   "build": {
-    "productName": "SmartGrid",
+    "productName": "PSMSD",
     "appId": "com.electron.SmartGrid",
     "copyright": "Copyright © 2022 catiga",
     "asar": false,

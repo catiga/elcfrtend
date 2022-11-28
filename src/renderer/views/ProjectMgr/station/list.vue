@@ -350,6 +350,7 @@
         },
         data() {
             return {
+                intervalHandler:null,
                 resultDialog: false,
                 selectHeads: [],
                 selectItems: [],
@@ -461,8 +462,66 @@
         },
         mounted() {
             this.initialize()
+            this.checkTaskInterval()
+        },
+        beforeDestroy() {
+            clearInterval(this.intervalHandler)
         },
         methods: {
+            checkTaskInterval() {
+                this.intervalHandler = setInterval(() => {
+                    const {sortBy, descending, page, rowsPerPage} = this.pagination
+                    let currentProject = remote.getGlobal('sharedObject').openedProject
+                    let whereAttrs = {
+                        dateStart: this.search.dateStart,
+                        dateEnd: this.search.dateEnd,
+                        proj_id: currentProject.id
+                    }
+                    const filterFun = (o => {
+                        let check1, check2 = false
+
+                        if (whereAttrs.dateStart) {
+                            if (new Date(o.createdAt) >= new Date(whereAttrs.dateStart)) {
+                                check1 = true
+                            }
+                        } else {
+                            check1 = true
+                        }
+
+                        if (whereAttrs.dateEnd) {
+                            if (new Date(o.createdAt) <= new Date(whereAttrs.dateEnd)) {
+                                check2 = true
+                            }
+                        } else {
+                            check2 = true
+                        }
+
+                        // 模糊查询
+                        return check1 && check2
+                    })
+                    getModelPagination(this.pagination, whereAttrs, filterFun).then(result => {
+                        if (result.code === 200) {
+                            let items = result.data.list
+                            const total = result.data.total
+
+                            // setTimeout(() => {
+                            this.loading = false
+                            this.desserts = items
+                            this.totalDesserts = total
+                            // }, 1000)
+                        } else {
+                            this.loading = false
+                            this.showNoData = true
+                            this.noDataMessage = result.message
+                        }
+                    }).catch(err => {
+                        this.loading = false
+                        this.showNoData = true
+                        this.noDataMessage = err.message
+                    })
+                }, 2000)
+            },
+
             create() {
                 this.$router.push('/projectMgr/task/station/add')
             },
