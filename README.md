@@ -14,9 +14,10 @@
 - 安装npm
 - 安装开发IDE，建议VsCode
 
+
 ## 开发说明
 
-> 目前仅针对Windows。Mac、Linux平台并未测试。
+> 目前仅针对Windows。Mac、Linux平台并未测试。按照下列顺序执行shell命令
 
 ``` bash
 # install dependencies
